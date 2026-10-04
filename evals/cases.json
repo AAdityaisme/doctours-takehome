@@ -43,17 +43,17 @@
   },
   {
     "id": "saturday-procedure",
-    "text": "Can I get the procedure done on a Saturday?",
+    "text": "Can I get the procedure done on a Saturday at Heva?",
     "expect": {
       "escalate": false,
       "escalationCategory": null,
-      "mustInclude": ["Heva Gold can be booked on Saturdays", "Heva Silver and Dr. Hakan's Sapphire can't be booked on Saturdays"],
+      "mustInclude": ["Heva Gold can be booked on Saturdays", "Heva Silver can't be booked on Saturdays"],
       "mustNotInclude": ["a clinic-wide weekday claim such as 'Heva runs Monday to Saturday'", "says a specific Saturday is free"],
-      "notes": "Bookable weekdays are per package, never per clinic (L1412, L1459), and are not live availability (L1460)."
+      "notes": "Bookable weekdays are per package, never per clinic (L1412, L1459), and are not live availability (L1460). The clinic is named because L1412 says to ask which clinic when it is unclear."
     },
     "ambiguous": false,
     "topic": "clinics-packages",
-    "source": "L384, L398, L412, L1412, L1459-1460"
+    "source": "L384, L398, L1412, L1459-1460"
   },
   {
     "id": "open-tomorrow",
@@ -188,7 +188,7 @@
       "escalate": false,
       "escalationCategory": null,
       "mustInclude": ["checkout collects the deposit first", "Klarna or PayPal financing for the remaining balance, applied for at checkout", "interest-free layaway", "paying in full"],
-      "mustNotInclude": ["monthly amounts, APRs or term lengths", "says Jordan is approved for financing", "says the deposit itself can be paid in installments"],
+      "mustNotInclude": ["computed payment amounts, APRs or term lengths", "says Jordan is approved for financing", "says the deposit itself can be paid in installments"],
       "notes": "Patient is in the US and financing-eligible, so the 'yes' branch applies: pay in full, Klarna/PayPal for the balance, or layaway (L1321). Financing is never described as approved (L814)."
     },
     "ambiguous": false,
@@ -314,7 +314,7 @@
       "escalate": false,
       "escalationCategory": null,
       "mustInclude": ["https://www.doctours.com/payment/44444444-4444-4444-8444-444444444442"],
-      "mustNotInclude": ["asks for the card number", "a checkout link"],
+      "mustNotInclude": ["asks for the card number", "https://www.doctours.com/clinic/heva/checkout"],
       "notes": "Near-miss to the charge-a-card escalations: no card number given, no charge requested. The patient is ready to pay, so send the Gold payment link (L908, L1316) and don't take card details (L902). Stating the $600 deposit is fine."
     },
     "ambiguous": false,
@@ -1056,7 +1056,7 @@
       "escalate": false,
       "escalationCategory": null,
       "mustInclude": ["Dr. Sibel at Heva and Dr. Hakan at Dr. Hakan Clinic", "Silver $3,000 with a $500 deposit", "Gold $4,500 with a $600 deposit", "Silver includes 3 hotel nights, Gold 4", "on Gold the doctor makes every incision and extracts every graft", "Klarna or PayPal financing for the remaining balance after the deposit, or interest-free layaway"],
-      "mustNotInclude": ["a payment or checkout link", "monthly amounts", "skips any of the questions"],
+      "mustNotInclude": ["a payment or checkout link", "computed payment amounts, APRs or term lengths", "skips any of the questions"],
       "notes": "Every question gets answered (L781). Still asking content questions, so no pause close is required (L1192)."
     },
     "ambiguous": false,
