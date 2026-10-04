@@ -70,11 +70,21 @@ export async function restructuredTurn(
       client,
       model,
       effort,
-      system: assembly.system,
+      // Message 1 (core + stage) is the same for every message in a stage: an explicit breakpoint after it lets every
+      // message read it from cache. The implicit breakpoint (latest message) still serves a turn's later rounds.
+      system: [
+        {
+          role: "developer",
+          content: [{ type: "input_text", text: assembly.prefix, prompt_cache_breakpoint: { mode: "explicit" } }],
+        },
+        ...(assembly.skillsText ? [{ role: "developer" as const, content: assembly.skillsText }] : []),
+      ],
       user: userMessage(text),
-      tools: assembly.tools,
+      tools: assembly.offered,
+      allowed: assembly.tools.map((tool) => tool.name),
+      cacheKey: `restructured-${constants.PIPELINE_STATUS}`,
       schema: DESCRIBED_REPLY_SCHEMA,
-      loader: skillLoader(assembly.rest, loadSkillCalls),
+      loader: skillLoader(assembly.skills, loadSkillCalls),
     });
     const reply = intent(turn.reply);
     const by = reply.escalate ? "reply" : null;

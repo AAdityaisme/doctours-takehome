@@ -91,24 +91,31 @@ const escalatedMessage = (response: Response): unknown => {
  * One patient message through the Responses API: call tools until the model answers, then parse its
  * strict-schema `Reply` and post-process it. Stable content (tools, schema, system prompt) comes first so
  * the batch shares a cached prefix. Any failure is rethrown as a `TurnError` carrying the work done so far.
- * `loader` (restructured mode) is an extra tool whose output is instructions: the tools it returns are offered
- * from the next round on, and its text never counts as tool-returned URLs.
+ * Restructured mode passes its developer messages as items, a fixed `tools` list with the per-message `allowed` names
+ * (`tool_choice: allowed_tools`, so the tools prefix stays cache-stable) and a `cacheKey`. Its `loader` is an extra
+ * tool whose output is instructions: the tools it returns are allowed from the next round on, and its text never
+ * counts as tool-returned URLs.
  */
 export async function respond(options: {
   client: Client;
   model: string;
   effort: string;
-  system: string;
+  /** The baseline's one prompt string, or restructured mode's developer messages. */
+  system: string | ResponseInputItem[];
   user: string;
   tools: Tool[];
+  /** Names this message may call; unset = every tool in `tools`. */
+  allowed?: string[];
+  cacheKey?: string;
   schema?: Schema;
   loader?: SkillLoader | null;
 }): Promise<Turn> {
-  const { client, model, effort, system, user, loader, schema = REPLY_SCHEMA } = options;
+  const { client, model, effort, system, user, loader, cacheKey, schema = REPLY_SCHEMA } = options;
   const tools = [...options.tools];
+  const allowed = options.allowed && [...options.allowed];
   // Developer role: the caching guide puts an implicit breakpoint after the first developer message group.
   const input: ResponseInputItem[] = [
-    { role: "developer", content: system },
+    ...(typeof system === "string" ? [{ role: "developer" as const, content: system }] : system),
     { role: "user", content: user },
   ];
   const toolUrls = new Set<string>();
@@ -132,6 +139,14 @@ export async function respond(options: {
         model,
         reasoning: { effort: effort as ReasoningEffort },
         tools: definitions(),
+        ...(allowed && {
+          tool_choice: {
+            type: "allowed_tools" as const,
+            mode: "auto" as const,
+            tools: [...allowed, ...(loader ? [loader.tool.name] : [])].map((name) => ({ type: "function", name })),
+          },
+        }),
+        ...(cacheKey && { prompt_cache_key: cacheKey }),
         text: { format: { type: "json_schema", name: "Reply", schema: { ...schema }, strict: true } },
         input,
       });
@@ -157,7 +172,11 @@ export async function respond(options: {
         if (loader && call.name === loader.tool.name) {
           const loaded = loader.load(call.arguments);
           output = loaded.output;
-          for (const tool of loaded.tools) if (!tools.some((t) => t.name === tool.name)) tools.push(tool);
+          for (const tool of loaded.tools) {
+            if (allowed) {
+              if (!allowed.includes(tool.name)) allowed.push(tool.name);
+            } else if (!tools.some((t) => t.name === tool.name)) tools.push(tool);
+          }
         } else {
           output = runTool(call.name, call.arguments);
           for (const url of findUrls(output)) toolUrls.add(url);

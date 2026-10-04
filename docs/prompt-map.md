@@ -39,8 +39,8 @@ Front matter `statuses` lists the `PIPELINE_STATUS` values a file serves. `MEETI
 | `stages/WAITING.md` | `WAITING` | none | 1341-1343 | 161 |
 
 ## Skills (`prompts/skills/`, chosen per message)
-The router sees only `id` and `description`. Tools offered for a message are core tools plus the stage's tools plus
-each loaded skill's tools.
+The router sees only `id` and `description`. A message may call core tools plus the stage's tools plus each loaded
+skill's tools (`tool_choice: allowed_tools`); every definition is sent on every call so the cached prefix holds.
 
 | id | description | tools | Source lines | Chars |
 |----|-------------|-------|--------------|-------|
