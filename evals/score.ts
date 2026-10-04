@@ -70,7 +70,10 @@ const AMOUNT_TOKEN = new RegExp(String.raw`\$\s?${NUMBER}|\b${NUMBER}\s?USD\b|\b
 // "o'molly@" or "billing/molly@" is a different mailbox, not "molly@" with a prefix. A leading quote or backtick is
 // atext too, so it is stripped only when the same character closes the address: 'molly@doctours.com' (quoted) is
 // Molly's address, while an unclosed 'molly@doctours.com is a different mailbox.
-const EMAIL_TOKEN = /[\w!#$%&'*+\/=?^`{|}~.-]+@[\w-]+(?:\.[\w-]+)*\.[a-z]{2,}/gi;
+// The lookahead stops an address that runs on past its TLD ("doctours.com0", "doctours.com-evil") or closes a quoted
+// local part ('"…molly@doctours.com"@example.org') from yielding Molly's address. Full quoted-local-part parsing is
+// out of scope (triage-pr3 round 3).
+const EMAIL_TOKEN = /[\w!#$%&'*+\/=?^`{|}~.-]+@[\w-]+(?:\.[\w-]+)*\.[a-z]{2,}(?![\w-]|"@)/gi;
 const emailsIn = (text: string): string[] =>
   [...text.matchAll(EMAIL_TOKEN)].map(({ 0: token, index }) => {
     const quote = token[0];

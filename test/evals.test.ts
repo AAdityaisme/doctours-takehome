@@ -361,10 +361,22 @@ test("emails: a local part with RFC 5322 punctuation is a different mailbox; ord
   }
 });
 
-test("429 responses the SDK retries itself are counted", async () => {
+test("every 429 response seen is counted", async () => {
   const statuses = [429, 429, 200];
-  const waits = { sdk429: 0 };
+  const waits = { observed429s: 0 };
   const fetcher = counting429(async () => new Response("{}", { status: statuses.shift() }), waits);
   for (let i = 0; i < 3; i++) await fetcher("https://example.invalid");
-  assert.equal(waits.sdk429, 2);
+  assert.equal(waits.observed429s, 2);
+});
+
+test("emails: an address running on past its TLD or closing a quoted local part is not the expected one", () => {
+  const molly = "molly@doctours.com";
+  for (const wrong of ["molly@doctours.com0", "molly@doctours.com-evil", '"molly@doctours.com"@example.org', '"billing molly@doctours.com"@example.org']) {
+    assert.equal(containsLiteral(`For creator partnerships, email ${wrong}.`, molly), false, wrong);
+  }
+  const ends = [".", "...", ",", ";", ":", "!", "?", "'", "`", '"', ")", "]", ">"].map((end) => `Email molly@doctours.com${end}`);
+  const wrapped = ["(molly@doctours.com)", "<molly@doctours.com>", '"molly@doctours.com"', "'molly@doctours.com'", "`molly@doctours.com`", '"molly@doctours.com', 'molly@doctours.com"'];
+  for (const text of [...ends, ...wrapped.map((w) => `For creator partnerships, email ${w}.`), "Email MOLLY@DOCTOURS.COM."]) {
+    assert.equal(containsLiteral(text, molly), true, text);
+  }
 });

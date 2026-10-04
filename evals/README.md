@@ -7,8 +7,8 @@ node --env-file="$HOME/.config/openai/doctours.env" evals/run.ts --mode restruct
 With no key file, `export OPENAI_API_KEY=...` and drop `--env-file`. `--mode` takes any mode `src/cli.ts` exports.
 `--cases` picks ids from either file, and `--repeat k` adds pass^k. `--concurrency` (default 2) caps messages in
 flight; the baseline prompt is about 40k tokens per call, so more than that can hit a 500k tokens-per-minute limit.
-The clients use the CLI's eight SDK retries. The report counts the 429s the SDK retried and any harness waits after
-that, separately for replies (inside the latency figures) and the grader (outside them, since grading runs after). Models come from `REPLY_MODEL`/`REPLY_EFFORT` and
+The clients use the CLI's eight SDK retries. The report counts the 429 responses seen (most retried inside the SDK, a
+terminal one included) and any harness waits after that, separately for replies (inside the latency figures) and the grader (outside them, since grading runs after). Models come from `REPLY_MODEL`/`REPLY_EFFORT` and
 `GRADER_MODEL`/`GRADER_EFFORT`; both default to `gpt-6.1-sol` at `low`. Restructured mode also reads
 `ROUTER_MODEL`/`ROUTER_EFFORT` (default `gpt-6-luna` at `none`, as in the CLI), and its router tokens are priced
 separately. `--mode` defaults to the CLI's default mode.

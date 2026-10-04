@@ -66,14 +66,14 @@ function patientClient(openai: OpenAI, waits: { count: number; ms: number }): Cl
 }
 
 /**
- * `fetch` that counts 429 responses. The SDK retries those itself (up to `maxRetries`), so they never reach
- * `patientClient`'s counter; this keeps the report's throttling figure honest.
+ * `fetch` that counts every 429 response seen. Most are retried inside the SDK (up to `maxRetries`) and never reach
+ * `patientClient`'s counter; a terminal one (no-retry header, or the last of an exhausted run) is counted too.
  */
 export const counting429 =
-  (base: typeof fetch, waits: { sdk429: number }): typeof fetch =>
+  (base: typeof fetch, waits: { observed429s: number }): typeof fetch =>
   async (input, init) => {
     const response = await base(input, init);
-    if (response.status === 429) waits.sdk429++;
+    if (response.status === 429) waits.observed429s++;
     return response;
   };
 
@@ -176,8 +176,8 @@ if (import.meta.main) {
   // Both sets go through one batch per run so they share the cached prompt prefix; they are scored apart.
   const all = [...sets.cases, ...sets.samples];
 
-  const replyWaits = { count: 0, ms: 0, sdk429: 0 };
-  const graderWaits = { count: 0, ms: 0, sdk429: 0 };
+  const replyWaits = { count: 0, ms: 0, observed429s: 0 };
+  const graderWaits = { count: 0, ms: 0, observed429s: 0 };
   const makeClient = (waits: typeof replyWaits) =>
     patientClient(new OpenAI({ maxRetries: 8, fetch: counting429(fetch, waits) }), waits);
   const settings: Settings = {
@@ -228,7 +228,7 @@ if (import.meta.main) {
     rateLimits: Object.fromEntries(
       Object.entries({ replies: replyWaits, grader: graderWaits }).map(([name, w]) => [
         name,
-        { sdkRetried429s: w.sdk429, harnessWaits: w.count, harnessWaitSeconds: Math.round(w.ms / 1000) },
+        { observed429s: w.observed429s, harnessWaits: w.count, harnessWaitSeconds: Math.round(w.ms / 1000) },
       ]),
     ),
   };
@@ -272,8 +272,8 @@ if (import.meta.main) {
     "",
     `Latency per message: p50 ${usage.latencyMs.p50 ?? "n/a"} ms, p95 ${usage.latencyMs.p95 ?? "n/a"} ms. ` +
       `Failed messages: ${usage.failedMessages}. Grader errors: ${usage.graderErrors}. ` +
-      `Rate limits, replies: ${replyWaits.sdk429} 429s retried by the SDK, ${replyWaits.count} harness waits ` +
-      `(${Math.round(replyWaits.ms / 1000)} s); inside the latency figures. Grader: ${graderWaits.sdk429} 429s, ` +
+      `Rate limits, replies: ${replyWaits.observed429s} 429 responses seen, ${replyWaits.count} harness waits ` +
+      `(${Math.round(replyWaits.ms / 1000)} s); inside the latency figures. Grader: ${graderWaits.observed429s} 429 responses seen, ` +
       `${graderWaits.count} waits (${Math.round(graderWaits.ms / 1000)} s); not in them.`,
     "",
     `Results: ${out.pathname}`,
