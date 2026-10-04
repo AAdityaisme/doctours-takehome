@@ -23,12 +23,14 @@ test("src/ and prompts/ never read the packet samples or contain their messages"
   // A sample sentence that is also part of the original system prompt (L994 quotes "is the consultation free?")
   // may legitimately appear in the split prompts, so only sentences foreign to that prompt are banned.
   const original = normalize(readFileSync(new URL("baseline/system-prompt.md", root), "utf8"));
+  // Whole messages and each sentence or dash-separated clause of 12+ characters, so one copied sentence is caught too.
+  const pieces = samples.flatMap((s) => [s.text, ...s.text.split(/(?<=[.?!])\s+|\s+—\s+/)]).map(normalize);
   const banned = [
     "packet-samples",
-    ...samples.map((s) => normalize(s.text)).filter((text) => !original.includes(text)),
+    ...new Set(pieces.filter((text) => text.length >= 12 && !original.includes(text))),
     ...samples.map((s) => s.id).filter((id) => id.includes("-")),
   ];
-  assert.ok(banned.length >= 8, "the guard lost its sample texts");
+  assert.ok(banned.length >= 10, "the guard lost its sample texts");
 
   const files = [...filesUnder("src"), ...filesUnder("prompts")];
   assert.ok(files.length > 0);

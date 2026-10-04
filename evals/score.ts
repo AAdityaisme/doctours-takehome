@@ -39,6 +39,8 @@ export interface Trial {
   categoryOk: boolean | null;
   claims: ClaimResult[];
   pass: boolean;
+  /** Set when the reply or the grader failed. Such a trial is left out of every rate and never counts as a pass. */
+  error: string | null;
 }
 
 export interface CaseResult {
@@ -48,8 +50,8 @@ export interface CaseResult {
   trials: Trial[];
 }
 
-/** One model verdict per claim, in claim order. */
-export type Verdicts = { pass: boolean; reason: string }[];
+/** One model verdict per claim, in claim order; null when the grader call failed. */
+export type Verdicts = { pass: boolean; reason: string }[] | null;
 
 const URL = /^https?:\/\/\S+$/i;
 const EMAIL = /^[^\s@]+@[^\s@]+\.[a-z]+$/i;
@@ -94,21 +96,24 @@ export function checkLiteral(claim: Claim, reply: Reply): ClaimResult {
 
 /**
  * Scores one reply against its case. `verdicts` answers the case's model claims in order; a missing verdict fails
- * its claim. The category is checked only when the trace carries `escalationCategory`.
+ * its claim. The category is checked only when the trace carries `escalationCategory`. A failed reply (trace `ok`
+ * false, which the CLI turns into a system-error escalation) or a failed grader call marks the trial as errored.
  */
 export function scoreTrial(c: Case, reply: Reply, trace: Trace | null, verdicts: Verdicts): Trial {
   const all = claimsOf(c);
   const modelClaims = all.filter((claim) => !isLiteral(claim.claim));
   const claims = all.map((claim): ClaimResult => {
     if (isLiteral(claim.claim)) return checkLiteral(claim, reply);
-    const verdict = verdicts[modelClaims.indexOf(claim)];
+    const verdict = verdicts?.[modelClaims.indexOf(claim)];
     return { ...claim, method: "model", pass: verdict?.pass ?? false, reason: verdict?.reason ?? "no grader verdict" };
   });
   const escalateOk = reply.escalate === c.expect.escalate;
   const categoryOk =
     trace && "escalationCategory" in trace ? (trace.escalationCategory ?? null) === c.expect.escalationCategory : null;
-  const pass = escalateOk && categoryOk !== false && claims.every((claim) => claim.pass);
-  return { reply, trace, escalateOk, categoryOk, claims, pass };
+  const error =
+    trace?.ok === false ? `reply failed: ${String(trace.error)}` : verdicts === null && modelClaims.length > 0 ? "grader failed" : null;
+  const pass = !error && escalateOk && categoryOk !== false && claims.every((claim) => claim.pass);
+  return { reply, trace, escalateOk, categoryOk, claims, pass, error };
 }
 
 const GRADER_INSTRUCTIONS = `You grade one SMS reply that a hair-transplant patient coordinator sent to a patient.
@@ -216,14 +221,20 @@ export interface Summary {
   category: Rate;
   claims: { all: Rate; literal: Rate; model: Rate };
   casePass: Rate;
-  /** Share of cases that pass every one of their k trials; equals casePass when k is 1. */
+  /** Trials left out of every rate because the reply or the grader failed. */
+  errored: number;
+  /** Share of cases that pass every one of their k trials (an errored trial is not a pass). */
   passK: Rate;
   topics: Record<string, { cases: number; escalate: Rate; claims: Rate; casePass: Rate }>;
 }
 
-/** Aggregates scored cases: escalate accuracy split by expectation, claim pass rates, case pass, pass^k, per topic. */
+/**
+ * Aggregates scored cases: escalate accuracy split by expectation, claim pass rates, case pass, pass^k, per topic.
+ * Errored trials are counted but kept out of the rates, so an outage can't pass for system behaviour.
+ */
 export function summarize(results: CaseResult[]): Summary {
-  const trials = results.flatMap((r) => r.trials.map((t) => ({ ...t, topic: r.topic, expectEscalate: r.expectEscalate })));
+  const every = results.flatMap((r) => r.trials.map((t) => ({ ...t, topic: r.topic, expectEscalate: r.expectEscalate })));
+  const trials = every.filter((t) => !t.error);
   const count = (list: typeof trials, test: (t: (typeof trials)[number]) => boolean) =>
     rate(list.filter(test).length, list.length);
   const claims = trials.flatMap((t) => t.claims);
@@ -254,6 +265,7 @@ export function summarize(results: CaseResult[]): Summary {
       model: claimRate(claims.filter((c) => c.method === "model")),
     },
     casePass: count(trials, (t) => t.pass),
+    errored: every.length - trials.length,
     passK: rate(results.filter((r) => r.trials.every((t) => t.pass)).length, results.length),
     topics,
   };
@@ -276,6 +288,7 @@ export function markdown(title: string, summary: Summary, results: CaseResult[],
     `| Claims passed, literal | ${pct(summary.claims.literal)} |`,
     `| Claims passed, model-graded | ${pct(summary.claims.model)} |`,
     `| Cases fully passed | ${pct(summary.casePass)} |`,
+    `| Errored trials (left out of rates) | ${summary.errored} |`,
     ...(repeat > 1 ? [`| pass^${repeat} | ${pct(summary.passK)} |`] : []),
     "",
     "| Topic | Cases | Escalate | Claims | Case pass |",
@@ -287,6 +300,7 @@ export function markdown(title: string, summary: Summary, results: CaseResult[],
   const failures = results.flatMap((r) =>
     r.trials.flatMap((t, i) => {
       const run = repeat > 1 ? ` (run ${i + 1})` : "";
+      if (t.error) return [`- ${r.id}${run}: errored (${t.error})`];
       return [
         ...(t.escalateOk ? [] : [`- ${r.id}${run}: escalate ${t.reply.escalate}, expected ${r.expectEscalate}`]),
         ...(t.categoryOk === false ? [`- ${r.id}${run}: wrong escalation category`] : []),

@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { parseArgs } from "node:util";
 import OpenAI from "openai";
 import { MODES, replyAll, type Mode } from "../src/cli.ts";
@@ -91,7 +91,7 @@ async function runOnce(cases: Case[], settings: Settings) {
     } catch (error) {
       graderErrors++;
       console.error(`grader failed on ${c.id}: ${error instanceof Error ? error.message : String(error)}`);
-      return claims.map(() => ({ pass: false, reason: "grader error" }));
+      return null;
     }
   });
   const trials = cases.map((c, i) => scoreTrial(c, replies[i], traces.get(i) ?? null, verdicts[i]));
@@ -180,7 +180,8 @@ if (import.meta.main) {
   }
   const summary = { cases: summarize(caseResults), packetSamples: summarize(sampleResults) };
   const stamp = started.toISOString().slice(0, 16).replace("T", "-").replace(":", "");
-  const out = new URL(`./results/${mode}-${stamp}.json`, import.meta.url);
+  let out = new URL(`./results/${mode}-${stamp}.json`, import.meta.url);
+  for (let n = 2; existsSync(out); n++) out = new URL(`./results/${mode}-${stamp}-${n}.json`, import.meta.url);
   mkdirSync(new URL("./results/", import.meta.url), { recursive: true });
   writeFileSync(
     out,

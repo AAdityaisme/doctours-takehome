@@ -75,9 +75,9 @@
     "expect": {
       "escalate": false,
       "escalationCategory": null,
-      "mustInclude": ["the clinics available are Heva Clinic and Dr. Hakan Clinic, both in Istanbul"],
+      "mustInclude": [],
       "mustNotInclude": ["names a clinic in Mexico", "Mexico pricing", "promises someone will follow up about Mexico"],
-      "notes": "Contested content, not escalation. L817 says Mexico is a destination Doctours books, but getAllClinics returns only the two Istanbul clinics. L1296 says a clinic the tool doesn't return is out of scope (brief, neutral); L1379 bans denying a location only when a tool returned a clinic there. Decision: name what the tools return, invent nothing, don't escalate."
+      "notes": "Contested content, not escalation. L817 says Mexico is a destination Doctours books, but getAllClinics returns only the two Istanbul clinics. L1296 says a clinic the tool doesn't return is out of scope (brief, neutral); L1379 bans denying a location only when a tool returned a clinic there. Decision: don't escalate; grade only the prohibitions, so naming the Istanbul clinics and saying Doctours books Mexico without clinic details both pass."
     },
     "ambiguous": true,
     "topic": "clinics-packages",
@@ -454,8 +454,8 @@
       "escalate": false,
       "escalationCategory": null,
       "mustInclude": ["attaches at most 3 of Jordan's uploaded photos", "offers the remaining angles or asks which ones Jordan wants"],
-      "mustNotInclude": ["more than 3 attachments", "photo URLs getPatientImages didn't return"],
-      "notes": "attachmentUrls must be a subset of https://assets.example.invalid/intake/7c2e1a40-6b8f-4d3a-9e15-2f0a8b6c4d11/{front,top,left,right,back}.jpg, max 3 (packet L82, L896)."
+      "mustNotInclude": ["more than 3 attachments"],
+      "notes": "Attachment provenance (only URLs a tool returned this turn, max 3) is enforced in code by postProcess and tested in test/reply.test.ts; the grader has no tool output, so it is not asked (packet L82, L896)."
     },
     "ambiguous": false,
     "topic": "images",
@@ -537,7 +537,7 @@
     "expect": {
       "escalate": false,
       "escalationCategory": null,
-      "mustInclude": ["take the time needed", "first-person check-in in about a month if no word", "offers to adjust the timing"],
+      "mustInclude": ["take the time needed", "first-person check-in in about a month if no word", "offers to adjust the timing", "shouldFollowUp is true and followUpTiming is about one month"],
       "mustNotInclude": ["a payment or checkout link", "a clinic or package question", "an open-ended 'whenever you're ready' with no date"],
       "notes": "TIME-BOUND PAUSE, default 1 month; shouldFollowUp true, followUpTiming about '1 month'."
     },
@@ -551,7 +551,7 @@
     "expect": {
       "escalate": false,
       "escalationCategory": null,
-      "mustInclude": ["confirms a check-in in January", "offers to adjust the timing"],
+      "mustInclude": ["confirms a check-in in January", "offers to adjust the timing", "shouldFollowUp is true and followUpTiming names January"],
       "mustNotInclude": ["substitutes a one-month default", "a payment link or funnel question"],
       "notes": "Patient named the window, so use it (L1184, L1201)."
     },

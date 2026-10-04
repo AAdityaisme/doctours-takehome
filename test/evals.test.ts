@@ -184,3 +184,18 @@ test("case files are well formed: unique ids, consistent escalation, handoff che
     assert.ok(c.expect.mustNotInclude.some((claim) => claim.startsWith("names a role")), `${c.id}: L877 check`);
   }
 });
+
+test("a failed reply or grader call errors the trial: never a pass, never in the rates", () => {
+  const c = caseOf({ escalate: true, escalationCategory: "cannot_do", mustNotInclude: ["answers a sales question"] });
+  // The CLI turns a failed message into a system-error escalation, which would otherwise look like a correct escalation.
+  const failedReply = scoreTrial(c, toEscalation("system error"), { ok: false, error: "429" }, [{ pass: true, reason: "" }]);
+  assert.equal(failedReply.error, "reply failed: 429");
+  assert.equal(failedReply.pass, false);
+  const failedGrader = scoreTrial(c, toEscalation("needs a person"), { ok: true }, null);
+  assert.equal(failedGrader.error, "grader failed");
+  const good = scoreTrial(c, toEscalation("needs a person"), { ok: true }, [{ pass: true, reason: "" }]);
+  const summary = summarize([{ id: "c", topic: "x", expectEscalate: true, trials: [failedReply, failedGrader, good] }]);
+  assert.equal(summary.errored, 2);
+  assert.deepEqual(summary.escalate.expectedTrue, { hits: 1, total: 1, rate: 1 });
+  assert.equal(summary.passK.hits, 0);
+});

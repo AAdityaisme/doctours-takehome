@@ -11,7 +11,8 @@ flight; the baseline prompt is about 40k tokens per call, so more than that can 
 
 Each run sends `cases.json` and `packet-samples.json` through `replyAll` in one batch, with a trace. It scores:
 
-- `escalate`, exactly. `escalationCategory` is checked only when a trace record carries an `escalationCategory`
+- `escalate`, exactly. A trial whose reply failed (the CLI's system-error escalation) or whose grader call failed is
+  counted as errored, left out of every rate and never a pass. `escalationCategory` is checked only when a trace record carries an `escalationCategory`
   key. PR1 traces don't, so the summary shows n/a.
 - Literal claims, in code.
 - Every other claim with one grader call per case (strict JSON schema, a pass/fail and a one-line reason per claim).
@@ -25,8 +26,9 @@ cost for replies and grader, and p50/p95 latency per message. The cost uses SPEC
 sentence.
 
 `results/baseline-2026-10-04-0745.json` is a harness check, not a measurement. It is one full run on PR1's baseline
-(main `a25bee9` plus this branch's harness), made to prove the pipeline works. Four claims in `saturday-procedure`,
-`gold-ready-card-offer`, `monthly-payments` and `long-message` were reworded after it. The baseline vs restructured
+(main `a25bee9` plus this branch's harness), made to prove the pipeline works. Claims in seven cases changed after it: `saturday-procedure`,
+`gold-ready-card-offer`, `monthly-payments`, `long-message`, `mexico-clinics`, `pause-saving`/`pause-january` and
+`photos-back`. Errored trials are now kept out of the rates. The baseline vs restructured
 comparison comes later, from merged heads.
 
 ## Cases
