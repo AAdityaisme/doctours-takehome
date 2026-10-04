@@ -53,6 +53,7 @@ export interface Schema {
   required?: string[];
   additionalProperties?: boolean;
   items?: Schema;
+  description?: string;
 }
 
 const text: Schema = { type: ["string", "null"] };

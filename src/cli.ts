@@ -4,10 +4,11 @@ import OpenAI from "openai";
 import { baselineMessages } from "./baseline.ts";
 import { toEscalation } from "./escalation.ts";
 import type { Reply } from "./reply.ts";
+import { restructuredTurn } from "./restructured.ts";
 import { TurnError, respond, type Client } from "./respond.ts";
 import { TOOLS } from "./tools.ts";
 
-export const MODES = ["baseline"] as const;
+export const MODES = ["restructured", "baseline"] as const;
 export type Mode = (typeof MODES)[number];
 
 export interface BatchOptions {
@@ -15,6 +16,8 @@ export interface BatchOptions {
   mode: Mode;
   model: string;
   effort: string;
+  /** Router model and effort; restructured mode only. */
+  router?: { model: string; effort: string };
   /** Receives one trace record per message, as each finishes. */
   trace?: (record: Record<string, unknown>) => void;
   concurrency?: number;
@@ -28,6 +31,21 @@ async function replyOne(item: unknown, index: number, options: BatchOptions): Pr
   try {
     const text = (item as { text?: unknown } | null)?.text;
     if (typeof text !== "string") throw new Error("message has no text");
+    if (mode === "restructured") {
+      if (!options.router) throw new Error("restructured mode needs router options");
+      const { reply, turn, trace } = await restructuredTurn(text, { client, model, effort, router: options.router });
+      options.trace?.({
+        ...base,
+        ok: true,
+        escalate: reply.escalate,
+        ...trace,
+        toolCalls: turn?.toolCalls ?? [],
+        apiCalls: turn?.apiCalls ?? 0,
+        tokens: turn?.usage ?? null,
+        latencyMs: Math.round(performance.now() - started),
+      });
+      return reply;
+    }
     const turn = await respond({ client, model, effort, tools: TOOLS, ...baselineMessages(text) });
     options.trace?.({
       ...base,
@@ -48,6 +66,7 @@ async function replyOne(item: unknown, index: number, options: BatchOptions): Pr
       ...base,
       ok: false,
       error: message,
+      ...(error instanceof TurnError && error.details),
       ...(done && { toolCalls: done.toolCalls, apiCalls: done.apiCalls, tokens: done.usage }),
       latencyMs: Math.round(performance.now() - started),
     });
@@ -77,7 +96,7 @@ const fail = (message: string): never => {
 if (import.meta.main) {
   const { values, positionals } = parseArgs({
     allowPositionals: true,
-    options: { mode: { type: "string", default: "baseline" }, trace: { type: "string" } },
+    options: { mode: { type: "string", default: "restructured" }, trace: { type: "string" } },
   });
   const mode = values.mode as Mode;
   if (!MODES.includes(mode)) fail(`unknown --mode ${values.mode}; expected one of: ${MODES.join(", ")}`);
@@ -94,6 +113,7 @@ if (import.meta.main) {
     mode,
     model: process.env.REPLY_MODEL ?? "gpt-6.1-sol",
     effort: process.env.REPLY_EFFORT ?? "low",
+    router: { model: process.env.ROUTER_MODEL ?? "gpt-6-luna", effort: process.env.ROUTER_EFFORT ?? "none" },
     trace: tracePath ? (record) => appendFileSync(tracePath, `${JSON.stringify(record)}\n`) : undefined,
   });
   process.stdout.write(`${JSON.stringify(replies, null, 2)}\n`);
