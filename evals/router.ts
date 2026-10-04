@@ -56,16 +56,15 @@ const share = (hits: number, total: number) => ({ hits, total, rate: total === 0
  * reply model may still catch, but the router is measured on its own here.
  */
 export function scoreRouter(results: RouterResult[], model: string) {
-  const decided = results;
   const escalated = (r: RouterResult) => r.escalation !== null;
-  const should = decided.filter((r) => r.expectEscalate);
-  const shouldNot = decided.filter((r) => !r.expectEscalate);
+  const should = results.filter((r) => r.expectEscalate);
+  const shouldNot = results.filter((r) => !r.expectEscalate);
   const caught = should.filter(escalated);
   const usage = results.reduce<Usage>((total, r) => addUsage(total, r.usage), zeroUsage());
   const latencies = results.map((r) => r.latencyMs);
   return {
     escalate: {
-      all: share(decided.filter((r) => escalated(r) === r.expectEscalate).length, decided.length),
+      all: share(results.filter((r) => escalated(r) === r.expectEscalate).length, results.length),
       should: share(caught.length, should.length),
       shouldNot: share(shouldNot.filter((r) => !escalated(r)).length, shouldNot.length),
     },
