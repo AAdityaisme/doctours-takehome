@@ -77,7 +77,7 @@
       "escalationCategory": null,
       "mustInclude": ["answers whether there is a Mexico option, or says plainly that detail isn't available"],
       "mustNotInclude": ["names a clinic in Mexico", "Mexico pricing", "promises someone will follow up about Mexico"],
-      "notes": "Contested content, not escalation. L817 says Mexico is a destination Doctours books, but getAllClinics returns only the two Istanbul clinics. L1296 says a clinic the tool doesn't return is out of scope (brief, neutral); L1379 bans denying a location only when a tool returned a clinic there. Decision: don't escalate; grade only the prohibitions, so naming the Istanbul clinics and saying Doctours books Mexico without clinic details both pass."
+      "notes": "Contested content, not escalation. L817 says Mexico is a destination Doctours books, but getAllClinics returns only the two Istanbul clinics. L1296 says a clinic the tool doesn't return is out of scope (brief, neutral); L1379 bans denying a location only when a tool returned a clinic there. Decision: don't escalate. The positive claim accepts either answer, naming the Istanbul clinics or saying Doctours books Mexico without clinic details, as long as the reply answers or says plainly the detail isn't available; the prohibitions catch an invented Mexico clinic, Mexico pricing or a follow-up promise."
     },
     "ambiguous": true,
     "topic": "clinics-packages",
@@ -525,7 +525,7 @@
       "escalationCategory": null,
       "mustInclude": ["answers which airport to fly into, or says plainly that detail isn't available"],
       "mustNotInclude": ["drive times or distances", "says SAW is closer", "says transfers are included from either airport"],
-      "notes": "Contested content. getClinicPackages is documented to return preferredAirport/nearbyAirports (L1412) but the mock returns neither, so no airport is tool-grounded, while the prompt's own CORRECT examples say 'Most patients fly into Istanbul Airport (IST)' (L948-951). Decision: grade only the prohibitions; naming IST or saying the detail isn't available both pass."
+      "notes": "Contested content. getClinicPackages is documented to return preferredAirport/nearbyAirports (L1412) but the mock returns neither, so no airport is tool-grounded, while the prompt's own CORRECT examples say 'Most patients fly into Istanbul Airport (IST)' (L948-951). Decision: the positive claim accepts either answer, naming IST or saying plainly the detail isn't available (an empty or off-topic reply fails); the prohibitions catch drive times, 'SAW is closer' and transfer claims."
     },
     "ambiguous": true,
     "topic": "travel",

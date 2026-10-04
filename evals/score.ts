@@ -66,14 +66,18 @@ export const isLiteral = (claim: string): boolean => [URL, EMAIL, DOLLARS, DIGIT
 // "$3,000", "3,000 USD" and "USD 3,000" are the same amount; "$500.99" is not "$500".
 const NUMBER = String.raw`\d+(?:,\d{3})*(?:\.\d+)?`;
 const AMOUNT_TOKEN = new RegExp(String.raw`\$\s?${NUMBER}|\b${NUMBER}\s?USD\b|\bUSD\s?${NUMBER}`, "g");
-const EMAIL_TOKEN = /[\w.%+-]+@[\w-]+(?:\.[\w-]+)*\.[a-z]{2,}/gi;
+// The local part takes every RFC 5322 atext character plus ".", so a token starts where the address really starts:
+// "o'molly@" or "billing/molly@" is a different mailbox, not "molly@" with a prefix. A leading quote or backtick is
+// atext too, so it is stripped: 'molly@doctours.com' (single-quoted) is still Molly's address.
+const EMAIL_TOKEN = /[\w!#$%&'*+\/=?^`{|}~.-]+@[\w-]+(?:\.[\w-]+)*\.[a-z]{2,}/gi;
+const emailsIn = (text: string): string[] => (text.match(EMAIL_TOKEN) ?? []).map((token) => token.replace(/^['`]+/, ""));
 const amount = (token: string): number => Number(token.replace(/[^\d.]/g, ""));
 const digitsOnly = (text: string): string => text.replace(/[\s/.-]/g, "");
 
 /** The whole URLs, email addresses and dollar amounts in `text`, as tokens. */
 export const literalsIn = (text: string): string[] => [
   ...findUrls(text),
-  ...(text.match(EMAIL_TOKEN) ?? []),
+  ...emailsIn(text),
   ...(text.match(AMOUNT_TOKEN) ?? []),
 ];
 
@@ -85,7 +89,7 @@ export const literalsIn = (text: string): string[] => [
  */
 export function containsLiteral(haystack: string, needle: string): boolean {
   if (URL.test(needle)) return findUrls(haystack).includes(needle);
-  if (EMAIL.test(needle)) return (haystack.match(EMAIL_TOKEN) ?? []).some((t) => t.toLowerCase() === needle.toLowerCase());
+  if (EMAIL.test(needle)) return emailsIn(haystack).some((t) => t.toLowerCase() === needle.toLowerCase());
   if (DOLLARS.test(needle)) return (haystack.match(AMOUNT_TOKEN) ?? []).some((t) => amount(t) === amount(needle));
   return digitsOnly(haystack).includes(digitsOnly(needle));
 }

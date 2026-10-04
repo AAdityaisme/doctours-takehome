@@ -165,7 +165,7 @@ if (import.meta.main) {
   const waits = { count: 0, ms: 0 };
   const settings: Settings = {
     // The baseline prompt is ~40k tokens a call: even one message in flight can pass a 500k tokens-per-minute limit.
-    client: patientClient(new OpenAI(), waits),
+    client: patientClient(new OpenAI({ maxRetries: 8 }), waits),
     concurrency,
     mode,
     model: process.env.REPLY_MODEL ?? "gpt-6.1-sol",

@@ -346,3 +346,15 @@ test("the category is read from the trace's escalationCategory; a router failure
   assert.equal(summary.errored, 0);
   assert.equal(summary.casePass.total, 1);
 });
+
+test("emails: a local part with RFC 5322 punctuation is a different mailbox; ordinary surroundings still match", () => {
+  const molly = "molly@doctours.com";
+  for (const wrong of ["o'molly@doctours.com", "billing/molly@doctours.com", "x!molly@doctours.com", "x=molly@doctours.com"]) {
+    assert.equal(containsLiteral(`email ${wrong}.`, molly), false, wrong);
+    assert.equal(checkLiteral({ kind: "exclude", claim: molly }, reply({ response: `email ${wrong}` })).pass, true, wrong);
+  }
+  for (const right of ["(molly@doctours.com)", '"molly@doctours.com"', "email: molly@doctours.com.", "'molly@doctours.com'"]) {
+    assert.equal(containsLiteral(`Reach Molly ${right}`, molly), true, right);
+    assert.equal(checkLiteral({ kind: "exclude", claim: molly }, reply({ response: right })).pass, false, right);
+  }
+});
