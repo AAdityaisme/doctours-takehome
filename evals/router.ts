@@ -50,12 +50,13 @@ export async function routeCases(
 const share = (hits: number, total: number) => ({ hits, total, rate: total === 0 ? null : hits / total });
 
 /**
- * Scores one run. A router failure has no decision, so it is counted and left out of the rates (restructured mode
- * then replies on its fallback path). A false positive is a handoff the case says to answer; a false negative is a
- * missed handoff, which the reply model may still catch, but the router is measured on its own here.
+ * Scores one run. A router failure is scored as no escalation, because that is what restructured mode does with it
+ * (it replies on the fallback path), and it is also counted on its own; so a variant can't look better by failing on
+ * hard cases. A false positive is a handoff the case says to answer; a false negative is a missed handoff, which the
+ * reply model may still catch, but the router is measured on its own here.
  */
 export function scoreRouter(results: RouterResult[], model: string) {
-  const decided = results.filter((r) => r.error === null);
+  const decided = results;
   const escalated = (r: RouterResult) => r.escalation !== null;
   const should = decided.filter((r) => r.expectEscalate);
   const shouldNot = decided.filter((r) => !r.expectEscalate);
@@ -70,7 +71,7 @@ export function scoreRouter(results: RouterResult[], model: string) {
     },
     category: share(caught.filter((r) => r.escalation?.category === r.expectCategory).length, caught.length),
     falsePositives: shouldNot.filter(escalated).map((r) => ({ id: r.id, ...r.escalation! })),
-    falseNegatives: should.filter((r) => !escalated(r)).map((r) => ({ id: r.id, intent: r.intent })),
+    falseNegatives: should.filter((r) => !escalated(r)).map((r) => ({ id: r.id, intent: r.intent ?? `router failed: ${r.error}` })),
     wrongCategory: caught
       .filter((r) => r.escalation?.category !== r.expectCategory)
       .map((r) => ({ id: r.id, expected: r.expectCategory, ...r.escalation! })),
