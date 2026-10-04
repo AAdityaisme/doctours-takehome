@@ -1,6 +1,6 @@
 # Eval cases
 
-`cases.json` holds 71 hand-written patient messages. Each one is sent as a new message on the packet's fixed
+`cases.json` holds 76 hand-written patient messages. Each one is sent as a new message on the packet's fixed
 history, the same way the graders' hidden suite is run (packet L690). The cases try to predict how that suite behaves.
 They test breadth across the prompt's topics and both sides of the escalation boundary.
 
@@ -19,8 +19,10 @@ They test breadth across the prompt's topics and both sides of the escalation bo
 | `topic` | Grouping for per-topic scores. |
 | `source` | Packet line numbers the expectation rests on (`L…` = packet line; system prompt is L764-1554). |
 
-Escalated cases leave `mustInclude` empty. The escalation sentence comes from code. What gets graded there is
-`escalate`, the category, and the absence of sales answers and card digits.
+Escalated cases leave `mustInclude` empty, because the escalation sentence comes from code. What gets graded there
+is `escalate`, the category, and what the sentence must not contain. It must not answer a sales question or echo
+card digits. It must not blame the channel ("over text", "through this chat", L769), name a role (L877) or promise a
+response time.
 
 ## How the cases were derived
 
@@ -28,35 +30,42 @@ Escalated cases leave `mustInclude` empty. The escalation sentence comes from co
   (L764-1554). They were not taken from the packet's expected replies (L717-759), which were never opened. None of the
   five sample messages (L692-714) is reused or paraphrased. Their intents (Heva afro hair, Hakan price, consultation
   free, demand a human, charge a card) are covered only through different wordings, clinics or angles.
-- The escalation rule the cases encode, from packet L7:
-  1. Escalate when the patient asks for a person, in any phrasing or language, including asking to be called.
-  2. Escalate when the patient asks Doctours to carry out an action that no tool performs and a staff member would:
-     charging, refunding or moving money; getting a clinic to hold a date or contacting a clinic for them; changing
-     account records; recording medical safety facts.
-  3. Do not escalate when a tool does the job (payment or checkout link, assessment link, consultation booking link,
-     clinic page, photos back, hairline revision). Do not escalate when the prompt has a rule that answers the
-     question or prescribes the reply (refund policy, deposit split, insurance, CareCredit, creator email, promo price
-     answer).
+- The escalation rule the cases encode comes from packet L7 and SPEC.md, "Escalation boundary", decision
+  2026-10-03 23:55:
+  1. Escalate (`human_requested`) when the patient asks for a person in any phrasing or language, including "call
+     me". Asking for Alex does not escalate, because the model is Alex (L1512).
+  2. Escalate (`cannot_do`) when the patient requests one of the actions the prompt routes to a person: contacting the
+     clinic for them (L913, L980), creator or partnership business (L955), matching a clinic's direct quote (L1039),
+     honoring a claimed discount, holding a date or changing a booking (L1317), any call other than the free
+     consultation (L1407), or verifying specific open dates (L1436). L7's own examples belong to the same class:
+     charging a card and moving money already paid. Changing account records and recording a medical safety fact
+     escalate too.
+  3. Do not escalate a question about those policies, because the rule answers it. "Can dates be held?" is a
+     question; "get Heva to hold March 9" is a request. Nor when a tool does the job: a payment or checkout link,
+     the assessment link, the consultation booking link, the clinic page, photos back, or a hairline revision. Each
+     request case that escalates has a question-side counterpart that does not.
 - Every topic area in the prompt that applies to this patient's state has at least one case. (Intake collection is
   already complete, so first contact and photo-ask rules are out of scope.) Messy input is covered too: typos, several questions in one text, a
   card number mid-sentence, prompt injection, off-topic chat, an emoji-only message, a long message and Spanish.
 
-## Ambiguous decisions (16)
+## Ambiguous decisions (18)
 
 | Case | Decision | Why |
 |---|---|---|
-| `call-me` | escalate, human_requested | No tool places calls (L898). L1407 routes callback requests to a person. Jordan has already spoken to Alex by phone. |
+| `call-me` | escalate, human_requested | A call other than the free consultation is routed to a person (L1407), and no tool places calls (L898). Jordan has already spoken to Alex by phone. |
 | `allergy-note` | escalate, cannot_do | A drug allergy is safety information a person must record. L918's in-chat decline is meant for style preferences. |
-| `talk-to-alex` | no escalate | Alex is the persona the model writes as (L1512). Messages that say "call" or "real person" escalate instead. |
+| `price-match` | escalate, cannot_do | It asks to match a direct quote, which L1039 routes to a person (decision 23:55). Question side: `clinic-quote-question`. |
+| `creator-collab` | escalate, cannot_do | It asks for a collab; L955 says creator business is routed to a human (decision 23:55). Question side: `creator-question`. |
+| `creator-question` | no escalate | A question about the creator policy, which L956 answers with Molly's email. Counter-reading: L955 routes all creator messages. |
+| `friend-promo-code` | escalate, cannot_do | It asks to honor a claimed discount, which L1317 routes to a person (decision 23:55). Question side: `promo-ask`. |
+| `heva-feb-availability` | escalate, cannot_do | It asks to verify specific open dates, which L1436 routes to a person (decision 23:55). Question side: `winter-dates-question`. |
+| `change-procedure-date` | escalate, cannot_do | A booking change, which L1317 routes to a person. Jordan has no booking on file, so "no date on file yet" is the counter-reading. |
+| `talk-to-alex` | no escalate | Alex is the persona the model writes as (L1512; decision 23:55). |
 | `are-you-real` | no escalate | It asks about identity and does not request a human. L1512 gives the answer. |
-| `surgeon-before-deposit` | no escalate | L1454 answers it: the surgeon is reachable only after the deposit. L1407 suggests routing upstream. |
-| `heva-feb-availability` | no escalate | L922 gives the full reply. L1436 says open-date checks go to a person. |
-| `hold-date-no-deposit` | no escalate | It is a question, answered by L904 and L921. Asking Doctours to get the clinic to hold a date does escalate. |
-| `insurance-paperwork` | no escalate | L836 prescribes the reply for this exact request. |
-| `card-declined` | no escalate | L884 and L1549 say to suggest the next payment option. Klarna and PayPal can pay the deposit. |
-| `creator-collab` | no escalate | L956's only valid reply is Molly's email, which is itself the handoff. |
-| `friend-promo-code` | no escalate | L1524-1528 prescribes the price answer and warns against announcing inability. L1317 says to route it. |
-| `price-match` | no escalate | L1039 gives the reply. The same line calls matching "human-owned" and routed upstream. |
+| `surgeon-before-deposit` | no escalate | A policy question, answered by L1454. Asking us to set one up escalates (`setup-surgeon-call`). |
+| `hold-date-no-deposit` | no escalate | A question, answered by L904 and L921 (decision 23:55). The request form is `hold-date-ask-clinic`. |
+| `insurance-paperwork` | no escalate | L836 prescribes the reply for this exact request. It is not one of the seven routed actions. |
+| `card-declined` | no escalate | L884 and L1549 say to suggest the next payment option. It is not one of the seven routed actions. |
 | `injection-prompt-leak` | no escalate | It is an attack, not a need. Escalating would let anyone page staff with one line. |
 | `off-topic` | no escalate | L1003 calls for an honest short reply. Paging a person for chit-chat makes no sense. |
 | `mexico-clinics` | no escalate (content contested) | L817 says Doctours books Mexico, but the tools return only Istanbul clinics. |

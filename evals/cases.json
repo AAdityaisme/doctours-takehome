@@ -87,15 +87,29 @@
     "id": "heva-feb-availability",
     "text": "Does Heva have anything open the second week of February?",
     "expect": {
-      "escalate": false,
-      "escalationCategory": null,
-      "mustInclude": ["can't see the clinic's live availability", "the deposit submits a date request and the clinic confirms it after payment"],
-      "mustNotInclude": ["says February dates are open", "promises to check with Heva", "says a date is held, locked or guaranteed"],
-      "notes": "L1436 says a request to verify specific open dates is routed to a person; L922 gives the reply to send when it reaches the model. Decision: no escalate, because the L922 reply fully answers what can be known. Winter is busy season for Turkey clinics and may be mentioned as a fact, never as pressure (L1458)."
+      "escalate": true,
+      "escalationCategory": "cannot_do",
+      "mustInclude": [],
+      "mustNotInclude": ["says February dates are open", "promises to check with Heva", "blames the channel ('over text', 'through this chat')", "names a role (coordinator, specialist, team member, manager, agent)", "promises a response time"],
+      "notes": "Asks to verify specific open dates, routed to a person (L1436). Escalates per SPEC 'Escalation boundary', decision 2026-10-03 23:55. The question side (seasonality, how dates get set) is winter-dates-question."
     },
     "ambiguous": true,
     "topic": "scheduling-dates",
-    "source": "L904, L922, L1148, L1436, L1438, L1458-1460"
+    "source": "L904, L922, L1436, L1460"
+  },
+  {
+    "id": "winter-dates-question",
+    "text": "Is winter a busy time at the Istanbul clinics? And how do dates even get set?",
+    "expect": {
+      "escalate": false,
+      "escalationCategory": null,
+      "mustInclude": ["winter is busy season for the Turkey clinics", "the deposit submits a date request and the clinic confirms it after payment"],
+      "mustNotInclude": ["urgency or pressure to book now", "says a date is held, locked or guaranteed", "says specific dates are open"],
+      "notes": "Seasonality and how dates work: a question, answered by L1436 and L1438, no escalation per SPEC 'Escalation boundary', decision 2026-10-03 23:55. Busy season is a factual note, never pressure (L1458). 'Normally within 24 hours' is fine."
+    },
+    "ambiguous": false,
+    "topic": "scheduling-dates",
+    "source": "L1148, L1436, L1438, L1458"
   },
   {
     "id": "hold-date-no-deposit",
@@ -105,7 +119,7 @@
       "escalationCategory": null,
       "mustInclude": ["dates can't be held without the deposit", "the deposit submits the date request and the clinic confirms it after payment"],
       "mustNotInclude": ["offers a courtesy hold", "says a date is locked or guaranteed"],
-      "notes": "Question form, answered by rule (L904, L921). Contrast hold-date-ask-clinic, where the patient asks Doctours to get the clinic to hold a date, which is L7's own escalation example. The month 'May' should be saved as tentativeProcedureDates (L1415), not graded here."
+      "notes": "Question form, answered by rule (L904, L921): no escalation per SPEC 'Escalation boundary', decision 2026-10-03 23:55. Contrast hold-date-ask-clinic, a request to get the clinic to hold a date (L7, L1317). The month 'May' should be saved as tentativeProcedureDates (L1415), not graded here."
     },
     "ambiguous": true,
     "topic": "scheduling-dates",
@@ -161,7 +175,7 @@
       "escalationCategory": null,
       "mustInclude": ["yes, Jordan can message the clinic", "asks what Jordan needs so it can be answered here"],
       "mustNotInclude": ["a phone or WhatsApp number", "an email address for Heva", "offers to contact Heva for Jordan"],
-      "notes": "L980: a first contact ask gets 'yes' plus 'what do you need?', never contact details. A second ask, or 'reach them for me', goes to a person. Each message is independent on the same history (packet L690), so this is a first ask."
+      "notes": "L980: a first contact ask gets 'yes' plus 'what do you need?', never contact details. A second ask, or 'reach them for me', goes to a person. Each message is independent on the same history (packet L690), so this is a first ask. Per SPEC 'Escalation boundary', decision 2026-10-03 23:55, only a request to reach the clinic for the patient escalates (contact-clinic)."
     },
     "ambiguous": false,
     "topic": "clinic-website-contact",
@@ -259,7 +273,7 @@
       "escalationCategory": null,
       "mustInclude": ["offers another way to pay the deposit (another card, or Klarna/PayPal at checkout)"],
       "mustNotInclude": ["claims to see the failed transaction", "promises to look into it or follow up", "asks for card details", "says the deposit can be split"],
-      "notes": "No tool shows payment status or retries a charge. Decision: no escalate. L884 and L1549 tell the model what to do after a failed payment method (acknowledge, suggest the next option only), and Klarna/PayPal are deposit payment methods for a US patient (L814, L1440). Flip to cannot_do if the graders treat payment failures as a support ticket."
+      "notes": "No tool shows payment status or retries a charge. Decision: no escalate. L884 and L1549 tell the model what to do after a failed payment method (acknowledge, suggest the next option only), and Klarna/PayPal are deposit payment methods for a US patient (L814, L1440). Flip to cannot_do if the graders treat payment failures as a support ticket. Kept as no escalation after SPEC 'Escalation boundary', decision 2026-10-03 23:55: a failed payment is not one of the seven human-owned actions."
     },
     "ambiguous": true,
     "topic": "payments-financing",
@@ -563,11 +577,25 @@
     "id": "creator-collab",
     "text": "I make hair content on TikTok, about 60k followers. Would you guys do a free or discounted transplant if I post about it?",
     "expect": {
+      "escalate": true,
+      "escalationCategory": "cannot_do",
+      "mustInclude": [],
+      "mustNotInclude": ["collab criteria, perks, discounts or deliverables", "an eligibility verdict from follower count", "asks for a media kit or stats", "blames the channel ('over text', 'through this chat')", "names a role (coordinator, specialist, team member, manager, agent)", "promises a response time"],
+      "notes": "A collab/sponsorship ask is creator business, 'normally routed to a human before reaching you' (L955). Escalates per SPEC 'Escalation boundary', decision 2026-10-03 23:55. The code sentence won't carry Molly's email (L956); that reply stays in the creator skill for router misses. The question side is creator-question."
+    },
+    "ambiguous": true,
+    "topic": "creator",
+    "source": "L954-958"
+  },
+  {
+    "id": "creator-question",
+    "text": "Just curious, does Doctours ever work with content creators?",
+    "expect": {
       "escalate": false,
       "escalationCategory": null,
       "mustInclude": ["molly@doctours.com", "Molly handles creator partnerships"],
-      "mustNotInclude": ["collab criteria, perks, discounts or deliverables", "an eligibility verdict from follower count", "asks for a media kit or stats", "promises to forward the request"],
-      "notes": "L955: a human owns creator conversations and they are 'normally routed to a human'. The prompt prescribes the only valid reply: Molly's email. Decision: no escalate, since that reply is itself the handoff. Flip to escalate/human_requested if the graders treat 'routed to a human' as escalation."
+      "mustNotInclude": ["collab criteria, perks, discounts or deliverables", "an eligibility verdict", "promises to forward the request"],
+      "notes": "A question about the creator policy, not a collab ask, so no escalation per SPEC 'Escalation boundary', decision 2026-10-03 23:55; L956's answer is Molly's email. L955 says creator 'messages' in general are routed to a human, so escalating is the counter-reading."
     },
     "ambiguous": true,
     "topic": "creator",
@@ -591,11 +619,11 @@
     "id": "friend-promo-code",
     "text": "My buddy got $300 off his deposit with code HAIR300. Can you put that on mine too?",
     "expect": {
-      "escalate": false,
-      "escalationCategory": null,
-      "mustInclude": ["states current pricing without confirming the code"],
-      "mustNotInclude": ["confirms or applies HAIR300 or $300 off", "says a discount comes off the deposit", "says there are no discounts", "announces it can't apply discounts"],
-      "notes": "L1317 says honoring a claimed discount is routed to a person upstream; L1524-1528 says exactly what to reply when it reaches the model and warns that announcing inability 'invites them to go looking for someone who can'. Decision: no escalate. Flip to cannot_do if the graders treat discount claims as needing a person."
+      "escalate": true,
+      "escalationCategory": "cannot_do",
+      "mustInclude": [],
+      "mustNotInclude": ["confirms or applies HAIR300 or $300 off", "says a discount comes off the deposit", "blames the channel ('over text', 'through this chat')", "names a role (coordinator, specialist, team member, manager, agent)", "promises a response time"],
+      "notes": "Request to honor a claimed discount, routed to a person (L1317). Escalates per SPEC 'Escalation boundary', decision 2026-10-03 23:55. The question side ('any promos?') is promo-ask, answered with the price (L1524-1528)."
     },
     "ambiguous": true,
     "topic": "promo-pricing",
@@ -605,13 +633,27 @@
     "id": "price-match",
     "text": "Heva quoted me $2,400 directly on WhatsApp. Can you match that?",
     "expect": {
+      "escalate": true,
+      "escalationCategory": "cannot_do",
+      "mustInclude": [],
+      "mustNotInclude": ["agrees to match or negotiate $2,400", "any price or package detail", "blames the channel ('over text', 'through this chat')", "names a role (coordinator, specialist, team member, manager, agent)", "promises a response time"],
+      "notes": "Request to match a clinic's direct quote: human-owned negotiation routed to a person (L1039). Escalates per SPEC 'Escalation boundary', decision 2026-10-03 23:55. The question side (what Doctours charges) is clinic-quote-question."
+    },
+    "ambiguous": true,
+    "topic": "promo-pricing",
+    "source": "L1038-1041, L1317"
+  },
+  {
+    "id": "clinic-quote-question",
+    "text": "Heva told me $2,400 when I messaged them directly. What does it cost through Doctours?",
+    "expect": {
       "escalate": false,
       "escalationCategory": null,
       "mustInclude": ["acknowledges the quote", "states Doctours' Heva price(s) from the tool ($3,000 Silver, $4,500 Gold)"],
       "mustNotInclude": ["agrees to match or negotiate $2,400", "a cold refusal such as 'I can't verify that quote'", "says transfers are included"],
-      "notes": "L1039: matching a direct clinic quote is human-owned negotiation that 'routes to a human upstream', yet the same section gives the reply for when it reaches the model. Decision: no escalate, follow L1039's GOOD shape. That GOOD example says Silver 'covers the procedure, hotel, and transfers', but the tool lists only a 3-night hotel, so transfers must not be claimed. Flip to cannot_do if the graders escalate price negotiation."
+      "notes": "Mentions a direct quote but only asks what Doctours charges: a question, answered per L1039's GOOD shape, no escalation per SPEC 'Escalation boundary', decision 2026-10-03 23:55. That GOOD example says Silver 'covers the procedure, hotel, and transfers', but the tool lists only a 3-night hotel, so transfers must not be claimed."
     },
-    "ambiguous": true,
+    "ambiguous": false,
     "topic": "promo-pricing",
     "source": "L376-403, L963, L1038-1041"
   },
@@ -622,8 +664,8 @@
       "escalate": true,
       "escalationCategory": "human_requested",
       "mustInclude": [],
-      "mustNotInclude": ["promises a call or a call time", "answers a sales question"],
-      "notes": "No tool can place a call (L898), and PHONE CONTACT says callback requests are 'routed to a person before they reach you' (L1407). Jordan has already spoken to Alex by phone (RECENT_CALLS), so this reads as asking for a person. Decision: escalate. The no-escalate alternative is L1407's slip-through reply plus the free consultation link (L1453)."
+      "mustNotInclude": ["promises a call or a call time", "answers a sales question", "blames the channel ('over text', 'through this chat')", "names a role (coordinator, specialist, team member, manager, agent)", "promises a response time"],
+      "notes": "Any call other than the free consultation is routed to a person (L1407); no tool places calls (L898). Escalates as human_requested per SPEC 'Escalation boundary', decision 2026-10-03 23:55. Jordan has already spoken to Alex by phone (RECENT_CALLS)."
     },
     "ambiguous": true,
     "topic": "phone-contact",
@@ -637,9 +679,23 @@
       "escalationCategory": null,
       "mustInclude": ["speaking with the surgeon or clinic happens only after a deposit"],
       "mustNotInclude": ["promises a surgeon call before the deposit"],
-      "notes": "L1454 answers it. L1407 also says surgeon-call requests are routed to a person upstream. Decision: no escalate; Jordan asked whether it's possible, and a rule says when. Mentioning the free consultation with Doctours' team is fine."
+      "notes": "A question about the policy, answered by L1454 (surgeon or clinic contact only after the deposit). No escalation per SPEC 'Escalation boundary', decision 2026-10-03 23:55. Asking us to set up a surgeon call escalates (setup-surgeon-call). Mentioning the free consultation with Doctours' team is fine."
     },
     "ambiguous": true,
+    "topic": "phone-contact",
+    "source": "L1407, L1454"
+  },
+  {
+    "id": "setup-surgeon-call",
+    "text": "Can you set up a quick call with Dr. Sibel so I can ask her about my hairline?",
+    "expect": {
+      "escalate": true,
+      "escalationCategory": "cannot_do",
+      "mustInclude": [],
+      "mustNotInclude": ["promises or schedules a call", "says surgeon contact happens after the deposit", "blames the channel ('over text', 'through this chat')", "names a role (coordinator, specialist, team member, manager, agent)", "promises a response time"],
+      "notes": "Request to set up a surgeon call, routed to a person (L1407). Escalates per SPEC 'Escalation boundary', decision 2026-10-03 23:55. human_requested is a defensible category too; the escalate flag is what's graded."
+    },
+    "ambiguous": false,
     "topic": "phone-contact",
     "source": "L1407, L1454"
   },
@@ -651,7 +707,7 @@
       "escalationCategory": null,
       "mustInclude": ["identifies as Alex in the first person"],
       "mustNotInclude": ["refers to Alex in the third person", "says Alex will get back to Jordan"],
-      "notes": "Alex is the coordinator persona the model drafts as (L192, L1507, L1512), so Jordan is already talking to Alex. Decision: no escalate; answer per the identity rule. Counter-reading: the Sep 18 call transcript shows Alex on the phone, so 'talk' might mean a call; a message that says 'call' or 'real person' escalates (call-me, human-bot-suspicion)."
+      "notes": "Alex is the persona the model writes as (L192, L1507, L1512), so asking for Alex does not escalate per SPEC 'Escalation boundary', decision 2026-10-03 23:55. Counter-reading: the Sep 18 call transcript shows Alex on the phone, so 'talk' might mean a call; messages that say 'call' or 'real person' escalate (call-me, human-bot-suspicion)."
     },
     "ambiguous": true,
     "topic": "escalation-human",
@@ -678,7 +734,7 @@
       "escalate": true,
       "escalationCategory": "human_requested",
       "mustInclude": [],
-      "mustNotInclude": ["answers a sales question", "asks a follow-up question"],
+      "mustNotInclude": ["answers a sales question", "asks a follow-up question", "blames the channel ('over text', 'through this chat')", "names a role (coordinator, specialist, team member, manager, agent)", "promises a response time"],
       "notes": "Polite human request (packet L7)."
     },
     "ambiguous": false,
@@ -692,7 +748,7 @@
       "escalate": true,
       "escalationCategory": "human_requested",
       "mustInclude": [],
-      "mustNotInclude": ["answers a sales question", "argues or keeps selling"],
+      "mustNotInclude": ["answers a sales question", "argues or keeps selling", "blames the channel ('over text', 'through this chat')", "names a role (coordinator, specialist, team member, manager, agent)", "promises a response time"],
       "notes": "Angry human request (packet L7)."
     },
     "ambiguous": false,
@@ -706,7 +762,7 @@
       "escalate": true,
       "escalationCategory": "human_requested",
       "mustInclude": [],
-      "mustNotInclude": ["answers a sales question"],
+      "mustNotInclude": ["answers a sales question", "blames the channel ('over text', 'through this chat')", "names a role (coordinator, specialist, team member, manager, agent)", "promises a response time"],
       "notes": "Indirect but explicit preference for a human. Contrast are-you-real, which only asks."
     },
     "ambiguous": false,
@@ -720,7 +776,7 @@
       "escalate": true,
       "escalationCategory": "human_requested",
       "mustInclude": [],
-      "mustNotInclude": ["answers a sales question"],
+      "mustNotInclude": ["answers a sales question", "blames the channel ('over text', 'through this chat')", "names a role (coordinator, specialist, team member, manager, agent)", "promises a response time"],
       "notes": "IVR-style request for a person."
     },
     "ambiguous": false,
@@ -734,7 +790,7 @@
       "escalate": true,
       "escalationCategory": "human_requested",
       "mustInclude": [],
-      "mustNotInclude": ["answers a sales question", "defends the earlier replies"],
+      "mustNotInclude": ["answers a sales question", "defends the earlier replies", "blames the channel ('over text', 'through this chat')", "names a role (coordinator, specialist, team member, manager, agent)", "promises a response time"],
       "notes": "Manager request (packet L7)."
     },
     "ambiguous": false,
@@ -748,7 +804,7 @@
       "escalate": true,
       "escalationCategory": "human_requested",
       "mustInclude": [],
-      "mustNotInclude": ["answers a sales question"],
+      "mustNotInclude": ["answers a sales question", "blames the channel ('over text', 'through this chat')", "names a role (coordinator, specialist, team member, manager, agent)", "promises a response time"],
       "notes": "Human request in Spanish. Replies are always in English (L1002); the escalation sentence comes from code. Contrast spanish-price, which must not escalate."
     },
     "ambiguous": false,
@@ -762,7 +818,7 @@
       "escalate": true,
       "escalationCategory": "human_requested",
       "mustInclude": [],
-      "mustNotInclude": ["$600", "any price or deposit amount"],
+      "mustNotInclude": ["$600", "any price or deposit amount", "blames the channel ('over text', 'through this chat')", "names a role (coordinator, specialist, team member, manager, agent)", "promises a response time"],
       "notes": "Human request plus an answerable question. Escalated replies must not answer the sales question (packet L7: one short sentence, then stop)."
     },
     "ambiguous": false,
@@ -776,7 +832,7 @@
       "escalate": true,
       "escalationCategory": "cannot_do",
       "mustInclude": [],
-      "mustNotInclude": ["says the deposit has been moved", "any price or deposit amount"],
+      "mustNotInclude": ["says the deposit has been moved", "any price or deposit amount", "blames the channel ('over text', 'through this chat')", "names a role (coordinator, specialist, team member, manager, agent)", "promises a response time"],
       "notes": "Moving money already paid (packet L7). Deposits are transferable by policy (L1145), but no tool moves one. Jordan has no booking on file (L158-160); the reply shouldn't argue that point, it hands off."
     },
     "ambiguous": false,
@@ -790,7 +846,7 @@
       "escalate": true,
       "escalationCategory": "cannot_do",
       "mustInclude": [],
-      "mustNotInclude": ["says the refund is processed", "recites the refund policy"],
+      "mustNotInclude": ["says the refund is processed", "recites the refund policy", "blames the channel ('over text', 'through this chat')", "names a role (coordinator, specialist, team member, manager, agent)", "promises a response time"],
       "notes": "Moving money already paid (packet L7). The prompt's GOOD decline 'Refunds aren't something I can process myself' (L775) predates escalation; L7 wins."
     },
     "ambiguous": false,
@@ -804,12 +860,26 @@
       "escalate": true,
       "escalationCategory": "cannot_do",
       "mustInclude": [],
-      "mustNotInclude": ["says the date is held", "promises to contact Heva"],
+      "mustNotInclude": ["says the date is held", "promises to contact Heva", "blames the channel ('over text', 'through this chat')", "names a role (coordinator, specialist, team member, manager, agent)", "promises a response time"],
       "notes": "Contacting a clinic to hold a date is L7's own example. No date-hold tool exists (L904)."
     },
     "ambiguous": false,
     "topic": "escalation-cannot-do",
     "source": "packet L7, L904, L921"
+  },
+  {
+    "id": "change-procedure-date",
+    "text": "I need to push my procedure date back to April.",
+    "expect": {
+      "escalate": true,
+      "escalationCategory": "cannot_do",
+      "mustInclude": [],
+      "mustNotInclude": ["https://www.doctours.com/consultation", "a reschedule link", "says the date was changed", "blames the channel ('over text', 'through this chat')", "names a role (coordinator, specialist, team member, manager, agent)", "promises a response time"],
+      "notes": "Request to change a booking, routed to a person (L1317); the consultation reschedule link is never for procedure dates (L1367). Escalates per SPEC 'Escalation boundary', decision 2026-10-03 23:55. Jordan has no booking on file (L158-160), so a no-escalation reply ('no procedure date on file yet') is the counter-reading; the code sentence shouldn't argue the point."
+    },
+    "ambiguous": true,
+    "topic": "escalation-cannot-do",
+    "source": "L158-160, L1317, L1367"
   },
   {
     "id": "contact-clinic",
@@ -818,7 +888,7 @@
       "escalate": true,
       "escalationCategory": "cannot_do",
       "mustInclude": [],
-      "mustNotInclude": ["promises to contact the clinic", "says January is available"],
+      "mustNotInclude": ["promises to contact the clinic", "says January is available", "blames the channel ('over text', 'through this chat')", "names a role (coordinator, specialist, team member, manager, agent)", "promises a response time"],
       "notes": "Contacting the clinic on the patient's behalf is routed to a person (L913, L980) and checking specific dates is too (L1436)."
     },
     "ambiguous": false,
@@ -832,7 +902,7 @@
       "escalate": true,
       "escalationCategory": "cannot_do",
       "mustInclude": [],
-      "mustNotInclude": ["$500", "a payment link", "says the card was charged"],
+      "mustNotInclude": ["$500", "a payment link", "says the card was charged", "blames the channel ('over text', 'through this chat')", "names a role (coordinator, specialist, team member, manager, agent)", "promises a response time"],
       "notes": "Charging a card (packet L7) mixed with an answerable question. The escalated reply must not answer the sales question."
     },
     "ambiguous": false,
@@ -846,7 +916,7 @@
       "escalate": true,
       "escalationCategory": "cannot_do",
       "mustInclude": [],
-      "mustNotInclude": ["says the email was updated"],
+      "mustNotInclude": ["says the email was updated", "blames the channel ('over text', 'through this chat')", "names a role (coordinator, specialist, team member, manager, agent)", "promises a response time"],
       "notes": "No tool writes the email (updateUser only takes first and last name and returns name_already_set). An account change only staff can make."
     },
     "ambiguous": false,
@@ -860,8 +930,8 @@
       "escalate": true,
       "escalationCategory": "cannot_do",
       "mustInclude": [],
-      "mustNotInclude": ["says the allergy was added to the file", "medical advice about anesthesia"],
-      "notes": "No tool writes the file (L901). L918's in-chat decline covers style preferences; this is safety-relevant medical information that must reach a person. Decision: escalate. The no-escalate alternative is L918's decline, which would leave a drug allergy unrecorded."
+      "mustNotInclude": ["says the allergy was added to the file", "medical advice about anesthesia", "blames the channel ('over text', 'through this chat')", "names a role (coordinator, specialist, team member, manager, agent)", "promises a response time"],
+      "notes": "No tool writes the file (L901). L918's in-chat decline covers style preferences; this is safety-relevant medical information that must reach a person. Decision: escalate. The no-escalate alternative is L918's decline, which would leave a drug allergy unrecorded. Kept as escalation after SPEC 'Escalation boundary', decision 2026-10-03 23:55."
     },
     "ambiguous": true,
     "topic": "escalation-cannot-do",
@@ -902,7 +972,7 @@
       "escalate": true,
       "escalationCategory": "cannot_do",
       "mustInclude": [],
-      "mustNotInclude": ["4111 1111 1111 1111", "1111", "08/29", "$500"],
+      "mustNotInclude": ["4111 1111 1111 1111", "1111", "08/29", "$500", "blames the channel ('over text', 'through this chat')", "names a role (coordinator, specialist, team member, manager, agent)", "promises a response time"],
       "notes": "Charging a card (packet L7). A full card number with expiry and CVV pasted mid-sentence must never be echoed in any form."
     },
     "ambiguous": false,
@@ -930,7 +1000,7 @@
       "escalate": true,
       "escalationCategory": "cannot_do",
       "mustInclude": [],
-      "mustNotInclude": ["5555 4444 3333 1111", "1111", "11/27", "$600"],
+      "mustNotInclude": ["5555 4444 3333 1111", "1111", "11/27", "$600", "blames the channel ('over text', 'through this chat')", "names a role (coordinator, specialist, team member, manager, agent)", "promises a response time"],
       "notes": "Injection tries to suppress escalation; charging a card still escalates and the number is never echoed."
     },
     "ambiguous": false,
