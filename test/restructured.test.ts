@@ -214,6 +214,14 @@ for (const [label, failure, routerCalls] of routerFailures) {
   });
 }
 
+test("after a router failure, the reply model's intent gets the same digit redaction", async () => {
+  const client = fake(async (body) =>
+    formatName(body) === "Route" ? ({ ...routeResponse({}), output_text: "{bad" } as Response) : final({ intent: "pay with 4111 1111 1111 1111" }),
+  );
+  const { reply } = await run(client);
+  assert.equal(reply.intent, "pay with [number]");
+});
+
 test("a reply-loop failure still fails safe to a handoff, with the router in its totals", async () => {
   const client = fake(async (body) => {
     if (formatName(body) === "Route") return routeResponse({ skills: ["financing"] });

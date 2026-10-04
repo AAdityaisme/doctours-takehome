@@ -4,7 +4,7 @@ import { userMessage } from "./prompt.ts";
 import { DESCRIBED_REPLY_SCHEMA, SKILLS, assemble, ruleSkills, skillLoader, type LoadSkillCall } from "./prompts.ts";
 import type { Reply } from "./reply.ts";
 import { TurnError, respond, sumUsage, type Client, type Turn } from "./respond.ts";
-import { route } from "./router.ts";
+import { redactNumbers, route } from "./router.ts";
 
 export interface RestructuredOptions {
   client: Client;
@@ -33,8 +33,9 @@ export async function restructuredTurn(
     tokens: routed.usage,
     latencyMs: routed.latencyMs,
   };
-  // Decision 4: one classifier, one intent, on every path the router answered (already digit-redacted).
-  const intent = (reply: Reply): Reply => (routed.route ? { ...reply, intent: routed.route.intent } : reply);
+  // Decision 4: one classifier, one intent, on every path the router answered. Without a router, the reply model's
+  // intent stands; both get the same digit redaction, since either could echo a card number.
+  const intent = (reply: Reply): Reply => ({ ...reply, intent: routed.route?.intent ?? redactNumbers(reply.intent) });
   if (routed.route?.escalation) {
     const reply = intent(toEscalation(CATEGORY_REASONS[routed.route.escalation.category]));
     const totals = { toolCalls: [], apiCalls: routed.apiCalls, usage: routed.usage };
