@@ -9,57 +9,13 @@ import type { Response, ResponseCreateParamsNonStreaming } from "openai/resource
 import { replyAll, type BatchOptions } from "../src/cli.ts";
 import { HANDOFF_SENTENCE } from "../src/escalation.ts";
 import type { Client } from "../src/respond.ts";
-
-const usage = {
-  input_tokens: 100,
-  input_tokens_details: { cached_tokens: 60, cache_write_tokens: 0 },
-  output_tokens: 20,
-  output_tokens_details: { reasoning_tokens: 5 },
-  total_tokens: 120,
-};
-
-const final = (fields: object) => {
-  const reply = {
-    response: "ok",
-    escalate: false,
-    escalationReason: null,
-    templateId: null,
-    intent: "answer",
-    shouldFollowUp: false,
-    followUpTiming: null,
-    attachmentUrls: null,
-    highEngagement: false,
-    workingMemoryUpdates: null,
-    ...fields,
-  };
-  const text = JSON.stringify(reply);
-  return {
-    status: "completed",
-    output: [
-      { type: "message", id: "msg_1", role: "assistant", status: "completed", content: [{ type: "output_text", text, annotations: [] }] },
-    ],
-    output_text: text,
-    usage,
-  } as unknown as Response;
-};
-
-const toolCall = (name: string, args: object, callId: string) =>
-  ({
-    status: "completed",
-    output: [{ type: "function_call", id: `fc_${callId}`, call_id: callId, name, arguments: JSON.stringify(args), status: "completed" }],
-    output_text: "",
-    usage,
-  }) as unknown as Response;
+import { fake, final, toolCall, usage } from "./fake.ts";
 
 // The patient text sits inside the packet user message: `"<text>"` on its second line.
 const patientText = (body: ResponseCreateParamsNonStreaming): string => {
   const user = (body.input as { role?: string; content?: string }[]).find((item) => item.role === "user");
   return /^"(.*)"$/m.exec(user?.content ?? "")?.[1] ?? "";
 };
-
-const fake = (create: (body: ResponseCreateParamsNonStreaming) => Promise<Response>): Client => ({
-  responses: { create },
-});
 
 const options = (client: Client, trace?: BatchOptions["trace"]): BatchOptions => ({
   client,
