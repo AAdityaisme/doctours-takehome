@@ -87,7 +87,7 @@ async function runOnce(cases: Case[], settings: Settings) {
   let graderErrors = 0;
   const verdicts = await pool(cases, settings.concurrency * 2, async (c, i): Promise<Verdicts> => {
     const claims = claimsOf(c).filter((claim) => !isLiteral(claim.claim));
-    // A failed reply or router makes an errored trial whatever the grader says, so don't pay for the call.
+    // A failed reply is an errored trial whatever the grader says, so don't pay for the call.
     if (claims.length === 0 || traceFailure(traces.get(i) ?? null)) return [];
     try {
       const graded = await gradeClaims(settings.client, settings.grader, c.text, replies[i], claims);

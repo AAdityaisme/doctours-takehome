@@ -95,15 +95,17 @@ const stringsIn = (value: unknown): string[] =>
   typeof value === "string" ? [value] : value && typeof value === "object" ? Object.values(value).flatMap(stringsIn) : [];
 
 /**
- * The infrastructure failure behind a trace, if any: the reply loop failed (the CLI then sends a system-error
- * escalation), or restructured mode's router failed and the reply ran on its fallback path. Either way the trial
- * measures an outage, not the mode, so it is errored rather than scored.
+ * Why a trace has no reply to score, if it has none: the reply loop failed and the CLI sent a system-error escalation
+ * in its place. A router failure is not this. Restructured mode then replies on its fallback path, which is what a
+ * patient (and the graders) would get, so that reply is scored and the failure only counted (`routerFailed`).
  */
 export function traceFailure(trace: Trace | null): string | null {
-  if (trace?.ok === false) return `reply failed: ${String(trace.error)}`;
-  const routerError = (trace?.router as { error?: unknown } | undefined)?.error;
-  return routerError ? `router failed: ${String(routerError)}` : null;
+  return trace?.ok === false ? `reply failed: ${String(trace.error)}` : null;
 }
+
+/** Whether restructured mode's router failed on this message, so the reply came from the fallback path. */
+export const routerFailed = (trace: Trace | null): boolean =>
+  Boolean((trace?.router as { error?: unknown } | undefined)?.error);
 
 /**
  * The escalation category a trace reports: a top-level `escalationCategory`, else the router's own escalation
@@ -147,8 +149,8 @@ const embeddedChecks = (claim: Claim, reply: Reply): ClaimResult[] =>
 
 /**
  * Scores one reply against its case. `verdicts` answers the case's model claims in order; a missing verdict fails
- * its claim. The category is checked only when the trace names one. A failed reply or router (`traceFailure`) or a
- * failed grader call marks the trial as errored.
+ * its claim. The category is checked only when the trace names one. A failed reply (`traceFailure`) or a failed
+ * grader call marks the trial as errored: no reply, or no usable grade.
  */
 export function scoreTrial(c: Case, reply: Reply, trace: Trace | null, verdicts: Verdicts): Trial {
   const all = claimsOf(c);
@@ -316,6 +318,8 @@ export interface Summary {
   casePass: Rate;
   /** Trials left out of every rate because the reply or the grader failed. */
   errored: number;
+  /** Trials whose router failed; their fallback replies are scored like any other. */
+  routerFailures: number;
   /** Share of cases that pass all k trials, over the cases with k completed (non-errored) trials. */
   passK: Rate;
   /** Cases left out of pass^k because one of their trials errored. */
@@ -362,6 +366,7 @@ export function summarize(results: CaseResult[]): Summary {
     },
     casePass: count(trials, (t) => t.pass),
     errored: every.length - trials.length,
+    routerFailures: every.filter((t) => routerFailed(t.trace)).length,
     passK: rate(complete.filter((r) => r.trials.every((t) => t.pass)).length, complete.length),
     passKIncomplete: results.length - complete.length,
     topics,
@@ -386,6 +391,7 @@ export function markdown(title: string, summary: Summary, results: CaseResult[],
     `| Claims passed, model-graded | ${pct(summary.claims.model)} |`,
     `| Cases fully passed | ${pct(summary.casePass)} |`,
     `| Errored trials (left out of rates) | ${summary.errored} |`,
+    `| Router failures (fallback reply scored) | ${summary.routerFailures} |`,
     ...(repeat > 1
       ? [`| pass^${repeat} | ${pct(summary.passK)}; ${summary.passKIncomplete} case(s) with an errored trial left out |`]
       : []),

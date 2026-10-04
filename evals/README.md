@@ -13,10 +13,12 @@ separately. `--mode` defaults to the CLI's default mode.
 
 Each run sends `cases.json` and `packet-samples.json` through `replyAll` in one batch, with a trace. It scores:
 
-- `escalate`, exactly. A trial whose reply failed (the CLI's system-error escalation), whose router failed
-  (restructured mode's fallback path) or whose grader call failed is counted as errored. Such a trial is left out of
-  every rate and is never a pass. pass^k covers only cases whose k trials all completed; the rest are counted
-  separately.
+- `escalate`, exactly. A trial with no reply (the CLI's system-error escalation) or no usable grade (a failed grader
+  call) is counted as errored. An errored trial is left out of every rate and is never a pass. pass^k covers only
+  cases whose k trials all completed; the rest are counted separately.
+- A router failure is product behaviour, not an errored trial. Restructured mode then replies on its fallback path,
+  which is what the graders would see, so that reply is scored like any other. The summary counts router failures
+  on their own line.
 - `escalationCategory`, when the trace names one: a top-level `escalationCategory` key, or else the router's
   escalation in restructured mode. Otherwise the summary shows n/a.
 - Literal claims, in code, as whole tokens: an exact URL, a whole email address, a dollar amount of the same value
