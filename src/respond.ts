@@ -25,7 +25,8 @@ export interface Usage {
 
 export interface Turn {
   reply: Reply;
-  toolCalls: { name: string; arguments: string }[];
+  /** Every call the model returned; `rejected` marks one outside what its request allowed, which did not run. */
+  toolCalls: { name: string; arguments: string; rejected?: true }[];
   apiCalls: number;
   usage: Usage;
 }
@@ -135,6 +136,11 @@ export async function respond(options: {
 
   try {
     for (let round = 1; round <= MAX_ROUNDS; round++) {
+      // What this request lets the model call, fixed now: tools a loadSkill adds below join the next request only.
+      const callable = new Set([
+        ...tools.map((tool) => tool.name).filter((name) => !allowed || allowed.includes(name)),
+        ...(loader ? [loader.tool.name] : []),
+      ]);
       const response = await client.responses.create({
         model,
         reasoning: { effort: effort as ReasoningEffort },
@@ -152,16 +158,14 @@ export async function respond(options: {
       });
       progress.apiCalls++;
       addUsage(progress.usage, response.usage);
+      // Nothing is read from a response that didn't complete; the turn fails safe with its usage kept.
+      if (response.status !== "completed") throw new Error(`response ${response.status}`);
 
       const calls = response.output.filter((item) => item.type === "function_call");
       // A message that already escalates stops the turn here, before any co-returned tool runs (L7: stop at the handoff).
       const escalation = calls.length > 0 ? escalatedMessage(response) : null;
-      if (escalation) {
-        if (response.status !== "completed") throw new Error(`response ${response.status}`);
-        return { reply: postProcess(escalation, toolUrls), ...progress };
-      }
+      if (escalation) return { reply: postProcess(escalation, toolUrls), ...progress };
       if (calls.length === 0) {
-        if (response.status !== "completed") throw new Error(`response ${response.status}`);
         const reply = postProcess(JSON.parse(response.output_text), toolUrls);
         return { reply, ...progress };
       }
@@ -169,6 +173,13 @@ export async function respond(options: {
       input.push(...toResponseInputItems(response.output));
       for (const call of calls) {
         let output: string;
+        if (!callable.has(call.name)) {
+          // Never trust the API's allowed_tools alone: an out-of-list call doesn't run and its output is no URL source.
+          output = JSON.stringify({ error: "tool not available for this message" });
+          progress.toolCalls.push({ name: call.name, arguments: call.arguments, rejected: true });
+          input.push({ type: "function_call_output", call_id: call.call_id, output });
+          continue;
+        }
         if (loader && call.name === loader.tool.name) {
           const loaded = loader.load(call.arguments);
           output = loaded.output;
