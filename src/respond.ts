@@ -25,7 +25,8 @@ export interface Usage {
 
 export interface Turn {
   reply: Reply;
-  toolCalls: { name: string; arguments: string }[];
+  /** Every call the model returned; `rejected` marks one outside what its request allowed, which did not run. */
+  toolCalls: { name: string; arguments: string; rejected?: true }[];
   apiCalls: number;
   usage: Usage;
 }
@@ -91,24 +92,31 @@ const escalatedMessage = (response: Response): unknown => {
  * One patient message through the Responses API: call tools until the model answers, then parse its
  * strict-schema `Reply` and post-process it. Stable content (tools, schema, system prompt) comes first so
  * the batch shares a cached prefix. Any failure is rethrown as a `TurnError` carrying the work done so far.
- * `loader` (restructured mode) is an extra tool whose output is instructions: the tools it returns are offered
- * from the next round on, and its text never counts as tool-returned URLs.
+ * Restructured mode passes its developer messages as items, a fixed `tools` list with the per-message `allowed` names
+ * (`tool_choice: allowed_tools`, so the tools prefix stays cache-stable) and a `cacheKey`. Its `loader` is an extra
+ * tool whose output is instructions: the tools it returns are allowed from the next round on, and its text never
+ * counts as tool-returned URLs.
  */
 export async function respond(options: {
   client: Client;
   model: string;
   effort: string;
-  system: string;
+  /** The baseline's one prompt string, or restructured mode's developer messages. */
+  system: string | ResponseInputItem[];
   user: string;
   tools: Tool[];
+  /** Names this message may call; unset = every tool in `tools`. */
+  allowed?: string[];
+  cacheKey?: string;
   schema?: Schema;
   loader?: SkillLoader | null;
 }): Promise<Turn> {
-  const { client, model, effort, system, user, loader, schema = REPLY_SCHEMA } = options;
+  const { client, model, effort, system, user, loader, cacheKey, schema = REPLY_SCHEMA } = options;
   const tools = [...options.tools];
+  const allowed = options.allowed && [...options.allowed];
   // Developer role: the caching guide puts an implicit breakpoint after the first developer message group.
   const input: ResponseInputItem[] = [
-    { role: "developer", content: system },
+    ...(typeof system === "string" ? [{ role: "developer" as const, content: system }] : system),
     { role: "user", content: user },
   ];
   const toolUrls = new Set<string>();
@@ -128,25 +136,36 @@ export async function respond(options: {
 
   try {
     for (let round = 1; round <= MAX_ROUNDS; round++) {
+      // What this request lets the model call, fixed now: tools a loadSkill adds below join the next request only.
+      const callable = new Set([
+        ...tools.map((tool) => tool.name).filter((name) => !allowed || allowed.includes(name)),
+        ...(loader ? [loader.tool.name] : []),
+      ]);
       const response = await client.responses.create({
         model,
         reasoning: { effort: effort as ReasoningEffort },
         tools: definitions(),
+        ...(allowed && {
+          tool_choice: {
+            type: "allowed_tools" as const,
+            mode: "auto" as const,
+            tools: [...allowed, ...(loader ? [loader.tool.name] : [])].map((name) => ({ type: "function", name })),
+          },
+        }),
+        ...(cacheKey && { prompt_cache_key: cacheKey }),
         text: { format: { type: "json_schema", name: "Reply", schema: { ...schema }, strict: true } },
         input,
       });
       progress.apiCalls++;
       addUsage(progress.usage, response.usage);
+      // Nothing is read from a response that didn't complete; the turn fails safe with its usage kept.
+      if (response.status !== "completed") throw new Error(`response ${response.status}`);
 
       const calls = response.output.filter((item) => item.type === "function_call");
       // A message that already escalates stops the turn here, before any co-returned tool runs (L7: stop at the handoff).
       const escalation = calls.length > 0 ? escalatedMessage(response) : null;
-      if (escalation) {
-        if (response.status !== "completed") throw new Error(`response ${response.status}`);
-        return { reply: postProcess(escalation, toolUrls), ...progress };
-      }
+      if (escalation) return { reply: postProcess(escalation, toolUrls), ...progress };
       if (calls.length === 0) {
-        if (response.status !== "completed") throw new Error(`response ${response.status}`);
         const reply = postProcess(JSON.parse(response.output_text), toolUrls);
         return { reply, ...progress };
       }
@@ -154,10 +173,21 @@ export async function respond(options: {
       input.push(...toResponseInputItems(response.output));
       for (const call of calls) {
         let output: string;
+        if (!callable.has(call.name)) {
+          // Never trust the API's allowed_tools alone: an out-of-list call doesn't run and its output is no URL source.
+          output = JSON.stringify({ error: "tool not available for this message" });
+          progress.toolCalls.push({ name: call.name, arguments: call.arguments, rejected: true });
+          input.push({ type: "function_call_output", call_id: call.call_id, output });
+          continue;
+        }
         if (loader && call.name === loader.tool.name) {
           const loaded = loader.load(call.arguments);
           output = loaded.output;
-          for (const tool of loaded.tools) if (!tools.some((t) => t.name === tool.name)) tools.push(tool);
+          for (const tool of loaded.tools) {
+            if (allowed) {
+              if (!allowed.includes(tool.name)) allowed.push(tool.name);
+            } else if (!tools.some((t) => t.name === tool.name)) tools.push(tool);
+          }
         } else {
           output = runTool(call.name, call.arguments);
           for (const url of findUrls(output)) toolUrls.add(url);
