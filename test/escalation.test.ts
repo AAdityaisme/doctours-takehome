@@ -104,13 +104,36 @@ test("trace escalationCategory: router category, `reply`, `system_error`, else n
   }
 });
 
-test("an escalated message co-returned with a tool call ends the turn: no tool runs, no further call (both modes)", async () => {
+// One assistant message item whose own text is `text`.
+const messageItem = (text: string, id: string) => ({
+  type: "message",
+  id,
+  role: "assistant",
+  status: "completed",
+  content: [{ type: "output_text", text, annotations: [] }],
+});
+const replyText = (escalate: boolean) => (final({ escalate, response: "model text" }) as Response).output_text;
+const ESCALATED = replyText(true);
+const PLAIN = replyText(false);
+const JUNK = "not a reply at all";
+
+test("an escalated message among co-returned messages ends the turn before any tool runs (both modes)", async () => {
   const memoryTool = TOOLS.find((tool) => tool.name === "updateWorkingMemoryTool")!;
   const run = memoryTool.run;
   let writes = 0;
   memoryTool.run = (input) => (writes++, run(input));
+  // [label, message texts in output order, whether the turn must stop at the handoff]
+  const cases: [string, string[], boolean][] = [
+    ["escalation alone", [ESCALATED], true],
+    ["escalation first, non-escalating second", [ESCALATED, PLAIN], true],
+    ["non-escalating first, escalation last", [PLAIN, ESCALATED], true],
+    ["escalation first, unparseable second", [ESCALATED, JUNK], true],
+    ["unparseable first, escalation last", [JUNK, ESCALATED], true],
+    ["non-escalating alone", [PLAIN], false],
+    ["non-escalating and unparseable", [PLAIN, JUNK], false],
+  ];
   try {
-    for (const escalate of [true, false]) {
+    for (const [label, texts, stops] of cases) {
       for (const mode of ["restructured", "baseline"] as const) {
         writes = 0;
         let replyCalls = 0;
@@ -119,9 +142,13 @@ test("an escalated message co-returned with a tool call ends the turn: no tool r
             return { ...final({}), output_text: JSON.stringify({ intent: "x", skills: [], escalation: null }) } as Response;
           }
           if (++replyCalls > 1) return final({ response: "a later answer" });
-          const message = final({ escalate, response: "model text" });
           const call = toolCall("updateWorkingMemoryTool", { memory: {} }, "w1");
-          return { ...message, output: [...call.output, ...message.output] } as Response;
+          // The SDK's output_text concatenates every message, which is exactly what must not be parsed as one.
+          return {
+            ...call,
+            output: [...call.output, ...texts.map((text, i) => messageItem(text, `msg_${i}`))],
+            output_text: texts.join(""),
+          } as unknown as Response;
         });
         const traces: Record<string, unknown>[] = [];
         const [reply] = await replyAll([{ id: "m", text: "hi" }], {
@@ -132,16 +159,17 @@ test("an escalated message co-returned with a tool call ends the turn: no tool r
           router: { model: "r", effort: "none" },
           trace: (record) => traces.push(record),
         });
-        if (escalate) {
-          assert.equal(writes, 0, `${mode}: no tool after an escalation`);
-          assert.equal(replyCalls, 1, `${mode}: no further model call`);
-          assert.equal(reply!.response, HANDOFFS.reply.sentence);
-          assert.equal(traces[0]!.escalationCategory, "reply");
+        const where = `${mode}, ${label}`;
+        if (stops) {
+          assert.equal(writes, 0, `${where}: no tool after an escalation`);
+          assert.equal(replyCalls, 1, `${where}: no further model call`);
+          assert.equal(reply!.response, HANDOFFS.reply.sentence, where);
+          assert.equal(traces[0]!.escalationCategory, "reply", where);
         } else {
-          // Not an escalation: the tool runs and the loop continues, as before.
-          assert.equal(writes, 1, mode);
-          assert.equal(replyCalls, 2, mode);
-          assert.equal(reply!.response, "a later answer");
+          // No escalation: the tool runs and the loop continues, as before.
+          assert.equal(writes, 1, where);
+          assert.equal(replyCalls, 2, where);
+          assert.equal(reply!.response, "a later answer", where);
         }
       }
     }

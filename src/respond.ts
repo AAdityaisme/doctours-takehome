@@ -63,14 +63,28 @@ export const addUsage = (total: Usage, usage: ResponseUsage | undefined): void =
   total.reasoning += usage?.output_tokens_details?.reasoning_tokens ?? 0;
 };
 
-/** True when `text` is a schema-valid Reply with `escalate: true`; anything else (empty, not JSON, invalid) is false. */
-const isEscalation = (text: string): boolean => {
+/** The parsed text when it is a schema-valid Reply with `escalate: true`; anything else (empty, not JSON, invalid) is null. */
+const asEscalation = (text: string): unknown => {
   try {
     const raw: unknown = JSON.parse(text);
-    return schemaError(REPLY_SCHEMA, raw) === null && (raw as Reply).escalate;
+    return schemaError(REPLY_SCHEMA, raw) === null && (raw as Reply).escalate ? raw : null;
   } catch {
-    return false;
+    return null;
   }
+};
+
+/**
+ * The first message item, checked one by one (not `output_text`, which concatenates them all), that is an
+ * escalated Reply; null when none is.
+ */
+const escalatedMessage = (response: Response): unknown => {
+  for (const item of response.output) {
+    if (item.type !== "message") continue;
+    const text = item.content.map((part) => (part.type === "output_text" ? part.text : "")).join("");
+    const escalation = asEscalation(text);
+    if (escalation) return escalation;
+  }
+  return null;
 };
 
 /**
@@ -126,9 +140,8 @@ export async function respond(options: {
 
       const calls = response.output.filter((item) => item.type === "function_call");
       // A message that already escalates stops the turn here, before any co-returned tool runs (L7: stop at the handoff).
-      if (calls.length > 0 && isEscalation(response.output_text)) {
-        return { reply: postProcess(JSON.parse(response.output_text), toolUrls), ...progress };
-      }
+      const escalation = calls.length > 0 ? escalatedMessage(response) : null;
+      if (escalation) return { reply: postProcess(escalation, toolUrls), ...progress };
       if (calls.length === 0) {
         if (response.status !== "completed") throw new Error(`response ${response.status}`);
         const reply = postProcess(JSON.parse(response.output_text), toolUrls);
