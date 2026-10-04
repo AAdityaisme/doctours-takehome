@@ -8,7 +8,7 @@ import { mkdtempSync, rmSync, writeFileSync as writeFile } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { writeResults } from "../evals/run.ts";
+import { counting429, writeResults } from "../evals/run.ts";
 import {
   checkLiteral,
   containsLiteral,
@@ -353,8 +353,18 @@ test("emails: a local part with RFC 5322 punctuation is a different mailbox; ord
     assert.equal(containsLiteral(`email ${wrong}.`, molly), false, wrong);
     assert.equal(checkLiteral({ kind: "exclude", claim: molly }, reply({ response: `email ${wrong}` })).pass, true, wrong);
   }
-  for (const right of ["(molly@doctours.com)", '"molly@doctours.com"', "email: molly@doctours.com.", "'molly@doctours.com'"]) {
+  // An unclosed leading apostrophe belongs to the mailbox: a different address.
+  assert.equal(containsLiteral("email 'molly@doctours.com today", molly), false);
+  for (const right of ["(molly@doctours.com)", '"molly@doctours.com"', "email: molly@doctours.com.", "'molly@doctours.com'", "`molly@doctours.com`"]) {
     assert.equal(containsLiteral(`Reach Molly ${right}`, molly), true, right);
     assert.equal(checkLiteral({ kind: "exclude", claim: molly }, reply({ response: right })).pass, false, right);
   }
+});
+
+test("429 responses the SDK retries itself are counted", async () => {
+  const statuses = [429, 429, 200];
+  const waits = { sdk429: 0 };
+  const fetcher = counting429(async () => new Response("{}", { status: statuses.shift() }), waits);
+  for (let i = 0; i < 3; i++) await fetcher("https://example.invalid");
+  assert.equal(waits.sdk429, 2);
 });

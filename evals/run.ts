@@ -65,6 +65,18 @@ function patientClient(openai: OpenAI, waits: { count: number; ms: number }): Cl
   };
 }
 
+/**
+ * `fetch` that counts 429 responses. The SDK retries those itself (up to `maxRetries`), so they never reach
+ * `patientClient`'s counter; this keeps the report's throttling figure honest.
+ */
+export const counting429 =
+  (base: typeof fetch, waits: { sdk429: number }): typeof fetch =>
+  async (input, init) => {
+    const response = await base(input, init);
+    if (response.status === 429) waits.sdk429++;
+    return response;
+  };
+
 interface Settings {
   client: Client;
   concurrency: number;
@@ -162,10 +174,10 @@ if (import.meta.main) {
   // Both sets go through one batch per run so they share the cached prompt prefix; they are scored apart.
   const all = [...sets.cases, ...sets.samples];
 
-  const waits = { count: 0, ms: 0 };
+  const waits = { count: 0, ms: 0, sdk429: 0 };
   const settings: Settings = {
     // The baseline prompt is ~40k tokens a call: even one message in flight can pass a 500k tokens-per-minute limit.
-    client: patientClient(new OpenAI({ maxRetries: 8 }), waits),
+    client: patientClient(new OpenAI({ maxRetries: 8, fetch: counting429(fetch, waits) }), waits),
     concurrency,
     mode,
     model: process.env.REPLY_MODEL ?? "gpt-6.1-sol",
@@ -207,7 +219,7 @@ if (import.meta.main) {
     latencyMs: { p50: percentile(latencies, 50), p95: percentile(latencies, 95) },
     failedMessages: traces.filter((t) => traceFailure(t)).length,
     graderErrors: runs.reduce((n, run) => n + run.graderErrors, 0),
-    rateLimitWaits: { count: waits.count, seconds: Math.round(waits.ms / 1000) },
+    rateLimitWaits: { count: waits.count, seconds: Math.round(waits.ms / 1000), sdkRetried429s: waits.sdk429 },
   };
 
   let sha: string | null = null;
@@ -249,7 +261,8 @@ if (import.meta.main) {
     "",
     `Latency per message: p50 ${usage.latencyMs.p50 ?? "n/a"} ms, p95 ${usage.latencyMs.p95 ?? "n/a"} ms. ` +
       `Failed messages: ${usage.failedMessages}. Grader errors: ${usage.graderErrors}. ` +
-      `Rate-limit waits: ${waits.count} (${usage.rateLimitWaits.seconds} s, inside the latency figures).`,
+      `Rate limits: ${waits.sdk429} 429 responses (the SDK retries these itself), plus ${waits.count} harness waits ` +
+      `(${usage.rateLimitWaits.seconds} s) after the SDK gave up; all inside the latency figures.`,
     "",
     `Results: ${out.pathname}`,
   ];

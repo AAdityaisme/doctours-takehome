@@ -68,9 +68,15 @@ const NUMBER = String.raw`\d+(?:,\d{3})*(?:\.\d+)?`;
 const AMOUNT_TOKEN = new RegExp(String.raw`\$\s?${NUMBER}|\b${NUMBER}\s?USD\b|\bUSD\s?${NUMBER}`, "g");
 // The local part takes every RFC 5322 atext character plus ".", so a token starts where the address really starts:
 // "o'molly@" or "billing/molly@" is a different mailbox, not "molly@" with a prefix. A leading quote or backtick is
-// atext too, so it is stripped: 'molly@doctours.com' (single-quoted) is still Molly's address.
+// atext too, so it is stripped only when the same character closes the address: 'molly@doctours.com' (quoted) is
+// Molly's address, while an unclosed 'molly@doctours.com is a different mailbox.
 const EMAIL_TOKEN = /[\w!#$%&'*+\/=?^`{|}~.-]+@[\w-]+(?:\.[\w-]+)*\.[a-z]{2,}/gi;
-const emailsIn = (text: string): string[] => (text.match(EMAIL_TOKEN) ?? []).map((token) => token.replace(/^['`]+/, ""));
+const emailsIn = (text: string): string[] =>
+  [...text.matchAll(EMAIL_TOKEN)].map(({ 0: token, index }) => {
+    const quote = token[0];
+    const closed = (quote === "'" || quote === "`") && text[index + token.length] === quote;
+    return closed ? token.slice(1) : token;
+  });
 const amount = (token: string): number => Number(token.replace(/[^\d.]/g, ""));
 const digitsOnly = (text: string): string => text.replace(/[\s/.-]/g, "");
 
