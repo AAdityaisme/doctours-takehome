@@ -79,6 +79,8 @@ export const counting429 =
 
 interface Settings {
   client: Client;
+  /** The grader's own client, so its rate limits are counted apart from the replies'; defaults to `client`. */
+  graderClient?: Client;
   concurrency: number;
   mode: Mode;
   model: string;
@@ -102,7 +104,7 @@ async function runOnce(cases: Case[], settings: Settings) {
     // A failed reply is an errored trial whatever the grader says, so don't pay for the call.
     if (claims.length === 0 || traceFailure(traces.get(i) ?? null)) return [];
     try {
-      const graded = await gradeClaims(settings.client, settings.grader, c.text, replies[i], claims);
+      const graded = await gradeClaims(settings.graderClient ?? settings.client, settings.grader, c.text, replies[i], claims);
       graderUsage = addUsage(graderUsage, graded.usage);
       if (graded.error) {
         graderErrors++;
@@ -174,10 +176,14 @@ if (import.meta.main) {
   // Both sets go through one batch per run so they share the cached prompt prefix; they are scored apart.
   const all = [...sets.cases, ...sets.samples];
 
-  const waits = { count: 0, ms: 0, sdk429: 0 };
+  const replyWaits = { count: 0, ms: 0, sdk429: 0 };
+  const graderWaits = { count: 0, ms: 0, sdk429: 0 };
+  const makeClient = (waits: typeof replyWaits) =>
+    patientClient(new OpenAI({ maxRetries: 8, fetch: counting429(fetch, waits) }), waits);
   const settings: Settings = {
     // The baseline prompt is ~40k tokens a call: even one message in flight can pass a 500k tokens-per-minute limit.
-    client: patientClient(new OpenAI({ maxRetries: 8, fetch: counting429(fetch, waits) }), waits),
+    client: makeClient(replyWaits),
+    graderClient: makeClient(graderWaits),
     concurrency,
     mode,
     model: process.env.REPLY_MODEL ?? "gpt-6.1-sol",
@@ -219,7 +225,12 @@ if (import.meta.main) {
     latencyMs: { p50: percentile(latencies, 50), p95: percentile(latencies, 95) },
     failedMessages: traces.filter((t) => traceFailure(t)).length,
     graderErrors: runs.reduce((n, run) => n + run.graderErrors, 0),
-    rateLimitWaits: { count: waits.count, seconds: Math.round(waits.ms / 1000), sdkRetried429s: waits.sdk429 },
+    rateLimits: Object.fromEntries(
+      Object.entries({ replies: replyWaits, grader: graderWaits }).map(([name, w]) => [
+        name,
+        { sdkRetried429s: w.sdk429, harnessWaits: w.count, harnessWaitSeconds: Math.round(w.ms / 1000) },
+      ]),
+    ),
   };
 
   let sha: string | null = null;
@@ -236,7 +247,7 @@ if (import.meta.main) {
     results,
     `${mode}-${stamp}`,
     `${JSON.stringify(
-      { mode, sha, startedAt: started.toISOString(), repeat, settings: { ...settings, client: undefined }, summary, usage, cases: caseResults, packetSamples: sampleResults },
+      { mode, sha, startedAt: started.toISOString(), repeat, settings: { ...settings, client: undefined, graderClient: undefined }, summary, usage, cases: caseResults, packetSamples: sampleResults },
       null,
       2,
     )}\n`,
@@ -261,8 +272,9 @@ if (import.meta.main) {
     "",
     `Latency per message: p50 ${usage.latencyMs.p50 ?? "n/a"} ms, p95 ${usage.latencyMs.p95 ?? "n/a"} ms. ` +
       `Failed messages: ${usage.failedMessages}. Grader errors: ${usage.graderErrors}. ` +
-      `Rate limits: ${waits.sdk429} 429 responses (the SDK retries these itself), plus ${waits.count} harness waits ` +
-      `(${usage.rateLimitWaits.seconds} s) after the SDK gave up; all inside the latency figures.`,
+      `Rate limits, replies: ${replyWaits.sdk429} 429s retried by the SDK, ${replyWaits.count} harness waits ` +
+      `(${Math.round(replyWaits.ms / 1000)} s); inside the latency figures. Grader: ${graderWaits.sdk429} 429s, ` +
+      `${graderWaits.count} waits (${Math.round(graderWaits.ms / 1000)} s); not in them.`,
     "",
     `Results: ${out.pathname}`,
   ];
