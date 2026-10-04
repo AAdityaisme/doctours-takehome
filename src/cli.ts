@@ -109,7 +109,8 @@ if (import.meta.main) {
   const tracePath = values.trace;
   if (tracePath) writeFileSync(tracePath, "");
   const replies = await replyAll(items as unknown[], {
-    client: new OpenAI(),
+    // A 429 under a busy org's TPM limit would otherwise fail the message into a handoff; the SDK backs off per retry-after.
+    client: new OpenAI({ maxRetries: 5 }),
     mode,
     model: process.env.REPLY_MODEL ?? "gpt-6.1-sol",
     effort: process.env.REPLY_EFFORT ?? "low",
