@@ -247,6 +247,15 @@ const PRICES: Record<string, { input: number; cached: number; output: number }> 
 
 export const zeroUsage = (): Usage => ({ input: 0, cached: 0, cacheWrite: 0, output: 0, reasoning: 0 });
 
+/** `total` minus `part`, field by field. */
+export const subtractUsage = (total: Usage, part: Usage): Usage => ({
+  input: total.input - part.input,
+  cached: total.cached - part.cached,
+  cacheWrite: total.cacheWrite - part.cacheWrite,
+  output: total.output - part.output,
+  reasoning: total.reasoning - part.reasoning,
+});
+
 /** Sums usage records; missing fields count as zero. */
 export const addUsage = (total: Usage, usage: Partial<Usage> | undefined): Usage => ({
   input: total.input + (usage?.input ?? 0),

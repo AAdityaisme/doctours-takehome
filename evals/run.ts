@@ -8,6 +8,7 @@ import type { Client, Usage } from "../src/respond.ts";
 import {
   addUsage,
   claimsOf,
+  subtractUsage,
   cost,
   gradeClaims,
   isLiteral,
@@ -69,6 +70,8 @@ interface Settings {
   mode: Mode;
   model: string;
   effort: string;
+  /** Router model and effort, used by restructured mode (same defaults as the CLI). */
+  router: { model: string; effort: string };
   grader: { model: string; effort: string };
 }
 
@@ -132,7 +135,7 @@ const money = (value: number | null) => (value === null ? "n/a" : `$${value.toFi
 if (import.meta.main) {
   const { values } = parseArgs({
     options: {
-      mode: { type: "string", default: "baseline" },
+      mode: { type: "string", default: MODES[0] },
       cases: { type: "string" },
       repeat: { type: "string", default: "1" },
       concurrency: { type: "string", default: "2" },
@@ -166,6 +169,7 @@ if (import.meta.main) {
     mode,
     model: process.env.REPLY_MODEL ?? "gpt-6.1-sol",
     effort: process.env.REPLY_EFFORT ?? "low",
+    router: { model: process.env.ROUTER_MODEL ?? "gpt-6-luna", effort: process.env.ROUTER_EFFORT ?? "none" },
     grader: { model: process.env.GRADER_MODEL ?? "gpt-6.1-sol", effort: process.env.GRADER_EFFORT ?? "low" },
   };
   const started = new Date();
@@ -184,11 +188,20 @@ if (import.meta.main) {
   const sampleResults = resultsFor(sets.samples);
 
   const traces = runs.flatMap((run) => run.traces);
-  const replyUsage = traces.reduce<Usage>((total, t) => addUsage(total, t.tokens as Partial<Usage>), zeroUsage());
+  // A restructured trace's tokens include its router call; router.tokens holds that share, priced at the router model.
+  const routerUsage = traces.reduce<Usage>(
+    (total, t) => addUsage(total, (t.router as { tokens?: Partial<Usage> } | undefined)?.tokens),
+    zeroUsage(),
+  );
+  const replyUsage = subtractUsage(
+    traces.reduce<Usage>((total, t) => addUsage(total, t.tokens as Partial<Usage>), zeroUsage()),
+    routerUsage,
+  );
   const graderUsage = runs.reduce<Usage>((total, run) => addUsage(total, run.graderUsage), zeroUsage());
   const latencies = traces.map((t) => t.latencyMs).filter((ms): ms is number => typeof ms === "number");
   const usage = {
     reply: { model: settings.model, tokens: replyUsage, cost: cost(settings.model, replyUsage) },
+    router: { model: settings.router.model, tokens: routerUsage, cost: cost(settings.router.model, routerUsage) },
     grader: { model: settings.grader.model, tokens: graderUsage, cost: cost(settings.grader.model, graderUsage) },
     latencyMs: { p50: percentile(latencies, 50), p95: percentile(latencies, 95) },
     failedMessages: traces.filter((t) => t.ok === false).length,
@@ -228,6 +241,9 @@ if (import.meta.main) {
     "| | Input | Cached | Cache writes | Output | Cost |",
     "|---|---|---|---|---|---|",
     `| Replies (${settings.model}) | ${replyUsage.input} | ${replyUsage.cached} | ${replyUsage.cacheWrite} | ${replyUsage.output} | ${money(usage.reply.cost)} |`,
+    ...(routerUsage.input > 0
+      ? [`| Router (${settings.router.model}) | ${routerUsage.input} | ${routerUsage.cached} | ${routerUsage.cacheWrite} | ${routerUsage.output} | ${money(usage.router.cost)} |`]
+      : []),
     `| Grader (${settings.grader.model}) | ${graderUsage.input} | ${graderUsage.cached} | ${graderUsage.cacheWrite} | ${graderUsage.output} | ${money(usage.grader.cost)} |`,
     "",
     `Latency per message: p50 ${usage.latencyMs.p50 ?? "n/a"} ms, p95 ${usage.latencyMs.p95 ?? "n/a"} ms. ` +

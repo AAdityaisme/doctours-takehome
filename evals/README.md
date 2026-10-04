@@ -1,13 +1,15 @@
 # Eval cases and harness
 
 ```sh
-node --env-file="$HOME/.config/openai/doctours.env" evals/run.ts --mode baseline [--cases id1,id2] [--repeat k]
+node --env-file="$HOME/.config/openai/doctours.env" evals/run.ts --mode restructured|baseline [--cases id1,id2] [--repeat k]
 ```
 
 With no key file, `export OPENAI_API_KEY=...` and drop `--env-file`. `--mode` takes any mode `src/cli.ts` exports.
 `--cases` picks ids from either file, and `--repeat k` adds pass^k. `--concurrency` (default 2) caps messages in
 flight; the baseline prompt is about 40k tokens per call, so more than that can hit a 500k tokens-per-minute limit. Models come from `REPLY_MODEL`/`REPLY_EFFORT` and
-`GRADER_MODEL`/`GRADER_EFFORT`; both default to `gpt-6.1-sol` at `low`.
+`GRADER_MODEL`/`GRADER_EFFORT`; both default to `gpt-6.1-sol` at `low`. Restructured mode also reads
+`ROUTER_MODEL`/`ROUTER_EFFORT` (default `gpt-6-luna` at `none`, as in the CLI), and its router tokens are priced
+separately. `--mode` defaults to the CLI's default mode.
 
 Each run sends `cases.json` and `packet-samples.json` through `replyAll` in one batch, with a trace. It scores:
 
