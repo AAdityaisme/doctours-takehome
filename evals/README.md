@@ -46,6 +46,27 @@ sentence.
 `photos-back`. Errored trials are now kept out of the rates. The baseline vs restructured
 comparison comes later, from merged heads.
 
+## Router-only eval
+
+```sh
+node --env-file="$HOME/.config/openai/doctours.env" evals/router.ts [--repeat k] [--concurrency n]
+```
+
+`evals/router.ts` sends every message in `cases.json` and `packet-samples.json` through `route()`. That is the same call
+restructured mode makes, with the same `ROUTER_MODEL`/`ROUTER_EFFORT` defaults, and there is no reply call and no grader.
+A run costs about a cent, so router changes are screened here before anyone pays for a full run. `--concurrency`
+defaults to 4.
+
+Per run it reports:
+- escalate accuracy (all, should escalate, should not);
+- category accuracy on correct escalations;
+- every false positive with the router's reason, every false negative with its intent, and every wrong category;
+- router failures (counted, left out of the rates);
+- p50/p95 latency and cost.
+
+It writes `results/router-<YYYY-MM-DD-HHMM>.json` with the same no-overwrite rule as `run.ts`. A router false negative
+is not always a system miss, because the reply model can still escalate, but the router is measured on its own here.
+
 ## Cases
 
 `cases.json` holds 76 hand-written patient messages. Each one is sent as a new message on the packet's fixed
