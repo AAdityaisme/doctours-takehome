@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { execFileSync } from "node:child_process";
+import { execFileSync, spawnSync } from "node:child_process";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -7,7 +7,7 @@ import { test } from "node:test";
 import { fileURLToPath } from "node:url";
 import type { Response, ResponseCreateParamsNonStreaming } from "openai/resources/responses/responses";
 import { replyAll, type BatchOptions } from "../src/cli.ts";
-import { HANDOFF_SENTENCE } from "../src/escalation.ts";
+import { HANDOFFS } from "../src/escalation.ts";
 import type { Client } from "../src/respond.ts";
 import { fake, final, toolCall, usage } from "./fake.ts";
 
@@ -25,7 +25,7 @@ const options = (client: Client, trace?: BatchOptions["trace"]): BatchOptions =>
   trace,
 });
 
-test("one reply per message, in input order, with at most 4 in flight", async () => {
+test("one reply per message, in input order, 2 in flight by default and `concurrency` when set", async () => {
   let inFlight = 0;
   let peak = 0;
   const client = fake(async (body) => {
@@ -42,7 +42,10 @@ test("one reply per message, in input order, with at most 4 in flight", async ()
     replies.map((r) => r.response),
     items.map((item) => `echo ${item.text}`),
   );
-  assert.equal(peak, 4);
+  assert.equal(peak, 2);
+  peak = 0;
+  await replyAll(items, { ...options(client), concurrency: 3 });
+  assert.equal(peak, 3);
 });
 
 test("a failing message gets a fail-safe escalation and the rest of the batch completes", async () => {
@@ -63,9 +66,11 @@ test("a failing message gets a fail-safe escalation and the rest of the batch co
       [false, null],
     ],
   );
-  assert.equal(replies[1]!.response, HANDOFF_SENTENCE);
+  assert.equal(replies[1]!.response, HANDOFFS.system_error.sentence);
   const failed = traces.find((t) => t.id === "b")!;
   assert.equal(failed.ok, false);
+  assert.equal(failed.escalationCategory, "system_error");
+  assert.equal(traces.find((t) => t.id === "a")!.escalationCategory, null);
   assert.match(String(failed.error), /upstream 500/);
 });
 
@@ -174,5 +179,48 @@ test("`node src/cli.ts` prints only the JSON array, reading a file, stdin or '-'
     assert.equal(run(["-"], "[]"), "[]\n");
   } finally {
     rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("the CLI client retries 8 times, CONCURRENCY caps messages in flight, and a bad CONCURRENCY is refused", () => {
+  const cli = fileURLToPath(new URL("../src/cli.ts", import.meta.url));
+  // Offline: stub the Responses API in the child process, record the client's retry budget and the peak in flight.
+  const stub = `
+    import { Responses } from ${JSON.stringify(import.meta.resolve("openai/resources/responses/responses"))};
+    let inFlight = 0, peak = 0;
+    Responses.prototype.create = async function (body) {
+      peak = Math.max(peak, ++inFlight);
+      await new Promise((resolve) => setTimeout(resolve, 20));
+      inFlight--;
+      const route = body.text.format.name === "Route";
+      const value = route
+        ? { intent: "x", skills: [], escalation: null }
+        : { response: JSON.stringify({ retries: this._client.maxRetries, peak }), escalate: false, escalationReason: null,
+            templateId: null, intent: "x", shouldFollowUp: false, followUpTiming: null, attachmentUrls: null,
+            highEngagement: false, workingMemoryUpdates: null };
+      return { status: "completed", output: [], output_text: JSON.stringify(value) };
+    };`;
+  // The parent's own CONCURRENCY must not leak into the default case.
+  const { CONCURRENCY: _inherited, ...parentEnv } = process.env;
+  const run = (env: Record<string, string>) =>
+    spawnSync(process.execPath, ["--import", `data:text/javascript,${encodeURIComponent(stub)}`, cli], {
+      input: JSON.stringify(Array.from({ length: 6 }, (_, i) => ({ id: `m${i}`, text: `m${i}` }))),
+      env: { ...parentEnv, OPENAI_API_KEY: "dummy", ...env },
+      encoding: "utf8",
+    });
+  const last = (env: Record<string, string>) => {
+    const result = run(env);
+    assert.equal(result.status, 0, result.stderr);
+    const replies = JSON.parse(result.stdout) as { response: string }[];
+    return replies.map((reply) => JSON.parse(reply.response) as { retries: number; peak: number });
+  };
+  const byDefault = last({});
+  assert.ok(byDefault.every((r) => r.retries === 8));
+  assert.equal(Math.max(...byDefault.map((r) => r.peak)), 2);
+  assert.equal(Math.max(...last({ CONCURRENCY: "3" }).map((r) => r.peak)), 3);
+  for (const bad of ["0", "abc", "1.5"]) {
+    const result = run({ CONCURRENCY: bad });
+    assert.equal(result.status, 1);
+    assert.match(result.stderr, /CONCURRENCY must be a positive integer/);
   }
 });

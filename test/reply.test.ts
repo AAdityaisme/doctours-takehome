@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { HANDOFF_SENTENCE } from "../src/escalation.ts";
+import { HANDOFFS } from "../src/escalation.ts";
 import { REPLY_SCHEMA, postProcess, schemaError, urlLast, type Schema } from "../src/reply.ts";
 import { TOOLS } from "../src/tools.ts";
 
@@ -110,7 +110,7 @@ test("an escalated reply is replaced by the handoff sentence and nothing else sh
     }),
     new Set(["https://www.doctours.com/payment/x"]),
   );
-  assert.equal(out.response, HANDOFF_SENTENCE);
+  assert.equal(out.response, HANDOFFS.reply.sentence);
   assert.equal(out.escalate, true);
   assert.equal(out.escalationReason, "needs a person");
   assert.doesNotMatch(JSON.stringify(out), /4242/);
