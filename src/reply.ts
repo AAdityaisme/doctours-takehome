@@ -187,7 +187,7 @@ export function postProcess(raw: unknown, toolUrls: ReadonlySet<string>): Reply 
   assertReply(raw);
   if (raw.escalate) {
     // The model's own reason is free text and could echo what the patient sent (a card number), so code sets it.
-    const escalated = toEscalation("needs a person");
+    const escalated = toEscalation("reply");
     assertReply(escalated);
     return escalated;
   }

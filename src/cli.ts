@@ -51,6 +51,7 @@ async function replyOne(item: unknown, index: number, options: BatchOptions): Pr
       ...base,
       ok: true,
       escalate: turn.reply.escalate,
+      escalationCategory: turn.reply.escalate ? "reply" : null,
       toolCalls: turn.toolCalls,
       apiCalls: turn.apiCalls,
       tokens: turn.usage,
@@ -68,11 +69,16 @@ async function replyOne(item: unknown, index: number, options: BatchOptions): Pr
       error: message,
       ...(error instanceof TurnError && error.details),
       ...(done && { toolCalls: done.toolCalls, apiCalls: done.apiCalls, tokens: done.usage }),
+      escalationCategory: "system_error",
       latencyMs: Math.round(performance.now() - started),
     });
-    return toEscalation("system error");
+    return toEscalation("system_error");
   }
 }
+
+// Two in flight keeps a batch under a 500K tokens-per-minute limit: a 429 that outlasts the retries becomes a
+// "system error" handoff, which scores as a wrong escalate.
+export const DEFAULT_CONCURRENCY = 2;
 
 /** Replies to every message, a few at a time. Output order and length always match the input. */
 export async function replyAll(items: unknown[], options: BatchOptions): Promise<Reply[]> {
@@ -84,7 +90,7 @@ export async function replyAll(items: unknown[], options: BatchOptions): Promise
       replies[index] = await replyOne(items[index], index, options);
     }
   };
-  await Promise.all(Array.from({ length: Math.min(options.concurrency ?? 4, items.length) }, worker));
+  await Promise.all(Array.from({ length: Math.min(options.concurrency ?? DEFAULT_CONCURRENCY, items.length) }, worker));
   return replies;
 }
 
@@ -105,12 +111,16 @@ if (import.meta.main) {
   const items: unknown = JSON.parse(readFileSync(source, "utf8"));
   if (!Array.isArray(items)) fail("input must be a JSON array of {id, text}");
   if (!process.env.OPENAI_API_KEY) fail("OPENAI_API_KEY is not set");
+  const concurrency = Number(process.env.CONCURRENCY ?? DEFAULT_CONCURRENCY);
+  if (!Number.isInteger(concurrency) || concurrency < 1) fail("CONCURRENCY must be a positive integer");
 
   const tracePath = values.trace;
   if (tracePath) writeFileSync(tracePath, "");
   const replies = await replyAll(items as unknown[], {
-    // A 429 under a busy org's TPM limit would otherwise fail the message into a handoff; the SDK backs off per retry-after.
-    client: new OpenAI({ maxRetries: 5 }),
+    // A 429 under a busy org's TPM limit would otherwise fail the message into a handoff. The SDK retries 429s,
+    // waiting what retry-after(-ms) asks for (up to 60 s), else exponential backoff from 0.5 s capped at 8 s.
+    client: new OpenAI({ maxRetries: 8 }),
+    concurrency,
     mode,
     model: process.env.REPLY_MODEL ?? "gpt-6.1-sol",
     effort: process.env.REPLY_EFFORT ?? "low",

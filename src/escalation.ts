@@ -1,27 +1,37 @@
 import type { Reply } from "./reply.ts";
 
-// PLACEHOLDER until PR3 (escalation): one neutral sentence and a code-set reason for every case.
-// PR3 replaces both with per-category wording. Neither may ever echo what the patient sent (a card number).
-export const HANDOFF_SENTENCE = "I'm passing this to a member of our team now.";
-
-/** Why the router handed off (SPEC "Escalation boundary"). PR3 gives each category its own wording. */
+/** Why the router handed off (SPEC "Escalation boundary"). */
 export type EscalationCategory = "human_requested" | "cannot_do";
 
-// Code-set reasons: the router's own reason is free text and stays in the trace, since it could echo a card number.
-export const CATEGORY_REASONS: Record<EscalationCategory, string> = {
-  human_requested: "patient asked for a person",
-  cannot_do: "request needs a person",
+/** Every source of a handoff; this is the trace's `escalationCategory`. */
+export type Handoff = EscalationCategory | "reply" | "system_error";
+
+// One short first-person sentence per source, written by code (SPEC "Escalation boundary"). It says a person is taking
+// over (knowingly past L877's handoff ban, since a handoff now exists), names no role, never blames the channel
+// (L769), promises no timing and never echoes the patient. The reply model's own escalation and the fail-safe don't
+// know which kind of request it was, so they share a neutral sentence.
+const NEUTRAL = "I'm handing this over to a person who can take care of it.";
+
+/** The sentence and the code-set `escalationReason` for each handoff source. */
+export const HANDOFFS: Record<Handoff, { sentence: string; reason: string }> = {
+  human_requested: { sentence: "Of course, I'm handing this over to a person.", reason: "patient asked for a person" },
+  cannot_do: {
+    sentence: "That isn't something I can do myself, so I'm handing it over to a person.",
+    reason: "needs a person to act",
+  },
+  reply: { sentence: NEUTRAL, reason: "needs a person" },
+  system_error: { sentence: NEUTRAL, reason: "system error" },
 };
 
 /**
  * The whole reply when a person must take over: one short sentence, and nothing past the handoff
  * (no attachments, no follow-up, no memory writes).
  */
-export function toEscalation(reason: string): Reply {
+export function toEscalation(handoff: Handoff): Reply {
   return {
-    response: HANDOFF_SENTENCE,
+    response: HANDOFFS[handoff].sentence,
     escalate: true,
-    escalationReason: reason,
+    escalationReason: HANDOFFS[handoff].reason,
     templateId: null,
     intent: "hand off to a person",
     shouldFollowUp: false,

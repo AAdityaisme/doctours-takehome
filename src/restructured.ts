@@ -1,5 +1,5 @@
 import * as constants from "./data.ts";
-import { CATEGORY_REASONS, toEscalation } from "./escalation.ts";
+import { toEscalation } from "./escalation.ts";
 import { userMessage } from "./prompt.ts";
 import { DESCRIBED_REPLY_SCHEMA, SKILLS, assemble, ruleSkills, skillLoader, type LoadSkillCall } from "./prompts.ts";
 import type { Reply } from "./reply.ts";
@@ -37,9 +37,11 @@ export async function restructuredTurn(
   // intent stands; both get the same digit redaction, since either could echo a card number.
   const intent = (reply: Reply): Reply => ({ ...reply, intent: routed.route?.intent ?? redactNumbers(reply.intent) });
   if (routed.route?.escalation) {
-    const reply = intent(toEscalation(CATEGORY_REASONS[routed.route.escalation.category]));
+    const { category } = routed.route.escalation;
+    const reply = intent(toEscalation(category));
     const totals = { toolCalls: [], apiCalls: routed.apiCalls, usage: routed.usage };
-    return { reply, totals, trace: { router, escalatedBy: "router", skillsLoaded: [], loadSkillCalls: [] } };
+    const trace = { router, escalatedBy: "router", escalationCategory: category, skillsLoaded: [], loadSkillCalls: [] };
+    return { reply, totals, trace };
   }
 
   const assembly = assemble(routed.route?.skills ?? []);
@@ -75,7 +77,8 @@ export async function restructuredTurn(
       loader: skillLoader(assembly.rest, loadSkillCalls),
     });
     const reply = intent(turn.reply);
-    return { reply, totals: withRouter(turn), trace: { ...trace(), escalatedBy: reply.escalate ? "reply" : null } };
+    const by = reply.escalate ? "reply" : null;
+    return { reply, totals: withRouter(turn), trace: { ...trace(), escalatedBy: by, escalationCategory: by } };
   } catch (error) {
     if (error instanceof TurnError) throw new TurnError(error.cause, withRouter(error.progress), trace());
     throw error;

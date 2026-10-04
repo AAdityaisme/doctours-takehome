@@ -3,7 +3,7 @@ import { test } from "node:test";
 import type { Response, ResponseCreateParamsNonStreaming } from "openai/resources/responses/responses";
 import { replyAll, type BatchOptions } from "../src/cli.ts";
 import * as constants from "../src/data.ts";
-import { CATEGORY_REASONS, HANDOFF_SENTENCE } from "../src/escalation.ts";
+import { HANDOFFS } from "../src/escalation.ts";
 import { CATALOG, CORE, ROUTER_SYSTEM, SKILLS, assemble, ruleSkills } from "../src/prompts.ts";
 import { fake, final, toolCall, usage } from "./fake.ts";
 
@@ -145,10 +145,11 @@ test("router escalation: no reply call, the handoff is built in code with a cate
   const { reply, trace } = await run(client, "get me someone real");
   assert.equal(requests.length, 1, "router only");
   assert.equal(reply.escalate, true);
-  assert.equal(reply.response, HANDOFF_SENTENCE);
-  assert.equal(reply.escalationReason, CATEGORY_REASONS.human_requested);
+  assert.equal(reply.response, HANDOFFS.human_requested.sentence);
+  assert.equal(reply.escalationReason, HANDOFFS.human_requested.reason);
   assert.equal(reply.intent, "wants a person", "decision 4: the router's intent");
   assert.equal(trace.escalatedBy, "router");
+  assert.equal(trace.escalationCategory, "human_requested");
   assert.equal(trace.apiCalls, 1, "the router call counts");
   assert.deepEqual(trace.tokens, { input: 100, cached: 60, cacheWrite: 0, output: 20, reasoning: 5 });
   assert.deepEqual((trace.router as { escalation: unknown }).escalation, { category: "human_requested", reason: "asked for a person" });
@@ -158,10 +159,11 @@ test("the reply model can still escalate a request the router missed", async () 
   const { client } = scripted({ intent: "hold a date" }, [final({ escalate: true, escalationReason: "hold 4242", response: "sure" })]);
   const { reply, trace } = await run(client);
   assert.equal(reply.escalate, true);
-  assert.equal(reply.response, HANDOFF_SENTENCE);
+  assert.equal(reply.response, HANDOFFS.reply.sentence);
   assert.equal(reply.escalationReason, "needs a person", "code-set, not the model's");
   assert.equal(reply.intent, "hold a date", "decision 4: the router's intent");
   assert.equal(trace.escalatedBy, "reply");
+  assert.equal(trace.escalationCategory, "reply");
 });
 
 test("Reply.intent comes from the router, not the reply model", async () => {
@@ -231,6 +233,7 @@ test("a reply-loop failure still fails safe to a handoff, with the router in its
   assert.equal(reply.escalate, true);
   assert.equal(reply.escalationReason, "system error");
   assert.equal(trace.ok, false);
+  assert.equal(trace.escalationCategory, "system_error");
   assert.equal(trace.apiCalls, 1);
   assert.deepEqual(trace.tokens, { input: 100, cached: 60, cacheWrite: 0, output: 20, reasoning: 5 });
   assert.deepEqual(trace.skillsLoaded, ["financing"]);
