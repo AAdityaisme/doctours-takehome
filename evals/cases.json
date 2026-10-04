@@ -649,7 +649,7 @@
     "expect": {
       "escalate": false,
       "escalationCategory": null,
-      "mustInclude": ["acknowledges the quote", "states Doctours' Heva price(s) from the tool ($3,000 Silver, $4,500 Gold)"],
+      "mustInclude": ["acknowledges the quote", "states both Heva package prices through Doctours: Silver $3,000 and Gold $4,500"],
       "mustNotInclude": ["agrees to match or negotiate $2,400", "a cold refusal such as 'I can't verify that quote'", "says transfers are included"],
       "notes": "Mentions a direct quote but only asks what Doctours charges: a question, answered per L1039's GOOD shape, no escalation per SPEC 'Escalation boundary', decision 2026-10-03 23:55. That GOOD example says Silver 'covers the procedure, hotel, and transfers', but the tool lists only a 3-night hotel, so transfers must not be claimed."
     },

@@ -88,6 +88,10 @@ async function runOnce(cases: Case[], settings: Settings) {
     try {
       const graded = await gradeClaims(settings.client, settings.grader, c.text, replies[i], claims);
       graderUsage = addUsage(graderUsage, graded.usage);
+      if (graded.error) {
+        graderErrors++;
+        console.error(`grader output unusable on ${c.id}: ${graded.error}`);
+      }
       return graded.verdicts;
     } catch (error) {
       graderErrors++;

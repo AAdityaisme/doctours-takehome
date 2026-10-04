@@ -299,3 +299,29 @@ test("M4: no case reuses a packet sample message verbatim", () => {
   const samples = new Set(load("packet-samples.json").map((s) => norm(s.text)));
   for (const c of load("cases.json")) assert.ok(!samples.has(norm(c.text)), c.id);
 });
+
+test("amounts written with USD instead of $ are the same token; other values still differ", () => {
+  assert.equal(containsLiteral("Silver is 3,000 USD.", "$3,000"), true);
+  assert.equal(containsLiteral("Gold: USD 4,500", "$4,500"), true);
+  assert.equal(containsLiteral("Silver is 3,000.50 USD.", "$3,000"), false);
+  assert.equal(containsLiteral("2,500 - 3,200 grafts", "$3,200"), false);
+});
+
+test("an unusable grader output still reports the call's tokens and errors the trial", async () => {
+  const client = {
+    responses: {
+      create: async () =>
+        ({
+          status: "incomplete",
+          output_text: JSON.stringify({ verdicts: [] }),
+          usage: { input_tokens: 40, output_tokens: 7 },
+        }) as unknown as Response,
+    },
+  };
+  const claims = [{ kind: "include" as const, claim: "states a price" }];
+  const graded = await gradeClaims(client, { model: "m", effort: "low" }, "how much?", reply(), claims);
+  assert.equal(graded.verdicts, null);
+  assert.match(graded.error ?? "", /incomplete/);
+  assert.deepEqual([graded.usage.input, graded.usage.output], [40, 7]);
+  assert.equal(scoreTrial(caseOf({ mustInclude: ["states a price"] }), reply(), null, graded.verdicts).error, "grader failed");
+});

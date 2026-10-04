@@ -63,9 +63,11 @@ const DIGITS = /^(?=.*\d)[\d\s/-]+$/;
 /** URLs, emails, dollar amounts and card-style digit strings are checked in code; anything else is a claim for the grader. */
 export const isLiteral = (claim: string): boolean => [URL, EMAIL, DOLLARS, DIGITS].some((pattern) => pattern.test(claim));
 
-const AMOUNT_TOKEN = /\$\d+(?:,\d{3})*(?:\.\d+)?/g;
+// "$3,000", "3,000 USD" and "USD 3,000" are the same amount; "$500.99" is not "$500".
+const NUMBER = String.raw`\d+(?:,\d{3})*(?:\.\d+)?`;
+const AMOUNT_TOKEN = new RegExp(String.raw`\$\s?${NUMBER}|\b${NUMBER}\s?USD\b|\bUSD\s?${NUMBER}`, "g");
 const EMAIL_TOKEN = /[\w.%+-]+@[\w-]+(?:\.[\w-]+)*\.[a-z]{2,}/gi;
-const amount = (token: string): number => Number(token.slice(1).replaceAll(",", ""));
+const amount = (token: string): number => Number(token.replace(/[^\d.]/g, ""));
 const digitsOnly = (text: string): string => text.replace(/[\s/.-]/g, "");
 
 /** The whole URLs, email addresses and dollar amounts in `text`, as tokens. */
@@ -190,7 +192,8 @@ export function parseVerdicts(response: Response, count: number): { pass: boolea
 
 /**
  * Asks the grader model about the claims code can't check. It sees the patient's message, the reply and the claims,
- * nothing else (no notes, no packet). Returns verdicts in claim order plus the call's token usage.
+ * nothing else (no notes, no packet). Returns verdicts in claim order (null, with `error`, when the output is unusable)
+ * plus the call's token usage.
  */
 export async function gradeClaims(
   client: Client,
@@ -198,7 +201,7 @@ export async function gradeClaims(
   text: string,
   reply: Reply,
   claims: Claim[],
-): Promise<{ verdicts: Verdicts; usage: Usage }> {
+): Promise<{ verdicts: Verdicts; usage: Usage; error: string | null }> {
   const numbered = claims.map((claim, i) => ({
     claim: i + 1,
     type: claim.kind === "include" ? "must include" : "must not include",
@@ -213,10 +216,18 @@ export async function gradeClaims(
     ],
     text: { format: { type: "json_schema", name: "Verdicts", schema: { ...VERDICT_SCHEMA }, strict: true } },
   });
-  const verdicts = parseVerdicts(response, claims.length);
   const usage = response.usage;
+  let verdicts: Verdicts = null;
+  let error: string | null = null;
+  try {
+    verdicts = parseVerdicts(response, claims.length);
+  } catch (invalid) {
+    error = invalid instanceof Error ? invalid.message : String(invalid);
+  }
+  // Usage is returned even when the verdicts are unusable: the call was still paid for.
   return {
     verdicts,
+    error,
     usage: {
       input: usage?.input_tokens ?? 0,
       cached: usage?.input_tokens_details?.cached_tokens ?? 0,
