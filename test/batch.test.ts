@@ -200,10 +200,12 @@ test("the CLI client retries 8 times, CONCURRENCY caps messages in flight, and a
             highEngagement: false, workingMemoryUpdates: null };
       return { status: "completed", output: [], output_text: JSON.stringify(value) };
     };`;
+  // The parent's own CONCURRENCY must not leak into the default case.
+  const { CONCURRENCY: _inherited, ...parentEnv } = process.env;
   const run = (env: Record<string, string>) =>
     spawnSync(process.execPath, ["--import", `data:text/javascript,${encodeURIComponent(stub)}`, cli], {
       input: JSON.stringify(Array.from({ length: 6 }, (_, i) => ({ id: `m${i}`, text: `m${i}` }))),
-      env: { ...process.env, OPENAI_API_KEY: "dummy", ...env },
+      env: { ...parentEnv, OPENAI_API_KEY: "dummy", ...env },
       encoding: "utf8",
     });
   const last = (env: Record<string, string>) => {

@@ -78,6 +78,8 @@ async function replyOne(item: unknown, index: number, options: BatchOptions): Pr
 
 // Two in flight keeps a batch under a 500K tokens-per-minute limit: a 429 that outlasts the retries becomes a
 // "system error" handoff, which scores as a wrong escalate.
+// ponytail: caps messages, not tokens; the SDK's retry-after waits absorb bursts. Add a tokens-per-minute budget if
+// 429s ever outlast the 8 retries.
 export const DEFAULT_CONCURRENCY = 2;
 
 /** Replies to every message, a few at a time. Output order and length always match the input. */
