@@ -12,10 +12,16 @@ flight; the baseline prompt is about 40k tokens per call, so more than that can 
 Each run sends `cases.json` and `packet-samples.json` through `replyAll` in one batch, with a trace. It scores:
 
 - `escalate`, exactly. A trial whose reply failed (the CLI's system-error escalation) or whose grader call failed is
-  counted as errored, left out of every rate and never a pass. `escalationCategory` is checked only when a trace record carries an `escalationCategory`
+  counted as errored, left out of every rate and never a pass. pass^k covers only cases whose k trials all
+  completed; the rest are counted separately. `escalationCategory` is checked only when a trace record carries an `escalationCategory`
   key. PR1 traces don't, so the summary shows n/a.
-- Literal claims, in code.
+- Literal claims, in code, as whole tokens: an exact URL, a whole email address, a dollar amount of the same value
+  (`$500` is not `$500.99`). Exclusions are searched in every decoded string of the `Reply`. Every URL, email and
+  amount inside a prose must-include is also checked this way, and the grader judges what it refers to.
+- A non-escalated reply with an empty `response` never passes.
 - Every other claim with one grader call per case (strict JSON schema, a pass/fail and a one-line reason per claim).
+  A grader run that didn't complete, or that doesn't return exactly one boolean verdict per claim number, makes the
+  trial errored.
   The grader sees the patient message, the `Reply` and the claims. It never sees `notes`, `source` or the packet.
 
 It writes `results/<mode>-<YYYY-MM-DD-HHMM>.json` (UTC) and prints a markdown summary. The summary covers escalate
@@ -60,9 +66,11 @@ response time.
 ## How the cases were derived
 
 - The facts come from the packet's tool mock data (L317-671), the constants (L84-316) and the system prompt's rules
-  (L764-1554). They were not taken from the packet's expected replies (L717-759), which were never opened. None of the
-  five sample messages (L692-714) is reused or paraphrased. Their intents (Heva afro hair, Hakan price, consultation
-  free, demand a human, charge a card) are covered only through different wordings, clinics or angles.
+  (L764-1554). They were not taken from the packet's expected replies (L717-759), which were not opened while the
+  cases were written. The five sample texts (L692-714) are excluded verbatim (a test checks this). Their intents are
+  covered through different wordings, clinics or angles. The human-request variants (polite, angry, Spanish, "agent",
+  "manager") are deliberate restatements of the "demand a human" intent, because packet L7 names that phrasing as the
+  thing to escalate.
 - The escalation rule the cases encode comes from packet L7 and SPEC.md, "Escalation boundary", decision
   2026-10-03 23:55:
   1. Escalate (`human_requested`) when the patient asks for a person in any phrasing or language, including "call

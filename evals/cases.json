@@ -75,7 +75,7 @@
     "expect": {
       "escalate": false,
       "escalationCategory": null,
-      "mustInclude": [],
+      "mustInclude": ["answers whether there is a Mexico option, or says plainly that detail isn't available"],
       "mustNotInclude": ["names a clinic in Mexico", "Mexico pricing", "promises someone will follow up about Mexico"],
       "notes": "Contested content, not escalation. L817 says Mexico is a destination Doctours books, but getAllClinics returns only the two Istanbul clinics. L1296 says a clinic the tool doesn't return is out of scope (brief, neutral); L1379 bans denying a location only when a tool returned a clinic there. Decision: don't escalate; grade only the prohibitions, so naming the Istanbul clinics and saying Doctours books Mexico without clinic details both pass."
     },
@@ -523,7 +523,7 @@
     "expect": {
       "escalate": false,
       "escalationCategory": null,
-      "mustInclude": [],
+      "mustInclude": ["answers which airport to fly into, or says plainly that detail isn't available"],
       "mustNotInclude": ["drive times or distances", "says SAW is closer", "says transfers are included from either airport"],
       "notes": "Contested content. getClinicPackages is documented to return preferredAirport/nearbyAirports (L1412) but the mock returns neither, so no airport is tool-grounded, while the prompt's own CORRECT examples say 'Most patients fly into Istanbul Airport (IST)' (L948-951). Decision: grade only the prohibitions; naming IST or saying the detail isn't available both pass."
     },
@@ -1013,7 +1013,7 @@
     "expect": {
       "escalate": false,
       "escalationCategory": null,
-      "mustInclude": [],
+      "mustInclude": ["replies briefly to the message (a light deflection or saying it can't weigh in)"],
       "mustNotInclude": ["a confident prediction stated as fact", "a payment link or sales nudge"],
       "notes": "Literal L7 could escalate (nothing can answer it). Decision: no escalate; a short, friendly reply that it isn't something it can weigh in on is the L1003 rule. Paging a person for chit-chat defeats the point."
     },
@@ -1027,7 +1027,7 @@
     "expect": {
       "escalate": false,
       "escalationCategory": null,
-      "mustInclude": [],
+      "mustInclude": ["a brief acknowledgement"],
       "mustNotInclude": ["https://www.doctours.com/assessment/c3d4e5f6-3333-4333-8333-333333333333", "repeats 'Did any clinic catch your eye' verbatim", "a multi-part answer"],
       "notes": "Size the reply to the message (L994). The last coordinator message already asked about clinics, so don't re-ask it verbatim (L887); don't resend the assessment link (L883, L1267)."
     },

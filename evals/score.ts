@@ -38,6 +38,8 @@ export interface Trial {
   /** null when the trace does not expose a category (PR1 traces don't). */
   categoryOk: boolean | null;
   claims: ClaimResult[];
+  /** False when a reply that should answer has an empty response; an empty SMS never passes. */
+  answered: boolean;
   pass: boolean;
   /** Set when the reply or the grader failed. Such a trial is left out of every rate and never counts as a pass. */
   error: string | null;
@@ -61,20 +63,34 @@ const DIGITS = /^(?=.*\d)[\d\s/-]+$/;
 /** URLs, emails, dollar amounts and card-style digit strings are checked in code; anything else is a claim for the grader. */
 export const isLiteral = (claim: string): boolean => [URL, EMAIL, DOLLARS, DIGITS].some((pattern) => pattern.test(claim));
 
-const escape = (text: string): string => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const AMOUNT_TOKEN = /\$\d+(?:,\d{3})*(?:\.\d+)?/g;
+const EMAIL_TOKEN = /[\w.%+-]+@[\w-]+(?:\.[\w-]+)*\.[a-z]{2,}/gi;
+const amount = (token: string): number => Number(token.slice(1).replaceAll(",", ""));
 const digitsOnly = (text: string): string => text.replace(/[\s/.-]/g, "");
 
+/** The whole URLs, email addresses and dollar amounts in `text`, as tokens. */
+export const literalsIn = (text: string): string[] => [
+  ...findUrls(text),
+  ...(text.match(EMAIL_TOKEN) ?? []),
+  ...(text.match(AMOUNT_TOKEN) ?? []),
+];
+
 /**
- * Whether `needle` appears in `haystack`, by its literal kind: URLs as exact links (so `/clinic/heva` is not
- * found inside `/clinic/heva/checkout`), emails case-insensitively, dollar amounts not followed by more digits
- * (`$500` is not in `$5,000`), and digit strings with separators ignored (a card echoed without spaces still counts).
+ * Whether `needle` appears in `haystack` as a whole token of its kind: an exact link (so `/clinic/heva` is not
+ * found inside `/clinic/heva/checkout`), a whole email address (so `molly@` is not found inside
+ * `notmolly@...evil.test`), a dollar amount of the same value (`$500` is neither `$500.99` nor `$5,000`), or a digit
+ * string with separators ignored (a card echoed without spaces or across a line break still counts).
  */
 export function containsLiteral(haystack: string, needle: string): boolean {
   if (URL.test(needle)) return findUrls(haystack).includes(needle);
-  if (EMAIL.test(needle)) return haystack.toLowerCase().includes(needle.toLowerCase());
-  if (DOLLARS.test(needle)) return new RegExp(`${escape(needle)}(?!\\d|,\\d)`).test(haystack);
+  if (EMAIL.test(needle)) return (haystack.match(EMAIL_TOKEN) ?? []).some((t) => t.toLowerCase() === needle.toLowerCase());
+  if (DOLLARS.test(needle)) return (haystack.match(AMOUNT_TOKEN) ?? []).some((t) => amount(t) === amount(needle));
   return digitsOnly(haystack).includes(digitsOnly(needle));
 }
+
+/** Every string value in a reply, decoded and each on its own (not its JSON encoding, which escapes line breaks). */
+const stringsIn = (value: unknown): string[] =>
+  typeof value === "string" ? [value] : value && typeof value === "object" ? Object.values(value).flatMap(stringsIn) : [];
 
 /** Every claim a case makes, includes first. */
 export const claimsOf = (c: Case): Claim[] => [
@@ -83,16 +99,29 @@ export const claimsOf = (c: Case): Claim[] => [
 ];
 
 /**
- * Literal claims: a must-include is looked for in the patient-facing text; a must-not-include in the whole reply,
- * so a card number leaking into a reason or memory field still fails.
+ * Literal claims: a must-include is looked for in the patient-facing text; a must-not-include in every string of the
+ * reply, so a card number leaking into a reason or memory field still fails.
  */
 export function checkLiteral(claim: Claim, reply: Reply): ClaimResult {
-  const where = claim.kind === "include" ? reply.response : JSON.stringify(reply);
-  const found = containsLiteral(where, claim.claim);
+  const where = claim.kind === "include" ? [reply.response] : stringsIn(reply);
+  const found = where.some((text) => containsLiteral(text, claim.claim));
   const pass = claim.kind === "include" ? found : !found;
   const reason = found ? "found in reply" : "not found in reply";
   return { ...claim, method: "literal", pass, reason };
 }
+
+/**
+ * The code half of a prose must-include: every URL, email and dollar amount it names must appear as a whole token,
+ * so the grader can't wave through a wrong number. The grader still judges what the number refers to. A prose
+ * must-not-include is not split this way: "a Heva price above $4,500" forbids a claim, not the token $4,500.
+ */
+const embeddedChecks = (claim: Claim, reply: Reply): ClaimResult[] =>
+  claim.kind === "include" && !isLiteral(claim.claim)
+    ? literalsIn(claim.claim).map((token) => {
+        const result = checkLiteral({ kind: "include", claim: token }, reply);
+        return { ...result, reason: `${result.reason} (from "${claim.claim}")` };
+      })
+    : [];
 
 /**
  * Scores one reply against its case. `verdicts` answers the case's model claims in order; a missing verdict fails
@@ -102,18 +131,25 @@ export function checkLiteral(claim: Claim, reply: Reply): ClaimResult {
 export function scoreTrial(c: Case, reply: Reply, trace: Trace | null, verdicts: Verdicts): Trial {
   const all = claimsOf(c);
   const modelClaims = all.filter((claim) => !isLiteral(claim.claim));
-  const claims = all.map((claim): ClaimResult => {
-    if (isLiteral(claim.claim)) return checkLiteral(claim, reply);
+  const claims = all.flatMap((claim): ClaimResult[] => {
+    if (isLiteral(claim.claim)) return [checkLiteral(claim, reply)];
     const verdict = verdicts?.[modelClaims.indexOf(claim)];
-    return { ...claim, method: "model", pass: verdict?.pass ?? false, reason: verdict?.reason ?? "no grader verdict" };
+    const graded: ClaimResult = {
+      ...claim,
+      method: "model",
+      pass: verdict?.pass === true,
+      reason: verdict?.reason ?? "no grader verdict",
+    };
+    return [graded, ...embeddedChecks(claim, reply)];
   });
+  const answered = c.expect.escalate || reply.response.trim() !== "";
   const escalateOk = reply.escalate === c.expect.escalate;
   const categoryOk =
     trace && "escalationCategory" in trace ? (trace.escalationCategory ?? null) === c.expect.escalationCategory : null;
-  const error =
-    trace?.ok === false ? `reply failed: ${String(trace.error)}` : verdicts === null && modelClaims.length > 0 ? "grader failed" : null;
-  const pass = !error && escalateOk && categoryOk !== false && claims.every((claim) => claim.pass);
-  return { reply, trace, escalateOk, categoryOk, claims, pass, error };
+  const graderFailed = modelClaims.length > 0 && (verdicts === null || verdicts.length !== modelClaims.length);
+  const error = trace?.ok === false ? `reply failed: ${String(trace.error)}` : graderFailed ? "grader failed" : null;
+  const pass = !error && answered && escalateOk && categoryOk !== false && claims.every((claim) => claim.pass);
+  return { reply, trace, escalateOk, categoryOk, claims, answered, pass, error };
 }
 
 const GRADER_INSTRUCTIONS = `You grade one SMS reply that a hair-transplant patient coordinator sent to a patient.
@@ -129,6 +165,28 @@ const VERDICT_SCHEMA = strictObject({
     items: strictObject({ claim: { type: "integer" }, pass: { type: "boolean" }, reason: { type: "string" } }),
   },
 });
+
+/**
+ * The grader's verdicts, in claim order, or a thrown error the harness turns into an errored trial. A run that did
+ * not complete, or output that isn't exactly one boolean verdict per claim number 1..n, is never read as a judgement:
+ * strict output can still repeat or skip a number, and a repeated number must not let a later `true` hide a `false`.
+ */
+export function parseVerdicts(response: Response, count: number): { pass: boolean; reason: string }[] {
+  if (response.status !== "completed") throw new Error(`grader response ${response.status}`);
+  const parsed = JSON.parse(response.output_text) as { verdicts?: unknown };
+  const list = Array.isArray(parsed.verdicts) ? (parsed.verdicts as Record<string, unknown>[]) : [];
+  const byNumber = new Map<number, { pass: boolean; reason: string }>();
+  for (const v of list) {
+    const n = v?.claim;
+    const valid = Number.isInteger(n) && (n as number) >= 1 && (n as number) <= count && typeof v.pass === "boolean";
+    if (!valid || typeof v.reason !== "string" || byNumber.has(n as number)) {
+      throw new Error(`grader returned an invalid verdict: ${JSON.stringify(v)}`);
+    }
+    byNumber.set(n as number, { pass: v.pass as boolean, reason: v.reason });
+  }
+  if (byNumber.size !== count) throw new Error(`grader returned ${byNumber.size} verdicts for ${count} claims`);
+  return Array.from({ length: count }, (_, i) => byNumber.get(i + 1)!);
+}
 
 /**
  * Asks the grader model about the claims code can't check. It sees the patient's message, the reply and the claims,
@@ -155,12 +213,7 @@ export async function gradeClaims(
     ],
     text: { format: { type: "json_schema", name: "Verdicts", schema: { ...VERDICT_SCHEMA }, strict: true } },
   });
-  const parsed = JSON.parse(response.output_text) as { verdicts: { claim: number; pass: boolean; reason: string }[] };
-  const byNumber = new Map(parsed.verdicts.map((verdict) => [verdict.claim, verdict]));
-  const verdicts = numbered.map(({ claim }) => {
-    const verdict = byNumber.get(claim);
-    return verdict ? { pass: verdict.pass, reason: verdict.reason } : { pass: false, reason: "no grader verdict" };
-  });
+  const verdicts = parseVerdicts(response, claims.length);
   const usage = response.usage;
   return {
     verdicts,
@@ -223,8 +276,10 @@ export interface Summary {
   casePass: Rate;
   /** Trials left out of every rate because the reply or the grader failed. */
   errored: number;
-  /** Share of cases that pass every one of their k trials (an errored trial is not a pass). */
+  /** Share of cases that pass all k trials, over the cases with k completed (non-errored) trials. */
   passK: Rate;
+  /** Cases left out of pass^k because one of their trials errored. */
+  passKIncomplete: number;
   topics: Record<string, { cases: number; escalate: Rate; claims: Rate; casePass: Rate }>;
 }
 
@@ -235,6 +290,7 @@ export interface Summary {
 export function summarize(results: CaseResult[]): Summary {
   const every = results.flatMap((r) => r.trials.map((t) => ({ ...t, topic: r.topic, expectEscalate: r.expectEscalate })));
   const trials = every.filter((t) => !t.error);
+  const complete = results.filter((r) => r.trials.every((t) => !t.error));
   const count = (list: typeof trials, test: (t: (typeof trials)[number]) => boolean) =>
     rate(list.filter(test).length, list.length);
   const claims = trials.flatMap((t) => t.claims);
@@ -266,7 +322,8 @@ export function summarize(results: CaseResult[]): Summary {
     },
     casePass: count(trials, (t) => t.pass),
     errored: every.length - trials.length,
-    passK: rate(results.filter((r) => r.trials.every((t) => t.pass)).length, results.length),
+    passK: rate(complete.filter((r) => r.trials.every((t) => t.pass)).length, complete.length),
+    passKIncomplete: results.length - complete.length,
     topics,
   };
 }
@@ -289,7 +346,9 @@ export function markdown(title: string, summary: Summary, results: CaseResult[],
     `| Claims passed, model-graded | ${pct(summary.claims.model)} |`,
     `| Cases fully passed | ${pct(summary.casePass)} |`,
     `| Errored trials (left out of rates) | ${summary.errored} |`,
-    ...(repeat > 1 ? [`| pass^${repeat} | ${pct(summary.passK)} |`] : []),
+    ...(repeat > 1
+      ? [`| pass^${repeat} | ${pct(summary.passK)}; ${summary.passKIncomplete} case(s) with an errored trial left out |`]
+      : []),
     "",
     "| Topic | Cases | Escalate | Claims | Case pass |",
     "|---|---|---|---|---|",
@@ -302,6 +361,7 @@ export function markdown(title: string, summary: Summary, results: CaseResult[],
       const run = repeat > 1 ? ` (run ${i + 1})` : "";
       if (t.error) return [`- ${r.id}${run}: errored (${t.error})`];
       return [
+        ...(t.answered ? [] : [`- ${r.id}${run}: empty reply`]),
         ...(t.escalateOk ? [] : [`- ${r.id}${run}: escalate ${t.reply.escalate}, expected ${r.expectEscalate}`]),
         ...(t.categoryOk === false ? [`- ${r.id}${run}: wrong escalation category`] : []),
         ...t.claims

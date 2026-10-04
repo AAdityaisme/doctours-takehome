@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { parseArgs } from "node:util";
 import OpenAI from "openai";
 import { MODES, replyAll, type Mode } from "../src/cli.ts";
@@ -83,7 +83,8 @@ async function runOnce(cases: Case[], settings: Settings) {
   let graderErrors = 0;
   const verdicts = await pool(cases, settings.concurrency * 2, async (c, i): Promise<Verdicts> => {
     const claims = claimsOf(c).filter((claim) => !isLiteral(claim.claim));
-    if (claims.length === 0) return [];
+    // A failed reply is an errored trial whatever the grader says, so don't pay for the call.
+    if (claims.length === 0 || traces.get(i)?.ok === false) return [];
     try {
       const graded = await gradeClaims(settings.client, settings.grader, c.text, replies[i], claims);
       graderUsage = addUsage(graderUsage, graded.usage);
@@ -96,6 +97,25 @@ async function runOnce(cases: Case[], settings: Settings) {
   });
   const trials = cases.map((c, i) => scoreTrial(c, replies[i], traces.get(i) ?? null, verdicts[i]));
   return { trials, traces: [...traces.values()], graderUsage, graderErrors };
+}
+
+/**
+ * Writes `body` to `<base>.json` in `dir`, or `<base>-2.json`, `-3`... if that name exists. The exclusive flag makes
+ * the check and the write one step, so a run started in the same minute can never overwrite another run's results.
+ */
+export function writeResults(dir: URL, base: string, body: string): URL {
+  let collision: unknown;
+  for (let n = 1; n <= 99; n++) {
+    const url = new URL(`${base}${n === 1 ? "" : `-${n}`}.json`, dir);
+    try {
+      writeFileSync(url, body, { flag: "wx" });
+      return url;
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== "EEXIST") throw error;
+      collision = error;
+    }
+  }
+  throw collision; // 99 names taken: refuse rather than overwrite.
 }
 
 const fail = (message: string): never => {
@@ -180,11 +200,11 @@ if (import.meta.main) {
   }
   const summary = { cases: summarize(caseResults), packetSamples: summarize(sampleResults) };
   const stamp = started.toISOString().slice(0, 16).replace("T", "-").replace(":", "");
-  let out = new URL(`./results/${mode}-${stamp}.json`, import.meta.url);
-  for (let n = 2; existsSync(out); n++) out = new URL(`./results/${mode}-${stamp}-${n}.json`, import.meta.url);
-  mkdirSync(new URL("./results/", import.meta.url), { recursive: true });
-  writeFileSync(
-    out,
+  const results = new URL("./results/", import.meta.url);
+  mkdirSync(results, { recursive: true });
+  const out = writeResults(
+    results,
+    `${mode}-${stamp}`,
     `${JSON.stringify(
       { mode, sha, startedAt: started.toISOString(), repeat, settings: { ...settings, client: undefined }, summary, usage, cases: caseResults, packetSamples: sampleResults },
       null,
