@@ -154,16 +154,13 @@ const URL_PATTERN = /https?:\/\/[^\s<>"'()[\]{}]*[^\s<>"'()[\]{}.,;:!?]/g;
 export const findUrls = (text: string): string[] => [...new Set(text.match(URL_PATTERN) ?? [])];
 
 /**
- * Packet L83: if the response includes a URL, that URL is the last line.
- * Already compliant (last line is a bare URL) → unchanged. Otherwise every URL is lifted out of the body
- * and appended, one per line.
+ * Packet L83: if the response includes a URL, that URL is the last line. Every URL is lifted out of the body and
+ * appended, one per line, so no link is left mid-message. Already-compliant text comes back unchanged.
  */
 export function urlLast(response: string): string {
   const trimmed = response.trimEnd();
   const urls = findUrls(trimmed);
   if (urls.length === 0) return trimmed;
-  const lastLine = trimmed.split("\n").at(-1)!.trim();
-  if (urls.includes(lastLine)) return trimmed;
   // ponytail: lifting a URL out of a sentence can leave "here: and" behind; the prompt asks for URL-last, so this is the fallback.
   const body = trimmed
     .split("\n")
@@ -186,7 +183,8 @@ export function urlLast(response: string): string {
 export function postProcess(raw: unknown, toolUrls: ReadonlySet<string>): Reply {
   assertReply(raw);
   if (raw.escalate) {
-    const escalated = toEscalation(raw.escalationReason?.trim() || "needs a person");
+    // The model's own reason is free text and could echo what the patient sent (a card number), so code sets it.
+    const escalated = toEscalation("needs a person");
     assertReply(escalated);
     return escalated;
   }

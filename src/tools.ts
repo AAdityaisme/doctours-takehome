@@ -483,6 +483,11 @@ export const TOOLS: Tool[] = [
             softPackageInterestIds: { type: ["array", "null"], items: { type: "string" } },
           },
         },
+        // The prompt (L1415) tells the model to send this; the packet handler ignores it.
+        tentativeProcedureDates: {
+          type: "object",
+          properties: { text: { type: "string" }, strength: { type: "string", enum: ["strong", "medium", "weak"] } },
+        },
         userId: nullableString,
       },
     },

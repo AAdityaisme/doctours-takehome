@@ -82,13 +82,17 @@ test("urlLast keeps compliant text and moves inline URLs to the last line", () =
     urlLast("Your page:\nhttps://x.test/a\nAny questions?"),
     "Your page:\nAny questions?\nhttps://x.test/a",
   );
+  assert.equal(
+    urlLast("See https://x.test/a for photos.\nhttps://x.test/b"),
+    "See for photos.\nhttps://x.test/a\nhttps://x.test/b",
+  );
 });
 
 test("an escalated reply is replaced by the handoff sentence and nothing else ships", () => {
   const out = postProcess(
     reply({
       escalate: true,
-      escalationReason: "patient asked to charge a card",
+      escalationReason: "patient asked to charge card 4242 4242 4242 4242",
       response: "Sure, charging your card ending 4242 now! Meanwhile, Gold is $4500.",
       attachmentUrls: ["https://www.doctours.com/payment/x"],
       shouldFollowUp: true,
@@ -98,10 +102,10 @@ test("an escalated reply is replaced by the handoff sentence and nothing else sh
   );
   assert.equal(out.response, HANDOFF_SENTENCE);
   assert.equal(out.escalate, true);
-  assert.equal(out.escalationReason, "patient asked to charge a card");
+  assert.equal(out.escalationReason, "needs a person");
+  assert.doesNotMatch(JSON.stringify(out), /4242/);
   assert.equal(out.attachmentUrls, null);
   assert.equal(out.shouldFollowUp, false);
   assert.equal(out.followUpTiming, null);
   assert.equal(out.workingMemoryUpdates, null);
-  assert.equal(postProcess(reply({ escalate: true }), new Set()).escalationReason, "needs a person");
 });
