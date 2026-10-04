@@ -4,7 +4,8 @@ import type { Response } from "openai/resources/responses/responses";
 import { replyAll } from "../src/cli.ts";
 import { HANDOFFS, toEscalation, type Handoff } from "../src/escalation.ts";
 import { REPLY_SCHEMA, schemaError } from "../src/reply.ts";
-import { fake, final } from "./fake.ts";
+import { TOOLS } from "../src/tools.ts";
+import { fake, final, toolCall } from "./fake.ts";
 
 // SPEC "Escalation boundary": no role (L877), no channel blame (L769), no timing, no echo, own wording.
 const BANNED = [
@@ -100,5 +101,51 @@ test("trace escalationCategory: router category, `reply`, `system_error`, else n
         ? [HANDOFFS.cannot_do.sentence, HANDOFFS.human_requested.sentence, HANDOFFS.reply.sentence, HANDOFFS.system_error.sentence, "ok"]
         : ["ok", "ok", HANDOFFS.reply.sentence, HANDOFFS.system_error.sentence, "ok"],
     );
+  }
+});
+
+test("an escalated message co-returned with a tool call ends the turn: no tool runs, no further call (both modes)", async () => {
+  const memoryTool = TOOLS.find((tool) => tool.name === "updateWorkingMemoryTool")!;
+  const run = memoryTool.run;
+  let writes = 0;
+  memoryTool.run = (input) => (writes++, run(input));
+  try {
+    for (const escalate of [true, false]) {
+      for (const mode of ["restructured", "baseline"] as const) {
+        writes = 0;
+        let replyCalls = 0;
+        const client = fake(async (body) => {
+          if ((body.text?.format as { name?: string }).name === "Route") {
+            return { ...final({}), output_text: JSON.stringify({ intent: "x", skills: [], escalation: null }) } as Response;
+          }
+          if (++replyCalls > 1) return final({ response: "a later answer" });
+          const message = final({ escalate, response: "model text" });
+          const call = toolCall("updateWorkingMemoryTool", { memory: {} }, "w1");
+          return { ...message, output: [...call.output, ...message.output] } as Response;
+        });
+        const traces: Record<string, unknown>[] = [];
+        const [reply] = await replyAll([{ id: "m", text: "hi" }], {
+          client,
+          mode,
+          model: "m",
+          effort: "low",
+          router: { model: "r", effort: "none" },
+          trace: (record) => traces.push(record),
+        });
+        if (escalate) {
+          assert.equal(writes, 0, `${mode}: no tool after an escalation`);
+          assert.equal(replyCalls, 1, `${mode}: no further model call`);
+          assert.equal(reply!.response, HANDOFFS.reply.sentence);
+          assert.equal(traces[0]!.escalationCategory, "reply");
+        } else {
+          // Not an escalation: the tool runs and the loop continues, as before.
+          assert.equal(writes, 1, mode);
+          assert.equal(replyCalls, 2, mode);
+          assert.equal(reply!.response, "a later answer");
+        }
+      }
+    }
+  } finally {
+    memoryTool.run = run;
   }
 });

@@ -7,7 +7,7 @@ import type {
 } from "openai/resources/responses/responses";
 import { toResponseInputItems } from "openai/lib/responses/ResponseInputItems";
 import type { SkillLoader } from "./prompts.ts";
-import { REPLY_SCHEMA, findUrls, postProcess, type Reply, type Schema } from "./reply.ts";
+import { REPLY_SCHEMA, findUrls, postProcess, schemaError, type Reply, type Schema } from "./reply.ts";
 import { runTool, type Tool } from "./tools.ts";
 
 /** The one OpenAI method this system uses. The real `OpenAI` client fits; tests pass a fake. */
@@ -63,6 +63,16 @@ export const addUsage = (total: Usage, usage: ResponseUsage | undefined): void =
   total.reasoning += usage?.output_tokens_details?.reasoning_tokens ?? 0;
 };
 
+/** True when `text` is a schema-valid Reply with `escalate: true`; anything else (empty, not JSON, invalid) is false. */
+const isEscalation = (text: string): boolean => {
+  try {
+    const raw: unknown = JSON.parse(text);
+    return schemaError(REPLY_SCHEMA, raw) === null && (raw as Reply).escalate;
+  } catch {
+    return false;
+  }
+};
+
 /**
  * One patient message through the Responses API: call tools until the model answers, then parse its
  * strict-schema `Reply` and post-process it. Stable content (tools, schema, system prompt) comes first so
@@ -115,6 +125,10 @@ export async function respond(options: {
       addUsage(progress.usage, response.usage);
 
       const calls = response.output.filter((item) => item.type === "function_call");
+      // A message that already escalates stops the turn here, before any co-returned tool runs (L7: stop at the handoff).
+      if (calls.length > 0 && isEscalation(response.output_text)) {
+        return { reply: postProcess(JSON.parse(response.output_text), toolUrls), ...progress };
+      }
       if (calls.length === 0) {
         if (response.status !== "completed") throw new Error(`response ${response.status}`);
         const reply = postProcess(JSON.parse(response.output_text), toolUrls);
