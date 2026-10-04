@@ -177,3 +177,47 @@ test("an escalated message among co-returned messages ends the turn before any t
     memoryTool.run = run;
   }
 });
+
+test("an incomplete response with a tool call and an escalated message is a failed turn: system_error, no tool runs", async () => {
+  const memoryTool = TOOLS.find((tool) => tool.name === "updateWorkingMemoryTool")!;
+  const run = memoryTool.run;
+  let writes = 0;
+  memoryTool.run = (input) => (writes++, run(input));
+  try {
+    for (const mode of ["restructured", "baseline"] as const) {
+      writes = 0;
+      let replyCalls = 0;
+      const client = fake(async (body) => {
+        if ((body.text?.format as { name?: string }).name === "Route") {
+          return { ...final({}), output_text: JSON.stringify({ intent: "x", skills: [], escalation: null }) } as Response;
+        }
+        replyCalls++;
+        const call = toolCall("updateWorkingMemoryTool", { memory: {} }, "w1");
+        return {
+          ...call,
+          status: "incomplete",
+          output: [...call.output, messageItem(ESCALATED, "msg_0")],
+          output_text: ESCALATED,
+        } as unknown as Response;
+      });
+      const traces: Record<string, unknown>[] = [];
+      const [reply] = await replyAll([{ id: "m", text: "hi" }], {
+        client,
+        mode,
+        model: "m",
+        effort: "low",
+        router: { model: "r", effort: "none" },
+        trace: (record) => traces.push(record),
+      });
+      assert.equal(writes, 0, `${mode}: no tool runs`);
+      assert.equal(replyCalls, 1, `${mode}: no further model call`);
+      assert.equal(reply!.response, HANDOFFS.system_error.sentence, mode);
+      assert.equal(reply!.escalationReason, "system error", mode);
+      assert.equal(traces[0]!.ok, false, mode);
+      assert.match(String(traces[0]!.error), /response incomplete/, mode);
+      assert.equal(traces[0]!.escalationCategory, "system_error", mode);
+    }
+  } finally {
+    memoryTool.run = run;
+  }
+});

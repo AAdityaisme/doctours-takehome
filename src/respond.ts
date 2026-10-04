@@ -141,7 +141,10 @@ export async function respond(options: {
       const calls = response.output.filter((item) => item.type === "function_call");
       // A message that already escalates stops the turn here, before any co-returned tool runs (L7: stop at the handoff).
       const escalation = calls.length > 0 ? escalatedMessage(response) : null;
-      if (escalation) return { reply: postProcess(escalation, toolUrls), ...progress };
+      if (escalation) {
+        if (response.status !== "completed") throw new Error(`response ${response.status}`);
+        return { reply: postProcess(escalation, toolUrls), ...progress };
+      }
       if (calls.length === 0) {
         if (response.status !== "completed") throw new Error(`response ${response.status}`);
         const reply = postProcess(JSON.parse(response.output_text), toolUrls);
