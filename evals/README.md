@@ -1,4 +1,35 @@
-# Eval cases
+# Eval cases and harness
+
+```sh
+node --env-file="$HOME/.config/openai/doctours.env" evals/run.ts --mode baseline [--cases id1,id2] [--repeat k]
+```
+
+With no key file, `export OPENAI_API_KEY=...` and drop `--env-file`. `--mode` takes any mode `src/cli.ts` exports.
+`--cases` picks ids from either file, and `--repeat k` adds pass^k. `--concurrency` (default 2) caps messages in
+flight; the baseline prompt is about 40k tokens per call, so more than that can hit a 500k tokens-per-minute limit. Models come from `REPLY_MODEL`/`REPLY_EFFORT` and
+`GRADER_MODEL`/`GRADER_EFFORT`; both default to `gpt-6.1-sol` at `low`.
+
+Each run sends `cases.json` and `packet-samples.json` through `replyAll` in one batch, with a trace. It scores:
+
+- `escalate`, exactly. `escalationCategory` is checked only when a trace record carries an `escalationCategory`
+  key. PR1 traces don't, so the summary shows n/a.
+- Literal claims, in code.
+- Every other claim with one grader call per case (strict JSON schema, a pass/fail and a one-line reason per claim).
+  The grader sees the patient message, the `Reply` and the claims. It never sees `notes`, `source` or the packet.
+
+It writes `results/<mode>-<YYYY-MM-DD-HHMM>.json` (UTC) and prints a markdown summary. The summary covers escalate
+accuracy (overall, expected true, expected false), claim pass rates, case pass, pass^k, a per-topic table, tokens and
+cost for replies and grader, and p50/p95 latency per message. The cost uses SPEC prices; cache writes are billed at
+1.25× input. The packet samples get their own section. Their grading facts are only the ones packet L759 names.
+`test/samples-guard.test.ts` fails if anything under `src/` or `prompts/` mentions the file, a sample id or a sample
+sentence.
+
+`results/baseline-2026-10-04-0745.json` is a harness check, not a measurement. It is one full run on PR1's baseline
+(main `a25bee9` plus this branch's harness), made to prove the pipeline works. Four claims in `saturday-procedure`,
+`gold-ready-card-offer`, `monthly-payments` and `long-message` were reworded after it. The baseline vs restructured
+comparison comes later, from merged heads.
+
+## Cases
 
 `cases.json` holds 76 hand-written patient messages. Each one is sent as a new message on the packet's fixed
 history, the same way the graders' hidden suite is run (packet L690). The cases try to predict how that suite behaves.
@@ -12,8 +43,8 @@ They test breadth across the prompt's topics and both sides of the escalation bo
 | `text` | The patient's SMS, exactly as sent. |
 | `expect.escalate` | Must match `Reply.escalate` exactly. |
 | `expect.escalationCategory` | `human_requested` (asked for a person), `cannot_do` (asked for an action no tool performs and a person must carry out), or `null`. |
-| `expect.mustInclude` | Facts the reply must state, written as short claims. A model grader checks meaning, not wording. A string that is a URL must appear verbatim. |
-| `expect.mustNotInclude` | Claims or strings the reply must not contain: fabrications, banned moves, card digits, wrong links. Literal strings (card numbers, URLs, `$600`) are checked as substrings. |
+| `expect.mustInclude` | Facts the reply must state. A claim that is only a URL, email, dollar amount or digit string is checked in code against the reply text. Any other claim goes to the model grader, which checks meaning, not wording. |
+| `expect.mustNotInclude` | What the reply must not contain: fabrications, banned moves, card digits, wrong links. Literal claims are searched in the whole `Reply` JSON, so a card number leaking into a reason or memory field still fails. |
 | `expect.notes` | Why the expectation is what it is, plus any non-graded fields worth checking (`shouldFollowUp`, `attachmentUrls`). |
 | `ambiguous` | `true` when the expectation is a judgement call. The reasoning is in `notes`. |
 | `topic` | Grouping for per-topic scores. |

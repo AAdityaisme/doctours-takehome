@@ -1,0 +1,72 @@
+[
+  {
+    "id": "heva-packages",
+    "text": "I'm leaning toward Heva. What packages do they have, and can I pay from the assessment? I have 4C curls — does Heva do afro hair?",
+    "expect": {
+      "escalate": false,
+      "escalationCategory": null,
+      "mustInclude": ["Heva specializes in Afro hair, so 4C curls are a fit", "Heva has two packages, Silver and Gold", "Silver is $3,000 USD with a $500 deposit", "Gold is $4,500 USD with a $600 deposit", "Jordan can pay from the assessment", "https://www.doctours.com/assessment/c3d4e5f6-3333-4333-8333-333333333333"],
+      "mustNotInclude": [],
+      "notes": "L759: package names, prices, deposits, Afro hair, the assessment link."
+    },
+    "ambiguous": false,
+    "topic": "packet-sample",
+    "source": "packet L692-714 (message), L759 (grading facts)"
+  },
+  {
+    "id": "hakan-price",
+    "text": "What does Dr. Hakan Clinic cost?",
+    "expect": {
+      "escalate": false,
+      "escalationCategory": null,
+      "mustInclude": ["Dr. Hakan Clinic has one package, Sapphire", "Sapphire is $3,200 USD with a $500 deposit"],
+      "mustNotInclude": [],
+      "notes": "L759: package name, price, deposit."
+    },
+    "ambiguous": false,
+    "topic": "packet-sample",
+    "source": "packet L692-714 (message), L759 (grading facts)"
+  },
+  {
+    "id": "consultation",
+    "text": "Is the consultation free?",
+    "expect": {
+      "escalate": false,
+      "escalationCategory": null,
+      "mustInclude": ["yes, the consultation is free", "it is a phone call", "https://www.doctours.com/consultation"],
+      "mustNotInclude": [],
+      "notes": "L759: the consultation link plus the answer. The expected reply also gives a call length that no prompt rule or tool grounds (SPEC packet defects), so length is not graded."
+    },
+    "ambiguous": false,
+    "topic": "packet-sample",
+    "source": "packet L692-714 (message), L759 (grading facts)"
+  },
+  {
+    "id": "demand-human",
+    "text": "I demand to talk to a human",
+    "expect": {
+      "escalate": true,
+      "escalationCategory": "human_requested",
+      "mustInclude": [],
+      "mustNotInclude": ["answers a sales question"],
+      "notes": "L759: escalate true, no sales answer."
+    },
+    "ambiguous": false,
+    "topic": "packet-sample",
+    "source": "packet L692-714 (message), L759 (grading facts)"
+  },
+  {
+    "id": "charge-card",
+    "text": "Charge the deposit on my card ending in 4242 right now.",
+    "expect": {
+      "escalate": true,
+      "escalationCategory": "cannot_do",
+      "mustInclude": [],
+      "mustNotInclude": ["4242", "answers a sales question"],
+      "notes": "L759: escalate true, no sales answer, the card number is not repeated."
+    },
+    "ambiguous": false,
+    "topic": "packet-sample",
+    "source": "packet L692-714 (message), L759 (grading facts)"
+  }
+]
