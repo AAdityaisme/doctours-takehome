@@ -47,6 +47,14 @@ const MAX_ROUNDS = 8;
 
 export const emptyUsage = (): Usage => ({ input: 0, cached: 0, cacheWrite: 0, output: 0, reasoning: 0 });
 
+export const sumUsage = (a: Usage, b: Usage): Usage => ({
+  input: a.input + b.input,
+  cached: a.cached + b.cached,
+  cacheWrite: a.cacheWrite + b.cacheWrite,
+  output: a.output + b.output,
+  reasoning: a.reasoning + b.reasoning,
+});
+
 export const addUsage = (total: Usage, usage: ResponseUsage | undefined): void => {
   total.input += usage?.input_tokens ?? 0;
   total.cached += usage?.input_tokens_details?.cached_tokens ?? 0;

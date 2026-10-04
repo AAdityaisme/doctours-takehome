@@ -151,6 +151,8 @@ export function assemble(routed: string[], context: Context = constants): Assemb
     ...coreTools,
     ...strings(stage, "tools"),
     ...skills.flatMap((skill) => skill.tools),
+    // ponytail: the packet ships only the no-promo ACTIVE PROMO OFFER text (discounts-and-quotes), matching its fixed
+    // PROMO_OFFER = null. A live offer also needs its section generated from PROMO_OFFER; add that with the first real one.
     ...(context.PROMO_OFFER != null ? ["issuePromoCodeTool"] : []),
   ]);
   return {

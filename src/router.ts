@@ -53,5 +53,17 @@ export async function route(
   const raw: unknown = JSON.parse(response.output_text);
   const error = schemaError(ROUTE_SHAPE, raw);
   if (error) throw new Error(`router schema: ${error}`);
-  return { route: raw as Route, usage, latencyMs: Math.round(performance.now() - started) };
+  const parsed = raw as Route;
+  const result: Route = {
+    ...parsed,
+    intent: redactNumbers(parsed.intent),
+    escalation: parsed.escalation && { ...parsed.escalation, reason: redactNumbers(parsed.escalation.reason) },
+  };
+  return { route: result, usage, latencyMs: Math.round(performance.now() - started) };
 }
+
+/**
+ * The router's free text reaches Reply.intent and the trace, and could echo a card number, expiry or CVV the patient
+ * sent. Any run of 3+ digits (spaces, dashes, slashes, dots or commas between them) becomes "[number]".
+ */
+export const redactNumbers = (text: string): string => text.replace(/\d(?:[\s,./-]?\d){2,}/g, "[number]");

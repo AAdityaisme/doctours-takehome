@@ -120,6 +120,10 @@ test("loadSkill: returns the skill's text, offers its tools from the next round,
     { id: "consultation", result: "loaded" },
     { id: "consultation", result: "already loaded" },
   ]);
+  assert.deepEqual(trace.skillsLoaded, ["consultation"], "trace shows what the reply could use");
+  assert.ok((trace.toolsOffered as string[]).includes("getConsultationRescheduleLinkTool"));
+  assert.equal(trace.apiCalls, 4, "router + 3 reply rounds");
+  assert.deepEqual(trace.tokens, { input: 400, cached: 240, cacheWrite: 0, output: 80, reasoning: 20 });
   // Skill text is instructions, not tool data: its URLs never become attachments.
   assert.equal(reply.attachmentUrls, null);
 });
@@ -144,7 +148,8 @@ test("router escalation: no reply call, the handoff is built in code with a cate
   assert.equal(reply.response, HANDOFF_SENTENCE);
   assert.equal(reply.escalationReason, CATEGORY_REASONS.human_requested);
   assert.equal(trace.escalatedBy, "router");
-  assert.equal(trace.apiCalls, 0);
+  assert.equal(trace.apiCalls, 1, "the router call counts");
+  assert.deepEqual(trace.tokens, { input: 100, cached: 60, cacheWrite: 0, output: 20, reasoning: 5 });
   assert.deepEqual((trace.router as { escalation: unknown }).escalation, { category: "human_requested", reason: "asked for a person" });
 });
 
@@ -180,4 +185,18 @@ test("a router failure fails that message safe; the batch carries on", async () 
   const { reply, trace } = await run(client);
   assert.equal(reply.escalationReason, "system error");
   assert.equal(trace.ok, false);
+});
+
+test("card digits in the router's free text never reach Reply.intent or the trace", async () => {
+  const { client } = scripted({ intent: "pay with card 4111 1111 1111 1111 exp 08/29 cvv 123" }, [final({})]);
+  const { reply, trace } = await run(client);
+  assert.equal(reply.intent, "pay with card [number] exp [number] cvv [number]");
+  assert.doesNotMatch(JSON.stringify(trace), /4111|08\/29|123/);
+
+  const escalated = scripted(
+    { intent: "charge 5555-4444-3333-1111", escalation: { category: "cannot_do", reason: "charge 5555 4444 3333 1111" } },
+    [],
+  );
+  const out = await run(escalated.client);
+  assert.doesNotMatch(JSON.stringify([out.reply, out.trace]), /5555|1111/);
 });

@@ -33,15 +33,15 @@ async function replyOne(item: unknown, index: number, options: BatchOptions): Pr
     if (typeof text !== "string") throw new Error("message has no text");
     if (mode === "restructured") {
       if (!options.router) throw new Error("restructured mode needs router options");
-      const { reply, turn, trace } = await restructuredTurn(text, { client, model, effort, router: options.router });
+      const { reply, totals, trace } = await restructuredTurn(text, { client, model, effort, router: options.router });
       options.trace?.({
         ...base,
         ok: true,
         escalate: reply.escalate,
         ...trace,
-        toolCalls: turn?.toolCalls ?? [],
-        apiCalls: turn?.apiCalls ?? 0,
-        tokens: turn?.usage ?? null,
+        toolCalls: totals.toolCalls,
+        apiCalls: totals.apiCalls,
+        tokens: totals.usage,
         latencyMs: Math.round(performance.now() - started),
       });
       return reply;
