@@ -12,8 +12,8 @@ recorded deletion. Text was moved, not rewritten: the only changed lines are lis
 | What | Size |
 |------|------|
 | Original prompt, L764-1554 | 164,678 chars, ~41,169 tokens |
-| `core.md` alone | 38,151 chars, ~9,537 tokens |
-| Core + largest stage (`PRE_CLINICAL_SENT`) + two largest skills (`financing`, `packages-and-pricing`) | 77,856 chars, ~19,464 tokens |
+| `core.md` alone | 38,828 chars, ~9,707 tokens |
+| Core + largest stage (`PRE_CLINICAL_SENT`) + two largest skills (`financing`, `packages-and-pricing`) | 78,788 chars, ~19,697 tokens |
 
 Sizes count the files as written, before `{{NAME}}` placeholders are filled and without front matter. Filling adds
 the same per-patient values (transcript, summary, memory) to both the original and the split version.
@@ -33,7 +33,7 @@ Front matter `statuses` lists the `PIPELINE_STATUS` values a file serves. `MEETI
 |------|----------|-------|--------------|-------|
 | `stages/LEAD.md` | `LEAD` | none | 1250-1255 | 695 |
 | `stages/PREP_PRE_CLINICAL.md` | `PREP_PRE_CLINICAL` | `getLatestAssessmentTool` | 1256-1263 | 1,647 |
-| `stages/PRE_CLINICAL_SENT.md` | `PRE_CLINICAL_SENT` | `getLatestAssessmentTool`, `getSavedClinicsTool`, `getAllClinicsTool`, `getClinicPackagesTool`, `getClinicDoctorsTool`, `updateUserClinicPreferencesTool` | 1264-1307, 1323-1325, 1414, 1425-1426 | 10,951 |
+| `stages/PRE_CLINICAL_SENT.md` | `PRE_CLINICAL_SENT` | `getLatestAssessmentTool`, `getSavedClinicsTool`, `getAllClinicsTool`, `getClinicPackagesTool`, `getClinicDoctorsTool`, `updateUserClinicPreferencesTool` | 1264-1307, 1323-1325, 1414, 1425-1426 | 11,206 |
 | `stages/MEETING_BOOKED.md` | `MEETING_BOOKED`, `MEETING_COMPLETED` | `getConsultationRescheduleLinkTool` | 1326-1337 | 2,211 |
 | `stages/MEETING_MISSED.md` | `MEETING_MISSED` | `getConsultationRescheduleLinkTool` | 1338-1340 | 330 |
 | `stages/WAITING.md` | `WAITING` | none | 1341-1343 | 161 |
@@ -259,6 +259,14 @@ not output fields, and went to `deposit-and-payment`.
   name the section a rule came from.
 - The ESCALATION section in core (new; the packet asks for it).
 - `prompts/router.md` (new).
+- Two completeness rules (E4), new text:
+  - Core, CONVERSATION AWARENESS, after No repeated links (L883): "A page you point to comes with its link".
+    A reply that points the patient to their assessment, the consultation booking page or a payment/checkout page
+    includes that page's URL from its source. Asking how to use one of those pages, or whether they can, counts as
+    asking for the link under L883; otherwise L883 stands. L1549 (repeat no URL) is read with L883's exception.
+  - Stage `PRE_CLINICAL_SENT`, before Step 0: "Prices come with their deposit". A quoted package price comes with
+    its `depositAmount` from the same tool result.
+  - Both say the added fact is part of the answer, so L994's one-to-three-line size and no-CTA rule still hold.
 
 ## Rule conflicts with a recorded winner
 - **The seven "routed to a person" rules** (L913, L955, L980, L1039, L1317, L1407, L1436) describe an upstream
