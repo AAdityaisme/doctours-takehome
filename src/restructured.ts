@@ -77,7 +77,7 @@ export async function restructuredTurn(
           role: "developer",
           content: [{ type: "input_text", text: assembly.prefix, prompt_cache_breakpoint: { mode: "explicit" } }],
         },
-        ...(assembly.skillsText ? [{ role: "developer" as const, content: assembly.skillsText }] : []),
+        { role: "developer", content: assembly.skillsText },
       ],
       user: userMessage(text),
       tools: assembly.offered,

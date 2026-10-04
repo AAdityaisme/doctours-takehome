@@ -47,14 +47,21 @@ test("tools and developer message 1 are byte-identical across messages with diff
     assert.equal(JSON.stringify(body.text), JSON.stringify(first!.text), "schema");
     assert.equal(body.prompt_cache_key, "restructured-PRE_CLINICAL_SENT");
   }
-  // Message 1 is core + stage with an explicit breakpoint; message 2 carries the skills and is absent without any.
+  // Message 1 is core + stage with an explicit breakpoint; message 2 names the loaded skills, then carries them.
   const [one] = developers(first!);
   const part = (one!.content as { type: string; text: string; prompt_cache_breakpoint?: unknown }[])[0]!;
   assert.deepEqual(part.prompt_cache_breakpoint, { mode: "explicit" });
   assert.equal(part.text, assemble([]).prefix);
   const bySkills = Object.fromEntries(requests.map((body) => [patient(body), developers(body)]));
-  assert.equal(bySkills.none!.length, 1);
   assert.equal(bySkills.money![1]!.content, assemble(ROUTES.money!).skillsText);
+  const firstLine = (id: string) => String(bySkills[id]![1]!.content).split("\n")[0];
+  assert.equal(
+    firstLine("money"),
+    "Skills already loaded below: deposit-and-payment, financing. Call loadSkill only for a skill not in this list.",
+  );
+  assert.match(firstLine("trip")!, /^Skills already loaded below: consultation, travel\./);
+  assert.equal(firstLine("none"), "No skills are loaded. Call loadSkill for any skill this message needs.");
+  assert.equal(bySkills.none!.length, 2);
   assert.notEqual(bySkills.money![1]!.content, bySkills.trip![1]!.content);
   // Every tool restructured mode can offer, plus loadSkill; issuePromoCodeTool only with a promo.
   const names = first!.tools!.map((tool) => (tool as { name: string }).name);

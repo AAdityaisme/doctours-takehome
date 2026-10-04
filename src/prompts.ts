@@ -129,7 +129,7 @@ export function ruleSkills(context: Context): string[] {
 export interface Assembly {
   /** Core + the stage file, filled: the same for every message in a stage, so it is the cached prefix. */
   prefix: string;
-  /** The loaded skills' text, filled ("" when none). */
+  /** Developer message 2: a line naming the loaded skills, then their text, filled. */
   skillsText: string;
   /** Tool definitions sent on every call: every tool restructured mode can offer, fixed order (cache-stable). */
   offered: Tool[];
@@ -165,7 +165,16 @@ export function assemble(routed: string[], context: Context = constants): Assemb
   const names = new Set([...coreTools, ...strings(stage, "tools"), ...skills.flatMap((skill) => skill.tools)]);
   return {
     prefix: fill([CORE, stage].map((file) => file.body).join("\n\n"), context),
-    skillsText: fill(skills.map((skill) => skill.body).join("\n\n"), context),
+    // loadSkill's fixed description lists every skill, so this line is how the model knows which it already has.
+    skillsText: fill(
+      [
+        skills.length
+          ? `Skills already loaded below: ${skills.map((skill) => skill.id).join(", ")}. Call loadSkill only for a skill not in this list.`
+          : "No skills are loaded. Call loadSkill for any skill this message needs.",
+        ...skills.map((skill) => skill.body),
+      ].join("\n\n"),
+      context,
+    ),
     offered: withPromo(declaredTools, context),
     tools: withPromo(names, context),
     skills: skills.map((skill) => skill.id),
