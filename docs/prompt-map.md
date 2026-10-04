@@ -5,6 +5,7 @@ Where every line of the original system prompt (packet lines 764-1554) went. Lin
 Each line is in exactly one place: `prompts/core.md` (loaded every turn), one stage file (picked by code from
 `PIPELINE_STATUS`), one skill (picked by the router, or by the reply model through `loadSkill`), code, or a
 recorded deletion. Text was moved, not rewritten: the only changed lines are listed under [Edits](#edits).
+`test/prompt-map.test.ts` checks this map against `baseline/system-prompt.md` on every test run.
 
 ## Sizes
 
@@ -136,7 +137,7 @@ each loaded skill's tools.
 | 991-1007 | GUIDELINES | core | Head-covering (L999) and assessment-turnaround (L1000) stay core: they can surface in any travel, photo or recovery reply. |
 | 1008-1015 | SPECIFICITY | core |  |
 | 1016-1018 | DATA COLLECTION | skill `intake` |  |
-| 1019-1025 | STRUCTURED OUTPUT FIELDS (header, highEngagement, shouldFollowUp/followUpTiming, intent, attachmentUrls) | code | CODE: the strict json_schema makes the output structural (L1019-1021); L1022-1024 become the schema `description` of their fields, verbatim (phase 2, src/reply.ts); L1025 becomes post-processing (attachmentUrls filtered to tool-returned URLs this turn, max 3) plus its field description. |
+| 1019-1025 | STRUCTURED OUTPUT FIELDS (header, highEngagement, shouldFollowUp/followUpTiming, intent, attachmentUrls) | code | CODE: the strict json_schema makes the output structural (L1019-1021); L1022-1024 become the schema `description` of their fields, verbatim (`DESCRIBED_REPLY_SCHEMA` in src/prompts.ts, read from baseline/system-prompt.md); L1025 becomes post-processing (attachmentUrls filtered to tool-returned URLs this turn, max 3) plus its field description. |
 | 1026-1029 | STRUCTURED OUTPUT FIELDS: payment/checkout link bullets | skill `deposit-and-payment` | Behavior rules, not output fields. |
 | 1030-1037 | DEPOSIT ELIGIBILITY RULE | skill `deposit-and-payment` | A one-line copy stays in core's Available Context (L1536). |
 | 1038-1042 | DIRECT-FROM-CLINIC PRICE QUOTES | skill `discounts-and-quotes` | L1039 'routes to a human upstream': a request to match the quote escalates; a shared quote alone is answered as written. |
@@ -240,7 +241,8 @@ The prompt names six tools the packet never defines. Every reference is removed 
 ### Moved to code (L1019-1025, STRUCTURED OUTPUT FIELDS)
 The strict `json_schema` output format replaces "Your response is parsed as structured data" (L1019-1021). The
 highEngagement, shouldFollowUp/followUpTiming and intent rules (L1022-1024) become the `description` of those schema
-fields, verbatim. The attachmentUrls rule (L1025) becomes its field description plus post-processing: keep only URLs
+fields, verbatim (`DESCRIBED_REPLY_SCHEMA` in `src/prompts.ts`; L1023 covers two fields, so it is split at "Set
+followUpTiming to"). Restructured mode only: baseline keeps its schema and the rules stay in its prompt. The attachmentUrls rule (L1025) becomes its field description plus post-processing: keep only URLs
 a tool returned this turn, at most 3. The two payment-link bullets of that section (L1026-1027) are behavior rules,
 not output fields, and went to `deposit-and-payment`.
 
