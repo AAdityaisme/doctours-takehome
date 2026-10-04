@@ -1,5 +1,10 @@
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { test } from "node:test";
+import { fileURLToPath } from "node:url";
 import type { Response, ResponseCreateParamsNonStreaming } from "openai/resources/responses/responses";
 import { replyAll, type BatchOptions } from "../src/cli.ts";
 import { HANDOFF_SENTENCE } from "../src/escalation.ts";
@@ -132,6 +137,7 @@ test("tool loop: runs the packet tool, returns its output by call_id, keeps only
   assert.equal(first.model, "test-model");
   assert.deepEqual(first.reasoning, { effort: "low" });
   assert.equal(first.tools?.length, 14);
+  assert.ok(first.tools?.every((tool) => (tool as { strict?: boolean }).strict === true), "every tool strict");
   assert.deepEqual(
     { type: (first.text?.format as { type: string }).type, strict: (first.text?.format as { strict: boolean }).strict },
     { type: "json_schema", strict: true },
@@ -156,4 +162,61 @@ test("a model that never stops calling tools is cut off and fails safe", async (
   const [reply] = await replyAll([{ id: "x", text: "hi" }], options(client));
   assert.equal(reply!.escalate, true);
   assert.equal(reply!.escalationReason, "system error");
+});
+
+test("a failed message's trace keeps the tools it ran, its API calls and its tokens", async () => {
+  let calls = 0;
+  const client = fake(async () =>
+    ++calls === 1
+      ? toolCall("getClinicPackagesTool", { clinicId: null, clinicName: "Heva Clinic" }, "c1")
+      : ({ ...final({}), status: "incomplete" } as Response),
+  );
+  const traces: Record<string, unknown>[] = [];
+  const [reply] = await replyAll([{ id: "x", text: "hi" }], options(client, (r) => traces.push(r)));
+  assert.equal(reply!.escalationReason, "system error");
+  assert.equal(traces[0]!.ok, false);
+  assert.match(String(traces[0]!.error), /incomplete/);
+  assert.deepEqual(traces[0]!.toolCalls, [
+    { name: "getClinicPackagesTool", arguments: '{"clinicId":null,"clinicName":"Heva Clinic"}' },
+  ]);
+  assert.equal(traces[0]!.apiCalls, 2);
+  assert.deepEqual(traces[0]!.tokens, { input: 200, cached: 120, cacheWrite: 0, output: 40, reasoning: 10 });
+});
+
+test("a tool error goes back to the model; the message still gets a normal reply", async () => {
+  const requests: ResponseCreateParamsNonStreaming[] = [];
+  const client = fake(async (body) => {
+    requests.push(structuredClone(body));
+    if (requests.length === 1) {
+      return {
+        status: "completed",
+        output: [{ type: "function_call", id: "fc_bad", call_id: "bad", name: "getClinicPackagesTool", arguments: "{oops", status: "completed" }],
+        output_text: "",
+        usage,
+      } as unknown as Response;
+    }
+    return final({ response: "Which clinic do you mean?" });
+  });
+  const [reply] = await replyAll([{ id: "x", text: "prices?" }], options(client));
+  assert.equal(reply!.escalate, false);
+  assert.equal(reply!.response, "Which clinic do you mean?");
+  const output = (requests[1]!.input as { type?: string; output?: string }[]).find((i) => i.type === "function_call_output");
+  assert.match(JSON.parse(output!.output!).error, /getClinicPackagesTool failed/);
+});
+
+test("`node src/cli.ts` prints only the JSON array, reading a file, stdin or '-'", () => {
+  const cli = fileURLToPath(new URL("../src/cli.ts", import.meta.url));
+  const dir = mkdtempSync(join(tmpdir(), "doctours-cli-"));
+  try {
+    const file = join(dir, "input.json");
+    writeFileSync(file, "[]");
+    // Empty batch: no API call is made, so a dummy key is enough.
+    const run = (args: string[], input?: string) =>
+      execFileSync(process.execPath, [cli, ...args], { input, env: { ...process.env, OPENAI_API_KEY: "dummy" } }).toString();
+    assert.equal(run([file]), "[]\n");
+    assert.equal(run([], "[]"), "[]\n");
+    assert.equal(run(["-"], "[]"), "[]\n");
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
 });

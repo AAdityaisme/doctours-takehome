@@ -4,7 +4,7 @@ import OpenAI from "openai";
 import { baselineMessages } from "./baseline.ts";
 import { toEscalation } from "./escalation.ts";
 import type { Reply } from "./reply.ts";
-import { respond, type Client } from "./respond.ts";
+import { TurnError, respond, type Client } from "./respond.ts";
 import { TOOLS } from "./tools.ts";
 
 export const MODES = ["baseline"] as const;
@@ -43,7 +43,14 @@ async function replyOne(item: unknown, index: number, options: BatchOptions): Pr
     // SPEC step 6: one failed message (after the SDK's own retries) escalates; the batch carries on.
     const message = error instanceof Error ? error.message : String(error);
     console.error(`message ${index} (${String(id)}) failed: ${message}`);
-    options.trace?.({ ...base, ok: false, error: message, latencyMs: Math.round(performance.now() - started) });
+    const done = error instanceof TurnError ? error.progress : undefined;
+    options.trace?.({
+      ...base,
+      ok: false,
+      error: message,
+      ...(done && { toolCalls: done.toolCalls, apiCalls: done.apiCalls, tokens: done.usage }),
+      latencyMs: Math.round(performance.now() - started),
+    });
     return toEscalation("system error");
   }
 }

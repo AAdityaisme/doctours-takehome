@@ -1,5 +1,7 @@
 // Packet "Tools" (pre-deposit-respond-packet.md L322-670), verbatim except `export`.
 
+import { WORKING_MEMORY_SCHEMA, nullable, strictObject, type Schema } from "./reply.ts";
+
 export const HEVA_CLINIC_ID = "11111111-1111-4111-8111-111111111111";
 export const HAKAN_CLINIC_ID = "22222222-2222-4222-8222-222222222222";
 
@@ -352,92 +354,75 @@ export function updateWorkingMemory(_input: { memory?: Record<string, unknown> }
 
 // ---- Everything below is ours: OpenAI function-tool definitions for the packet functions above. ----
 
-/** One packet function exposed to the model under the name the system prompt uses (packet L319). */
+/** One packet function exposed to the model under the name the system prompt uses (packet L319). Always strict. */
 export interface Tool {
   name: string;
   description: string;
-  strict: boolean;
-  parameters: Record<string, unknown>;
+  parameters: Schema;
   run(input: Record<string, unknown>): unknown;
 }
 
-const nullableString = { type: ["string", "null"] };
+const nullableString: Schema = { type: ["string", "null"] };
+const nullableStrings: Schema = nullable({ type: "array", items: { type: "string" } });
 const userId = { userId: nullableString };
 const clinicRef = { clinicId: nullableString, clinicName: nullableString };
-
-// Strict mode: every property listed in `required`, optional ones nullable, no extra keys.
-const strict = (properties: Record<string, unknown>) => ({
-  type: "object",
-  properties,
-  required: Object.keys(properties),
-  additionalProperties: false,
-});
 
 export const TOOLS: Tool[] = [
   {
     name: "getAllClinicsTool",
     description: "List every clinic with id, name, slug, status, url, address, clinic_flags and ai_context.",
-    strict: true,
-    parameters: strict({}),
+    parameters: strictObject({}),
     run: getAllClinics,
   },
   {
     name: "getClinicDoctorsTool",
     description: "Doctors at one clinic. Pass clinicId or clinicName.",
-    strict: true,
-    parameters: strict(clinicRef),
+    parameters: strictObject(clinicRef),
     run: getClinicDoctors,
   },
   {
     name: "getClinicPackagesTool",
     description:
       "Packages for one clinic: price, deposit, currency, bookable weekdays, included add-ons. Pass clinicId or clinicName.",
-    strict: true,
-    parameters: strict(clinicRef),
+    parameters: strictObject(clinicRef),
     run: getClinicPackages,
   },
   {
     name: "getConsultationRescheduleLinkTool",
     description: "Trusted reschedule link for the patient's consultation call.",
-    strict: true,
-    parameters: strict(userId),
+    parameters: strictObject(userId),
     run: getConsultationRescheduleLink,
   },
   {
     name: "getFullCallsTool",
     description: "Full records (summary and transcript) of the patient's recent calls.",
-    strict: true,
-    parameters: strict({ chatId: nullableString, limit: { type: ["integer", "null"] } }),
+    parameters: strictObject({ chatId: nullableString, limit: { type: ["integer", "null"] } }),
     run: getFullCalls,
   },
   {
     name: "getLatestAssessmentTool",
     description: "The patient's latest assessment: link, graft range and share status.",
-    strict: true,
-    parameters: strict(userId),
+    parameters: strictObject(userId),
     run: getLatestAssessment,
   },
   {
     name: "getPatientContextTool",
     description:
       "Patient profile, pipeline status, clinic/package selection preferences and tentative procedure dates.",
-    strict: true,
-    parameters: strict(userId),
+    parameters: strictObject(userId),
     run: getPatientContext,
   },
   {
     name: "getPatientImagesTool",
     description: "Which intake photo angles (front, top, left, right, back) the patient has uploaded.",
-    strict: true,
-    parameters: strict(userId),
+    parameters: strictObject(userId),
     run: getPatientImages,
   },
   {
     name: "getPaymentLinkTool",
     description:
       'Trusted deposit link. type "payment" needs clinicPackageId; type "checkout" needs clinicId.',
-    strict: true,
-    parameters: strict({
+    parameters: strictObject({
       clinicPackageId: nullableString,
       type: { type: ["string", "null"], enum: ["payment", "checkout", null] },
       clinicId: nullableString,
@@ -447,58 +432,53 @@ export const TOOLS: Tool[] = [
   {
     name: "getSavedClinicsTool",
     description: "Clinics recommended in the patient's assessment, ranked.",
-    strict: true,
-    parameters: strict(userId),
+    parameters: strictObject(userId),
     run: getSavedClinics,
   },
   {
     name: "issuePromoCodeTool",
     description: "Issue the patient's promo code, if they are on a sent-out promo list.",
-    strict: true,
-    parameters: strict(userId),
+    parameters: strictObject(userId),
     run: issuePromoCode,
   },
   {
     name: "updateUserTool",
     description: "Set the patient's first and last name.",
-    strict: true,
-    parameters: strict({ firstName: nullableString, lastName: nullableString, userId: nullableString }),
+    parameters: strictObject({ firstName: nullableString, lastName: nullableString, userId: nullableString }),
     run: updateUser,
   },
   {
-    // Not strict: the packet types clinicSelection as Record<string, unknown>, which strict mode can't express.
     name: "updateUserClinicPreferencesTool",
     description:
-      "Save the patient's clinic/package selection or soft interest, using canonical ids returned by the clinic/package tools.",
-    strict: false,
-    parameters: {
-      type: "object",
-      properties: {
-        clinicSelection: {
-          type: "object",
-          properties: {
-            selectedClinicId: nullableString,
-            selectedPackageId: nullableString,
-            softClinicInterestIds: { type: ["array", "null"], items: { type: "string" } },
-            softPackageInterestIds: { type: ["array", "null"], items: { type: "string" } },
-          },
-        },
-        // The prompt (L1415) tells the model to send this; the packet handler ignores it.
-        tentativeProcedureDates: {
-          type: "object",
-          properties: { text: { type: "string" }, strength: { type: "string", enum: ["strong", "medium", "weak"] } },
-        },
-        userId: nullableString,
-      },
-    },
+      "Save the patient's clinic/package selection or soft interest, using canonical ids returned by the clinic/package tools, and/or their tentative procedure dates.",
+    // clinicSelection: the selection fields the packet's tools return (getPatientContext, this handler's own result).
+    // tentativeProcedureDates: the prompt (L1415) tells the model to send it; the packet handler ignores it.
+    parameters: strictObject({
+      clinicSelection: nullable(
+        strictObject({
+          selectedClinicId: nullableString,
+          selectedPackageId: nullableString,
+          softClinicInterestIds: nullableStrings,
+          softPackageInterestIds: nullableStrings,
+          budgetMax: { type: ["number", "null"] },
+          preferredDestinations: nullableStrings,
+          excludedDestinations: nullableStrings,
+        }),
+      ),
+      tentativeProcedureDates: nullable(
+        strictObject({
+          text: { type: "string" },
+          strength: { type: "string", enum: ["strong", "medium", "weak"] },
+        }),
+      ),
+      userId: nullableString,
+    }),
     run: updateUserClinicPreferences,
   },
   {
-    // Not strict, same reason: memory is Record<string, unknown> in the packet.
     name: "updateWorkingMemoryTool",
-    description: "Store the patient's working memory. Pass the entire JSON object.",
-    strict: false,
-    parameters: { type: "object", properties: { memory: { type: "object" } } },
+    description: "Store the patient's working memory. Pass the entire object.",
+    parameters: strictObject({ memory: WORKING_MEMORY_SCHEMA }),
     run: updateWorkingMemory,
   },
 ];
@@ -508,12 +488,17 @@ const byName = new Map(TOOLS.map((tool) => [tool.name, tool]));
 /**
  * Runs one model tool call and returns the JSON string sent back as `function_call_output`.
  * Null arguments are dropped first, so each packet function sees the optional fields its signature declares.
+ * Malformed arguments or a throwing tool come back to the model as `{"error": ...}` instead of failing the message.
  */
 export function runTool(name: string, argumentsJson: string): string {
   const tool = byName.get(name);
   if (!tool) return JSON.stringify({ error: `unknown tool ${name}` });
-  const args = Object.fromEntries(
-    Object.entries(JSON.parse(argumentsJson || "{}") as Record<string, unknown>).filter(([, v]) => v !== null),
-  );
-  return JSON.stringify(tool.run(args) ?? null);
+  try {
+    const args = Object.fromEntries(
+      Object.entries(JSON.parse(argumentsJson || "{}") as Record<string, unknown>).filter(([, v]) => v !== null),
+    );
+    return JSON.stringify(tool.run(args) ?? null);
+  } catch (error) {
+    return JSON.stringify({ error: `${name} failed: ${error instanceof Error ? error.message : String(error)}` });
+  }
 }

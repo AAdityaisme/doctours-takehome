@@ -49,15 +49,6 @@ test("all 14 packet functions are exposed under the prompt's names", () => {
     "updateUserTool",
     "updateWorkingMemoryTool",
   ]);
-  for (const tool of TOOLS.filter((t) => t.strict)) {
-    const { properties, required, additionalProperties } = tool.parameters as {
-      properties: object;
-      required: string[];
-      additionalProperties: boolean;
-    };
-    assert.deepEqual(required, Object.keys(properties), tool.name);
-    assert.equal(additionalProperties, false, tool.name);
-  }
 });
 
 test("runTool drops null arguments, passes null results through, reports unknown tools", () => {
@@ -65,6 +56,14 @@ test("runTool drops null arguments, passes null results through, reports unknown
   assert.equal(out.clinicName, "Heva Clinic");
   assert.equal(runTool("getClinicDoctorsTool", '{"clinicId":null,"clinicName":"nowhere"}'), "null");
   assert.match(runTool("chargeCardTool", "{}"), /unknown tool/);
+});
+
+test("runTool returns an error to the model, instead of throwing, on malformed arguments or a throwing tool", () => {
+  for (const args of ["{not json", "null"]) {
+    assert.match(JSON.parse(runTool("getClinicPackagesTool", args)).error, /getClinicPackagesTool failed/, args);
+  }
+  // The packet handler calls clinicName.trim(), so a number makes it throw.
+  assert.match(JSON.parse(runTool("getClinicDoctorsTool", '{"clinicName":5}')).error, /getClinicDoctorsTool failed/);
 });
 
 test("fill: every {{NAME}} filled, unknown names throw, inserted values are not re-scanned", () => {

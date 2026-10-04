@@ -29,6 +29,15 @@ export interface Turn {
   usage: Usage;
 }
 
+/** What a turn did before it failed, so the failure's trace still shows its tools, calls and tokens (SPEC step 7). */
+export class TurnError extends Error {
+  readonly progress: Omit<Turn, "reply">;
+  constructor(cause: unknown, progress: Omit<Turn, "reply">) {
+    super(cause instanceof Error ? cause.message : String(cause), { cause });
+    this.progress = progress;
+  }
+}
+
 // A reply needs a handful of lookups; more rounds than this means the model is looping.
 const MAX_ROUNDS = 8;
 
@@ -43,7 +52,7 @@ const addUsage = (total: Usage, usage: ResponseUsage | undefined): void => {
 /**
  * One patient message through the Responses API: call tools until the model answers, then parse its
  * strict-schema `Reply` and post-process it. Stable content (tools, schema, system prompt) comes first so
- * the batch shares a cached prefix.
+ * the batch shares a cached prefix. Any failure is rethrown as a `TurnError` carrying the work done so far.
  */
 export async function respond(options: {
   client: Client;
@@ -60,39 +69,48 @@ export async function respond(options: {
     { role: "user", content: user },
   ];
   const toolUrls = new Set<string>();
-  const toolCalls: Turn["toolCalls"] = [];
-  const usage: Usage = { input: 0, cached: 0, cacheWrite: 0, output: 0, reasoning: 0 };
+  const progress: Omit<Turn, "reply"> = {
+    toolCalls: [],
+    apiCalls: 0,
+    usage: { input: 0, cached: 0, cacheWrite: 0, output: 0, reasoning: 0 },
+  };
+  const definitions = tools.map(({ name, description, parameters }) => ({
+    type: "function" as const,
+    name,
+    description,
+    parameters: { ...parameters },
+    strict: true,
+  }));
 
-  for (let round = 1; round <= MAX_ROUNDS; round++) {
-    const response = await client.responses.create({
-      model,
-      reasoning: { effort: effort as ReasoningEffort },
-      tools: tools.map(({ name, description, parameters, strict }) => ({
-        type: "function",
-        name,
-        description,
-        parameters,
-        strict,
-      })),
-      text: { format: { type: "json_schema", name: "Reply", schema: { ...REPLY_SCHEMA }, strict: true } },
-      input,
-    });
-    addUsage(usage, response.usage);
+  try {
+    for (let round = 1; round <= MAX_ROUNDS; round++) {
+      const response = await client.responses.create({
+        model,
+        reasoning: { effort: effort as ReasoningEffort },
+        tools: definitions,
+        text: { format: { type: "json_schema", name: "Reply", schema: { ...REPLY_SCHEMA }, strict: true } },
+        input,
+      });
+      progress.apiCalls++;
+      addUsage(progress.usage, response.usage);
 
-    const calls = response.output.filter((item) => item.type === "function_call");
-    if (calls.length === 0) {
-      if (response.status !== "completed") throw new Error(`response ${response.status}`);
-      const reply = postProcess(JSON.parse(response.output_text), toolUrls);
-      return { reply, toolCalls, apiCalls: round, usage };
+      const calls = response.output.filter((item) => item.type === "function_call");
+      if (calls.length === 0) {
+        if (response.status !== "completed") throw new Error(`response ${response.status}`);
+        const reply = postProcess(JSON.parse(response.output_text), toolUrls);
+        return { reply, ...progress };
+      }
+
+      input.push(...toResponseInputItems(response.output));
+      for (const call of calls) {
+        const output = runTool(call.name, call.arguments);
+        for (const url of findUrls(output)) toolUrls.add(url);
+        progress.toolCalls.push({ name: call.name, arguments: call.arguments });
+        input.push({ type: "function_call_output", call_id: call.call_id, output });
+      }
     }
-
-    input.push(...toResponseInputItems(response.output));
-    for (const call of calls) {
-      const output = runTool(call.name, call.arguments);
-      for (const url of findUrls(output)) toolUrls.add(url);
-      toolCalls.push({ name: call.name, arguments: call.arguments });
-      input.push({ type: "function_call_output", call_id: call.call_id, output });
-    }
+    throw new Error(`no reply after ${MAX_ROUNDS} tool rounds`);
+  } catch (error) {
+    throw new TurnError(error, progress);
   }
-  throw new Error(`no reply after ${MAX_ROUNDS} tool rounds`);
 }

@@ -58,17 +58,44 @@ export interface Schema {
 const text: Schema = { type: ["string", "null"] };
 const count: Schema = { type: ["integer", "null"] };
 const choice = (...values: string[]): Schema => ({ type: ["string", "null"], enum: [...values, null] });
-const nullable = (schema: Schema): Schema => ({ anyOf: [schema, { type: "null" }] });
-// Strict mode: every key required (optional ones are nullable), no extra keys.
-const object = (properties: Record<string, Schema>): Schema => ({
+export const nullable = (schema: Schema): Schema => ({ anyOf: [schema, { type: "null" }] });
+/** OpenAI strict mode: every key required (optional ones are nullable), no extra keys. */
+export const strictObject = (properties: Record<string, Schema>): Schema => ({
   type: "object",
   properties,
   required: Object.keys(properties),
   additionalProperties: false,
 });
 
+/** `WorkingMemoryUpdates` as a strict JSON Schema; also the input of `updateWorkingMemoryTool`. */
+export const WORKING_MEMORY_SCHEMA: Schema = strictObject({
+  collectionState: nullable(
+    strictObject({
+      areaAskCount: count,
+      lastAskedItem: choice("area", "name", "photos", "none"),
+      nameAskCount: count,
+      photoAskCount: count,
+    }),
+  ),
+  communicationStyle: choice("detailed", "concise", "casual", "formal", "unknown"),
+  escalationFlags: text,
+  keyConcerns: text,
+  patientName: text,
+  preferredPaymentMethod: choice("financing", "layaway", "pay_in_full", "cash_preference", "unknown"),
+  procedureArea: text,
+  promisesMade: text,
+  targetProcedureWindow: choice(
+    "within_3_months",
+    "within_6_months",
+    "within_8_months",
+    "within_12_months",
+    "over_12_months",
+    "unknown",
+  ),
+});
+
 /** `Reply` as a strict JSON Schema, sent as `text.format` and used to validate the final output. */
-export const REPLY_SCHEMA: Schema = object({
+export const REPLY_SCHEMA: Schema = strictObject({
   response: { type: "string" },
   escalate: { type: "boolean" },
   escalationReason: text,
@@ -78,33 +105,7 @@ export const REPLY_SCHEMA: Schema = object({
   followUpTiming: text,
   attachmentUrls: nullable({ type: "array", items: { type: "string" } }),
   highEngagement: { type: "boolean" },
-  workingMemoryUpdates: nullable(
-    object({
-      collectionState: nullable(
-        object({
-          areaAskCount: count,
-          lastAskedItem: choice("area", "name", "photos", "none"),
-          nameAskCount: count,
-          photoAskCount: count,
-        }),
-      ),
-      communicationStyle: choice("detailed", "concise", "casual", "formal", "unknown"),
-      escalationFlags: text,
-      keyConcerns: text,
-      patientName: text,
-      preferredPaymentMethod: choice("financing", "layaway", "pay_in_full", "cash_preference", "unknown"),
-      procedureArea: text,
-      promisesMade: text,
-      targetProcedureWindow: choice(
-        "within_3_months",
-        "within_6_months",
-        "within_8_months",
-        "within_12_months",
-        "over_12_months",
-        "unknown",
-      ),
-    }),
-  ),
+  workingMemoryUpdates: nullable(WORKING_MEMORY_SCHEMA),
 });
 
 const isType = (type: string, value: unknown): boolean => {
@@ -147,8 +148,9 @@ function assertReply(value: unknown): asserts value is Reply {
   if (error) throw new Error(`Reply schema: ${error}`);
 }
 
-// Stops before whitespace, quotes and brackets; never ends on sentence punctuation.
-const URL_PATTERN = /https?:\/\/[^\s<>"'()[\]{}]*[^\s<>"'()[\]{}.,;:!?]/g;
+// Scheme matched case-insensitively (HTTPS:// is valid). Stops before whitespace, quotes and brackets; never ends
+// on sentence punctuation. Bare domains ("hims.com") are sentence text, not links, and are left alone.
+const URL_PATTERN = /https?:\/\/[^\s<>"'()[\]{}]*[^\s<>"'()[\]{}.,;:!?]/gi;
 
 /** Every http(s) URL in `text`, in order of first appearance, without duplicates. */
 export const findUrls = (text: string): string[] => [...new Set(text.match(URL_PATTERN) ?? [])];

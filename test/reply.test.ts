@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { HANDOFF_SENTENCE } from "../src/escalation.ts";
 import { REPLY_SCHEMA, postProcess, schemaError, urlLast, type Schema } from "../src/reply.ts";
+import { TOOLS } from "../src/tools.ts";
 
 const reply = (overrides: object = {}) => ({
   response: "Hi Jordan.",
@@ -17,17 +18,20 @@ const reply = (overrides: object = {}) => ({
   ...overrides,
 });
 
-test("REPLY_SCHEMA is valid for strict mode: every object lists all keys as required and allows no others", () => {
-  const walk = (schema: Schema): void => {
-    if (schema.properties) {
-      assert.deepEqual(schema.required, Object.keys(schema.properties));
-      assert.equal(schema.additionalProperties, false);
-      Object.values(schema.properties).forEach(walk);
+test("REPLY_SCHEMA and all 14 tool schemas are strict: every object is closed and lists all keys as required", () => {
+  const walk = (schema: Schema, path: string): void => {
+    if ([schema.type].flat().includes("object")) {
+      assert.ok(schema.properties, `${path}: object without declared properties`);
+      assert.deepEqual(schema.required, Object.keys(schema.properties), `${path}: required`);
+      assert.equal(schema.additionalProperties, false, `${path}: additionalProperties`);
     }
-    schema.anyOf?.forEach(walk);
-    if (schema.items) walk(schema.items);
+    for (const [key, child] of Object.entries(schema.properties ?? {})) walk(child, `${path}.${key}`);
+    schema.anyOf?.forEach((child) => walk(child, path));
+    if (schema.items) walk(schema.items, `${path}[]`);
   };
-  walk(REPLY_SCHEMA);
+  walk(REPLY_SCHEMA, "Reply");
+  assert.equal(TOOLS.length, 14);
+  for (const tool of TOOLS) walk(tool.parameters, tool.name);
 });
 
 test("schema validation rejects missing, extra and out-of-enum fields", () => {
@@ -86,6 +90,12 @@ test("urlLast keeps compliant text and moves inline URLs to the last line", () =
     urlLast("See https://x.test/a for photos.\nhttps://x.test/b"),
     "See for photos.\nhttps://x.test/a\nhttps://x.test/b",
   );
+  assert.equal(
+    urlLast("Book using HTTPS://www.doctours.com/consultation. It's free."),
+    "Book using. It's free.\nHTTPS://www.doctours.com/consultation",
+  );
+  // Bare domains are sentence text, not links: left in place.
+  assert.equal(urlLast("You can buy at hims.com."), "You can buy at hims.com.");
 });
 
 test("an escalated reply is replaced by the handoff sentence and nothing else ships", () => {
