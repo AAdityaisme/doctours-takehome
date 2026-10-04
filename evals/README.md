@@ -67,6 +67,9 @@ Per run it reports:
 It writes `results/router-<YYYY-MM-DD-HHMM>.json` with the same no-overwrite rule as `run.ts`. A router false negative
 is not always a system miss, because the reply model can still escalate, but the router is measured on its own here.
 
+The four `results/router-2026-10-04-*.json` files are experiment E1 (router precision): the old router prompt at
+effort none and low (V0, V1), then the request-or-question prompt at none and low (V2, V3), three runs each. V2 shipped.
+
 ## Cases
 
 `cases.json` holds 76 hand-written patient messages. Each one is sent as a new message on the packet's fixed
