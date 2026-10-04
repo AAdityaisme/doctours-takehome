@@ -4,7 +4,7 @@ import type { Response, ResponseCreateParamsNonStreaming } from "openai/resource
 import { replyAll, type BatchOptions } from "../src/cli.ts";
 import * as constants from "../src/data.ts";
 import { CATEGORY_REASONS, HANDOFF_SENTENCE } from "../src/escalation.ts";
-import { CATALOG, CORE, SKILLS, assemble, ruleSkills } from "../src/prompts.ts";
+import { CATALOG, CORE, ROUTER_SYSTEM, SKILLS, assemble, ruleSkills } from "../src/prompts.ts";
 import { fake, final, toolCall, usage } from "./fake.ts";
 
 const routeResponse = (route: object) => {
@@ -147,6 +147,7 @@ test("router escalation: no reply call, the handoff is built in code with a cate
   assert.equal(reply.escalate, true);
   assert.equal(reply.response, HANDOFF_SENTENCE);
   assert.equal(reply.escalationReason, CATEGORY_REASONS.human_requested);
+  assert.equal(reply.intent, "wants a person", "decision 4: the router's intent");
   assert.equal(trace.escalatedBy, "router");
   assert.equal(trace.apiCalls, 1, "the router call counts");
   assert.deepEqual(trace.tokens, { input: 100, cached: 60, cacheWrite: 0, output: 20, reasoning: 5 });
@@ -158,6 +159,8 @@ test("the reply model can still escalate a request the router missed", async () 
   const { reply, trace } = await run(client);
   assert.equal(reply.escalate, true);
   assert.equal(reply.response, HANDOFF_SENTENCE);
+  assert.equal(reply.escalationReason, "needs a person", "code-set, not the model's");
+  assert.equal(reply.intent, "hold a date", "decision 4: the router's intent");
   assert.equal(trace.escalatedBy, "reply");
 });
 
@@ -177,14 +180,59 @@ test("an unknown skill id from the router is ignored and traced, never a failed 
   assert.ok(developer(replyRequests()[0]!).includes(skillText("financing").slice(0, 300)));
 });
 
-test("a router failure fails that message safe; the batch carries on", async () => {
+const routerFailures: [string, () => Response, number][] = [
+  ["API error after retries", () => { throw new Error("router unavailable"); }, 0],
+  ["incomplete response", () => ({ ...routeResponse({}), status: "incomplete" }) as Response, 1],
+  ["bad JSON", () => ({ ...routeResponse({}), output_text: "{not json" }) as Response, 1],
+  ["schema miss", () => ({ ...routeResponse({}), output_text: JSON.stringify({ intent: "x", skills: [] }) }) as Response, 1],
+];
+for (const [label, failure, routerCalls] of routerFailures) {
+  test(`router failure (${label}) degrades: the reply still runs with core + stage + rule skills, no handoff`, async () => {
+    const requests: ResponseCreateParamsNonStreaming[] = [];
+    const client = fake(async (body) => {
+      requests.push(structuredClone(body));
+      return formatName(body) === "Route" ? failure() : final({ response: "answered", intent: "reply model intent" });
+    });
+    const { reply, trace } = await run(client);
+    assert.equal(reply.escalate, false);
+    assert.equal(reply.response, "answered");
+    assert.equal(reply.intent, "reply model intent", "no router intent to use");
+    assert.ok((trace.router as { error?: string }).error, "router error traced");
+    assert.deepEqual(trace.skillsLoaded, []);
+    const replyBody = requests.find((body) => formatName(body) === "Reply")!;
+    assert.ok(developer(replyBody).includes("## PRE_CLINICAL_SENT (decision stage)"));
+    const loader = replyBody.tools!.find((tool) => (tool as { name: string }).name === "loadSkill") as {
+      parameters: { properties: { id: { enum: string[] } } };
+    };
+    assert.equal(loader.parameters.properties.id.enum.length, SKILLS.length, "every skill reachable");
+    // Router usage is in the trace and the totals whenever the API returned a response.
+    const one = { input: 100, cached: 60, cacheWrite: 0, output: 20, reasoning: 5 };
+    const zero = { input: 0, cached: 0, cacheWrite: 0, output: 0, reasoning: 0 };
+    assert.deepEqual((trace.router as { tokens: unknown }).tokens, routerCalls ? one : zero);
+    assert.equal(trace.apiCalls, routerCalls + 1);
+    assert.equal((trace.tokens as { input: number }).input, 100 * (routerCalls + 1));
+  });
+}
+
+test("a reply-loop failure still fails safe to a handoff, with the router in its totals", async () => {
   const client = fake(async (body) => {
-    if (formatName(body) === "Route") return { ...routeResponse({}), output_text: "{not json" } as Response;
-    return final({});
+    if (formatName(body) === "Route") return routeResponse({ skills: ["financing"] });
+    throw new Error("upstream 500");
   });
   const { reply, trace } = await run(client);
+  assert.equal(reply.escalate, true);
   assert.equal(reply.escalationReason, "system error");
   assert.equal(trace.ok, false);
+  assert.equal(trace.apiCalls, 1);
+  assert.deepEqual(trace.tokens, { input: 100, cached: 60, cacheWrite: 0, output: 20, reasoning: 5 });
+  assert.deepEqual(trace.skillsLoaded, ["financing"]);
+});
+
+test("the router prompt names the coordinator in its no-escalation exception", () => {
+  const name = constants.COORDINATOR_DISPLAY_NAME;
+  assert.ok(ROUTER_SYSTEM.includes(`Asking for ${name} is not this: ${name} is the coordinator the patient is already texting`));
+  assert.ok(ROUTER_SYSTEM.includes(`- asking for ${name} by name, or to talk to ${name}: ${name} is who replies;`));
+  assert.doesNotMatch(ROUTER_SYSTEM, /\{\{/);
 });
 
 test("card digits in the router's free text never reach Reply.intent or the trace", async () => {

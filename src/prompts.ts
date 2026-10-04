@@ -79,7 +79,7 @@ const skillsById = new Map(SKILLS.map((skill) => [skill.id, skill]));
 /** The router's catalog: one `- id: description` line per skill. */
 export const CATALOG = SKILLS.map((skill) => `- ${skill.id}: ${skill.description}`).join("\n");
 
-export const ROUTER_SYSTEM = fill(load("router.md").body, { SKILL_CATALOG: CATALOG });
+export const ROUTER_SYSTEM = fill(load("router.md").body, { ...constants, SKILL_CATALOG: CATALOG });
 
 // STRUCTURED OUTPUT FIELDS (packet L1022-1025) moved from the prompt into the schema, read verbatim from the original.
 const ORIGINAL = readFileSync(new URL("../baseline/system-prompt.md", import.meta.url), "utf8");

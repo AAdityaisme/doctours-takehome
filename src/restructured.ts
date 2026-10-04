@@ -16,6 +16,8 @@ export interface RestructuredOptions {
 /**
  * SPEC steps 1-5 for one message: route; if the router escalates, hand off in code with no reply call; otherwise
  * assemble core + stage + skills, run the reply loop with `loadSkill`, and take the intent from the router.
+ * If the router fails, the reply still runs with core + stage + rule skills, every other skill behind `loadSkill`,
+ * and the reply model's own intent; only a reply-loop failure fails safe to a handoff.
  * Returns the trace fields this mode adds and message totals (router + reply). A reply-loop failure is rethrown
  * with both attached.
  */
@@ -25,14 +27,21 @@ export async function restructuredTurn(
 ): Promise<{ reply: Reply; totals: Omit<Turn, "reply">; trace: Record<string, unknown> }> {
   const { client, model, effort } = options;
   const routed = await route(client, text, options.router);
-  const router = { ...options.router, ...routed.route, tokens: routed.usage, latencyMs: routed.latencyMs };
-  if (routed.route.escalation) {
-    const reply = toEscalation(CATEGORY_REASONS[routed.route.escalation.category]);
-    const totals = { toolCalls: [], apiCalls: 1, usage: routed.usage };
+  const router = {
+    ...options.router,
+    ...(routed.route ?? { error: routed.error }),
+    tokens: routed.usage,
+    latencyMs: routed.latencyMs,
+  };
+  // Decision 4: one classifier, one intent, on every path the router answered (already digit-redacted).
+  const intent = (reply: Reply): Reply => (routed.route ? { ...reply, intent: routed.route.intent } : reply);
+  if (routed.route?.escalation) {
+    const reply = intent(toEscalation(CATEGORY_REASONS[routed.route.escalation.category]));
+    const totals = { toolCalls: [], apiCalls: routed.apiCalls, usage: routed.usage };
     return { reply, totals, trace: { router, escalatedBy: "router", skillsLoaded: [], loadSkillCalls: [] } };
   }
 
-  const assembly = assemble(routed.route.skills);
+  const assembly = assemble(routed.route?.skills ?? []);
   const loadSkillCalls: LoadSkillCall[] = [];
   // Built after the turn: loadSkill may have added skills and their tools.
   const trace = () => {
@@ -50,7 +59,7 @@ export async function restructuredTurn(
   // Message totals count the router call too; router.tokens keeps the split.
   const withRouter = (progress: Omit<Turn, "reply">): Omit<Turn, "reply"> => ({
     ...progress,
-    apiCalls: progress.apiCalls + 1,
+    apiCalls: progress.apiCalls + routed.apiCalls,
     usage: sumUsage(routed.usage, progress.usage),
   });
   try {
@@ -64,8 +73,7 @@ export async function restructuredTurn(
       schema: DESCRIBED_REPLY_SCHEMA,
       loader: skillLoader(assembly.rest, loadSkillCalls),
     });
-    // Decision 4: one classifier, one intent. An escalated reply keeps the code-set fields (nothing past the handoff).
-    const reply = turn.reply.escalate ? turn.reply : { ...turn.reply, intent: routed.route.intent };
+    const reply = intent(turn.reply);
     return { reply, totals: withRouter(turn), trace: { ...trace(), escalatedBy: reply.escalate ? "reply" : null } };
   } catch (error) {
     if (error instanceof TurnError) throw new TurnError(error.cause, withRouter(error.progress), trace());
