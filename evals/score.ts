@@ -108,13 +108,14 @@ export const routerFailed = (trace: Trace | null): boolean =>
   Boolean((trace?.router as { error?: unknown } | undefined)?.error);
 
 /**
- * The escalation category a trace reports: a top-level `escalationCategory`, else the router's own escalation
- * (restructured mode). Undefined when the trace names none, so the check is skipped rather than failed.
+ * The escalation category a trace names, from its top-level `escalationCategory` (the handoff source). Only the two
+ * real categories count: "reply" (the reply model escalated without naming one), "system_error" and null name none,
+ * so the check is skipped rather than failed. A wrong-or-false escalation is already caught by `escalate`.
  */
-const categoryOf = (trace: Trace | null): unknown =>
-  trace && "escalationCategory" in trace
-    ? (trace.escalationCategory ?? null)
-    : (trace?.router as { escalation?: { category?: unknown } | null } | undefined)?.escalation?.category;
+const categoryOf = (trace: Trace | null): string | null => {
+  const category = trace?.escalationCategory;
+  return category === "human_requested" || category === "cannot_do" ? category : null;
+};
 
 /** Every claim a case makes, includes first. */
 export const claimsOf = (c: Case): Claim[] => [
@@ -169,7 +170,7 @@ export function scoreTrial(c: Case, reply: Reply, trace: Trace | null, verdicts:
   const answered = c.expect.escalate || reply.response.trim() !== "";
   const escalateOk = reply.escalate === c.expect.escalate;
   const category = categoryOf(trace);
-  const categoryOk = category === undefined ? null : category === c.expect.escalationCategory;
+  const categoryOk = category === null ? null : category === c.expect.escalationCategory;
   const graderFailed = modelClaims.length > 0 && (verdicts === null || verdicts.length !== modelClaims.length);
   const error = traceFailure(trace) ?? (graderFailed ? "grader failed" : null);
   const pass = !error && answered && escalateOk && categoryOk !== false && claims.every((claim) => claim.pass);
@@ -385,7 +386,7 @@ export function markdown(title: string, summary: Summary, results: CaseResult[],
     `| Escalate accuracy, all | ${pct(summary.escalate.all)} |`,
     `| Escalate accuracy, expected true | ${pct(summary.escalate.expectedTrue)} |`,
     `| Escalate accuracy, expected false | ${pct(summary.escalate.expectedFalse)} |`,
-    `| Escalation category | ${summary.category.total === 0 ? "n/a (trace has no category)" : pct(summary.category)} |`,
+    `| Escalation category | ${summary.category.total === 0 ? "n/a (no escalation named a category)" : pct(summary.category)} |`,
     `| Claims passed, all | ${pct(summary.claims.all)} |`,
     `| Claims passed, literal | ${pct(summary.claims.literal)} |`,
     `| Claims passed, model-graded | ${pct(summary.claims.model)} |`,

@@ -99,7 +99,7 @@ test("a missing verdict fails its claim", () => {
 
 test("escalate must match exactly; the category counts only when the trace carries one", () => {
   const c = caseOf({ escalate: true, escalationCategory: "cannot_do" });
-  const escalated = toEscalation("needs a person");
+  const escalated = toEscalation("reply");
   assert.equal(scoreTrial(c, reply(), null, []).escalateOk, false);
   const noCategory = scoreTrial(c, escalated, { index: 0 }, []);
   assert.equal(noCategory.categoryOk, null);
@@ -195,12 +195,12 @@ test("case files are well formed: unique ids, consistent escalation, handoff che
 test("a failed reply or grader call errors the trial: never a pass, never in the rates", () => {
   const c = caseOf({ escalate: true, escalationCategory: "cannot_do", mustNotInclude: ["answers a sales question"] });
   // The CLI turns a failed message into a system-error escalation, which would otherwise look like a correct escalation.
-  const failedReply = scoreTrial(c, toEscalation("system error"), { ok: false, error: "429" }, [{ pass: true, reason: "" }]);
+  const failedReply = scoreTrial(c, toEscalation("system_error"), { ok: false, error: "429" }, [{ pass: true, reason: "" }]);
   assert.equal(failedReply.error, "reply failed: 429");
   assert.equal(failedReply.pass, false);
-  const failedGrader = scoreTrial(c, toEscalation("needs a person"), { ok: true }, null);
+  const failedGrader = scoreTrial(c, toEscalation("reply"), { ok: true }, null);
   assert.equal(failedGrader.error, "grader failed");
-  const good = scoreTrial(c, toEscalation("needs a person"), { ok: true }, [{ pass: true, reason: "" }]);
+  const good = scoreTrial(c, toEscalation("reply"), { ok: true }, [{ pass: true, reason: "" }]);
   const summary = summarize([{ id: "c", topic: "x", expectEscalate: true, trials: [failedReply, failedGrader, good] }]);
   assert.equal(summary.errored, 2);
   assert.deepEqual(summary.escalate.expectedTrue, { hits: 1, total: 1, rate: 1 });
@@ -326,15 +326,17 @@ test("an unusable grader output still reports the call's tokens and errors the t
   assert.equal(scoreTrial(caseOf({ mustInclude: ["states a price"] }), reply(), null, graded.verdicts).error, "grader failed");
 });
 
-test("restructured traces: the router's category is checked, and a router failure is scored and counted", () => {
+test("the category is read from the trace's escalationCategory; a router failure is scored and counted", () => {
   const c = caseOf({ escalate: true, escalationCategory: "cannot_do" });
-  const escalated = toEscalation("needs a person");
-  const routed = (category: string) => ({ ok: true, router: { escalation: { category, reason: "" } } });
-  assert.equal(scoreTrial(c, escalated, routed("cannot_do"), []).categoryOk, true);
-  assert.equal(scoreTrial(c, escalated, routed("human_requested"), []).pass, false);
-  assert.equal(scoreTrial(c, escalated, { ok: true, router: { escalation: null } }, []).categoryOk, null);
-  // A top-level category (PR3) wins over the router's.
-  assert.equal(scoreTrial(c, escalated, { ...routed("human_requested"), escalationCategory: "cannot_do" }, []).categoryOk, true);
+  const escalated = toEscalation("cannot_do");
+  assert.equal(scoreTrial(c, escalated, { ok: true, escalationCategory: "cannot_do" }, []).categoryOk, true);
+  assert.equal(scoreTrial(c, escalated, { ok: true, escalationCategory: "human_requested" }, []).pass, false);
+  // "reply" (the reply model escalated without a category) and "system_error" name no category: skipped, not failed.
+  for (const source of ["reply", "system_error", null]) {
+    assert.equal(scoreTrial(c, escalated, { ok: true, escalationCategory: source }, []).categoryOk, null, String(source));
+  }
+  // A false escalation with a named category counts as a wrong category too.
+  assert.equal(scoreTrial(caseOf(), escalated, { ok: true, escalationCategory: "cannot_do" }, []).categoryOk, false);
   // The fallback reply is what the patient gets, so it is scored like any other reply, not errored.
   const fallback = scoreTrial(caseOf(), reply(), { ok: true, router: { error: "429" } }, []);
   assert.equal(fallback.error, null);

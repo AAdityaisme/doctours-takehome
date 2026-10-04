@@ -19,8 +19,9 @@ Each run sends `cases.json` and `packet-samples.json` through `replyAll` in one 
 - A router failure is product behaviour, not an errored trial. Restructured mode then replies on its fallback path,
   which is what the graders would see, so that reply is scored like any other. The summary counts router failures
   on their own line.
-- `escalationCategory`, when the trace names one: a top-level `escalationCategory` key, or else the router's
-  escalation in restructured mode. Otherwise the summary shows n/a.
+- `escalationCategory`, from the trace's top-level `escalationCategory` (the handoff source). Only `human_requested`
+  and `cannot_do` are compared. `reply` (the reply model escalated without naming a category), `system_error` and null
+  name none, so those trials are skipped. A false escalation that names a category counts as a wrong category.
 - Literal claims, in code, as whole tokens: an exact URL, a whole email address, a dollar amount of the same value
   (`$500` is not `$500.99`). Exclusions are searched in every decoded string of the `Reply`. Every URL, email and
   amount inside a prose must-include is also checked this way, and the grader judges what it refers to.
