@@ -94,6 +94,26 @@ export function containsLiteral(haystack: string, needle: string): boolean {
 const stringsIn = (value: unknown): string[] =>
   typeof value === "string" ? [value] : value && typeof value === "object" ? Object.values(value).flatMap(stringsIn) : [];
 
+/**
+ * The infrastructure failure behind a trace, if any: the reply loop failed (the CLI then sends a system-error
+ * escalation), or restructured mode's router failed and the reply ran on its fallback path. Either way the trial
+ * measures an outage, not the mode, so it is errored rather than scored.
+ */
+export function traceFailure(trace: Trace | null): string | null {
+  if (trace?.ok === false) return `reply failed: ${String(trace.error)}`;
+  const routerError = (trace?.router as { error?: unknown } | undefined)?.error;
+  return routerError ? `router failed: ${String(routerError)}` : null;
+}
+
+/**
+ * The escalation category a trace reports: a top-level `escalationCategory`, else the router's own escalation
+ * (restructured mode). Undefined when the trace names none, so the check is skipped rather than failed.
+ */
+const categoryOf = (trace: Trace | null): unknown =>
+  trace && "escalationCategory" in trace
+    ? (trace.escalationCategory ?? null)
+    : (trace?.router as { escalation?: { category?: unknown } | null } | undefined)?.escalation?.category;
+
 /** Every claim a case makes, includes first. */
 export const claimsOf = (c: Case): Claim[] => [
   ...c.expect.mustInclude.map((claim) => ({ kind: "include" as const, claim })),
@@ -127,8 +147,8 @@ const embeddedChecks = (claim: Claim, reply: Reply): ClaimResult[] =>
 
 /**
  * Scores one reply against its case. `verdicts` answers the case's model claims in order; a missing verdict fails
- * its claim. The category is checked only when the trace carries `escalationCategory`. A failed reply (trace `ok`
- * false, which the CLI turns into a system-error escalation) or a failed grader call marks the trial as errored.
+ * its claim. The category is checked only when the trace names one. A failed reply or router (`traceFailure`) or a
+ * failed grader call marks the trial as errored.
  */
 export function scoreTrial(c: Case, reply: Reply, trace: Trace | null, verdicts: Verdicts): Trial {
   const all = claimsOf(c);
@@ -146,10 +166,10 @@ export function scoreTrial(c: Case, reply: Reply, trace: Trace | null, verdicts:
   });
   const answered = c.expect.escalate || reply.response.trim() !== "";
   const escalateOk = reply.escalate === c.expect.escalate;
-  const categoryOk =
-    trace && "escalationCategory" in trace ? (trace.escalationCategory ?? null) === c.expect.escalationCategory : null;
+  const category = categoryOf(trace);
+  const categoryOk = category === undefined ? null : category === c.expect.escalationCategory;
   const graderFailed = modelClaims.length > 0 && (verdicts === null || verdicts.length !== modelClaims.length);
-  const error = trace?.ok === false ? `reply failed: ${String(trace.error)}` : graderFailed ? "grader failed" : null;
+  const error = traceFailure(trace) ?? (graderFailed ? "grader failed" : null);
   const pass = !error && answered && escalateOk && categoryOk !== false && claims.every((claim) => claim.pass);
   return { reply, trace, escalateOk, categoryOk, claims, answered, pass, error };
 }

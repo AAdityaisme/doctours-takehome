@@ -9,6 +9,7 @@ import {
   addUsage,
   claimsOf,
   subtractUsage,
+  traceFailure,
   cost,
   gradeClaims,
   isLiteral,
@@ -86,8 +87,8 @@ async function runOnce(cases: Case[], settings: Settings) {
   let graderErrors = 0;
   const verdicts = await pool(cases, settings.concurrency * 2, async (c, i): Promise<Verdicts> => {
     const claims = claimsOf(c).filter((claim) => !isLiteral(claim.claim));
-    // A failed reply is an errored trial whatever the grader says, so don't pay for the call.
-    if (claims.length === 0 || traces.get(i)?.ok === false) return [];
+    // A failed reply or router makes an errored trial whatever the grader says, so don't pay for the call.
+    if (claims.length === 0 || traceFailure(traces.get(i) ?? null)) return [];
     try {
       const graded = await gradeClaims(settings.client, settings.grader, c.text, replies[i], claims);
       graderUsage = addUsage(graderUsage, graded.usage);
@@ -204,7 +205,7 @@ if (import.meta.main) {
     router: { model: settings.router.model, tokens: routerUsage, cost: cost(settings.router.model, routerUsage) },
     grader: { model: settings.grader.model, tokens: graderUsage, cost: cost(settings.grader.model, graderUsage) },
     latencyMs: { p50: percentile(latencies, 50), p95: percentile(latencies, 95) },
-    failedMessages: traces.filter((t) => t.ok === false).length,
+    failedMessages: traces.filter((t) => traceFailure(t)).length,
     graderErrors: runs.reduce((n, run) => n + run.graderErrors, 0),
     rateLimitWaits: { count: waits.count, seconds: Math.round(waits.ms / 1000) },
   };

@@ -13,10 +13,12 @@ separately. `--mode` defaults to the CLI's default mode.
 
 Each run sends `cases.json` and `packet-samples.json` through `replyAll` in one batch, with a trace. It scores:
 
-- `escalate`, exactly. A trial whose reply failed (the CLI's system-error escalation) or whose grader call failed is
-  counted as errored, left out of every rate and never a pass. pass^k covers only cases whose k trials all
-  completed; the rest are counted separately. `escalationCategory` is checked only when a trace record carries an `escalationCategory`
-  key. PR1 traces don't, so the summary shows n/a.
+- `escalate`, exactly. A trial whose reply failed (the CLI's system-error escalation), whose router failed
+  (restructured mode's fallback path) or whose grader call failed is counted as errored. Such a trial is left out of
+  every rate and is never a pass. pass^k covers only cases whose k trials all completed; the rest are counted
+  separately.
+- `escalationCategory`, when the trace names one: a top-level `escalationCategory` key, or else the router's
+  escalation in restructured mode. Otherwise the summary shows n/a.
 - Literal claims, in code, as whole tokens: an exact URL, a whole email address, a dollar amount of the same value
   (`$500` is not `$500.99`). Exclusions are searched in every decoded string of the `Reply`. Every URL, email and
   amount inside a prose must-include is also checked this way, and the grader judges what it refers to.

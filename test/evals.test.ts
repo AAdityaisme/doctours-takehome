@@ -325,3 +325,17 @@ test("an unusable grader output still reports the call's tokens and errors the t
   assert.deepEqual([graded.usage.input, graded.usage.output], [40, 7]);
   assert.equal(scoreTrial(caseOf({ mustInclude: ["states a price"] }), reply(), null, graded.verdicts).error, "grader failed");
 });
+
+test("restructured traces: the router's category is checked, and a router failure errors the trial", () => {
+  const c = caseOf({ escalate: true, escalationCategory: "cannot_do" });
+  const escalated = toEscalation("needs a person");
+  const routed = (category: string) => ({ ok: true, router: { escalation: { category, reason: "" } } });
+  assert.equal(scoreTrial(c, escalated, routed("cannot_do"), []).categoryOk, true);
+  assert.equal(scoreTrial(c, escalated, routed("human_requested"), []).pass, false);
+  assert.equal(scoreTrial(c, escalated, { ok: true, router: { escalation: null } }, []).categoryOk, null);
+  // A top-level category (PR3) wins over the router's.
+  assert.equal(scoreTrial(c, escalated, { ...routed("human_requested"), escalationCategory: "cannot_do" }, []).categoryOk, true);
+  const fallback = scoreTrial(caseOf(), reply(), { ok: true, router: { error: "429" } }, []);
+  assert.equal(fallback.error, "router failed: 429");
+  assert.equal(fallback.pass, false);
+});
