@@ -12,8 +12,8 @@ recorded deletion. Text was moved, not rewritten: the only changed lines are lis
 | What | Size |
 |------|------|
 | Original prompt, L764-1554 | 164,678 chars, ~41,169 tokens |
-| `core.md` alone | 38,151 chars, ~9,537 tokens |
-| Core + largest stage (`PRE_CLINICAL_SENT`) + two largest skills (`financing`, `packages-and-pricing`) | 77,856 chars, ~19,464 tokens |
+| `core.md` alone | 38,555 chars, ~9,639 tokens |
+| Core + largest stage (`PRE_CLINICAL_SENT`) + two largest skills (`financing`, `packages-and-pricing`) | 78,260 chars, ~19,565 tokens |
 
 Sizes count the files as written, before `{{NAME}}` placeholders are filled and without front matter. Filling adds
 the same per-patient values (transcript, summary, memory) to both the original and the split version.
@@ -273,6 +273,12 @@ not output fields, and went to `deposit-and-payment`.
 - **Asking for the coordinator by name** is not a request for a person: the model is that coordinator (L1512).
 - **VOICE bans handoff wording** (L877, and L769 bans channel-blaming): kept as is. Code writes the escalation
   sentence, so the model never writes handoff wording and the rule still holds for every word it does write.
+- **A prescribed reply vs ESCALATION rule 2** (E2). Rule 2's "no tool and no rule here can carry out" read as any
+  action no tool performs, so the model escalated requests the prompt answers with a set decline (insurance
+  paperwork, L836; a note on the assessment, L901/L918). Core ESCALATION now says a rule carries out a request when
+  the prompt gives its reply or decline, so outside rule 2's list and the "routed to a person" requests that reply
+  wins. One exception escalates: safety-relevant medical information the patient wants on file (an allergy, a
+  medication, a condition), which a decline would leave unrecorded.
 
 ## Conflicts left as found (recorded, not resolved)
 - L902 ends "then give interim browse guidance"; L1428 says the flight-help line is the answer, "no need to name
