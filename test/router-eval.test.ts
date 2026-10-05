@@ -72,3 +72,23 @@ test("router eval stops on configuration errors instead of scoring them", async 
     client: { responses: { create: async () => { throw error; } } }, model: "router", effort: "none", concurrency: 1,
   }), (caught) => caught === error);
 });
+
+test("router eval scores a message-level 400 as one failed case and continues", async () => {
+  for (const code of ["context_length_exceeded", "invalid_prompt", "string_above_max_length"]) {
+    const client = { responses: { create: async (body: ResponseCreateParamsNonStreaming) => {
+      if (JSON.stringify(body.input).includes("odd")) {
+        throw new OpenAI.BadRequestError(400, { code, message: "bad content" }, undefined, new Headers());
+      }
+      return routeReply(null);
+    } } };
+    const results = await routeCases([
+      caseOf("a", "hello", false), caseOf("b", "odd", false), caseOf("c", "bye", false),
+    ], { client, model: "router", effort: "none", concurrency: 1 });
+    assert.deepEqual(results.map((r) => r.id), ["a", "b", "c"]);
+    assert.deepEqual(results.map((r) => r.error !== null), [false, true, false]);
+    assert.equal(results[1]!.intent, null);
+    assert.deepEqual(results[1]!.skills, []);
+    assert.equal(results[1]!.usage.input, 0);
+    assert.deepEqual(scoreRouter(results, "router").routerFailures.map((r) => r.id), ["b"]);
+  }
+});

@@ -1,10 +1,10 @@
-import { apiErrorMessage, nonRetryableApiError } from "../src/api-errors.ts";
+import { apiErrorMessage, messageApiError, nonRetryableApiError } from "../src/api-errors.ts";
 import { execFileSync } from "node:child_process";
 import { mkdirSync } from "node:fs";
 import { parseArgs } from "node:util";
 import OpenAI from "openai";
 import type { Client, Usage } from "../src/respond.ts";
-import { route } from "../src/router.ts";
+import { route, type Routed } from "../src/router.ts";
 import { counting429, fail, load, pool, writeResults } from "./run.ts";
 import { addUsage, cost, percentile, zeroUsage, type Case } from "./score.ts";
 
@@ -32,7 +32,20 @@ export async function routeCases(
   options: { client: Client; model: string; effort: string; concurrency: number },
 ): Promise<RouterResult[]> {
   return pool(cases, options.concurrency, async (c) => {
-    const routed = await route(options.client, c.text, options);
+    const started = performance.now();
+    let routed: Routed;
+    try {
+      routed = await route(options.client, c.text, options);
+    } catch (error) {
+      if (!messageApiError(error)) throw error;
+      routed = {
+        route: null,
+        error: error instanceof Error ? error.message : String(error),
+        usage: zeroUsage(),
+        apiCalls: 0,
+        latencyMs: Math.round(performance.now() - started),
+      };
+    }
     return {
       id: c.id,
       set: c.set,

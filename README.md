@@ -192,7 +192,7 @@ The router decides first, using `human_requested` or `cannot_do`. The reply mode
 
 <details><summary>Failures, handoff reasons, and trace categories</summary>
 
-A 401, 403, 404, billing error (`insufficient_quota`), or configuration 400 stops the batch and eval runs. The CLI and both eval commands print the same one-line status, message, and configuration hint (including `GRADER_MODEL`) to stderr and exit nonzero without writing results. The batch CLI writes nothing to stdout. Message-level 400 codes `context_length_exceeded`, `invalid_prompt`, `string_above_max_length`, `content_policy_violation`, `bio_policy`, `misalignment_policy_violation`, `invalid_image`, `invalid_image_format`, `invalid_base64_image`, `invalid_image_url`, `image_too_large`, `image_too_small`, `image_parse_error`, `image_content_policy_violation`, `image_file_too_large`, `unsupported_image_media_type`, `empty_image_file`, `failed_to_download_image`, `image_file_not_found` hand off only that message as `system_error`.
+A 401, 403, 404, billing error (`insufficient_quota`), or configuration 400 stops the batch and eval runs. The CLI and both eval commands print the same one-line status, message, and configuration hint (including `GRADER_MODEL`) to stderr and exit nonzero without writing results. The batch CLI writes nothing to stdout. Message-level 400 codes such as `context_length_exceeded` and `invalid_prompt` hand off only that message as `system_error`; [src/api-errors.ts](src/api-errors.ts) lists all recognized codes. The router-only eval records these as failures of the individual case and continues.
 
 Other rate limits (429), server errors (5xx), timeouts, and connection errors keep the fallback paths: a failed reply turn hands off as `system_error` after retries.
 

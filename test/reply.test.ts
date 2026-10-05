@@ -164,3 +164,38 @@ test("malformed static URL does not throw or force a handoff; payment words in p
     assert.equal(postProcess(reply({ response }), new Set()).escalate, false);
   }
 });
+
+for (const response of [
+  "We accept card, Klarna or PayPal for the payment/financing step.",
+  "The $600 deposit/payment locks your price for 12 months.",
+  "Once you pick a package I can send a payment/checkout link.",
+  "Head to checkout/booking when you're ready.",
+  "You can choose PayPal/checkout at the end.",
+  "Card/payment details never go over text.",
+  "Pay-in-full/payment plans are available.",
+  "Klarna/PayPal checkout works too.",
+]) {
+  test(`payment prose stays allowed: ${response}`, () => {
+    assert.equal(postProcess(reply({ response }), new Set()).escalate, false);
+  });
+}
+
+for (const wrap of [
+  (url: string) => `${url}…`,
+  (url: string) => `${url}—thanks`,
+  (url: string) => `“${url}”`,
+  (url: string) => `‘${url}’`,
+  (url: string) => `*${url}*`,
+  (url: string) => `**${url}**`,
+  (url: string) => `\`${url}\``,
+]) {
+  test(`attached punctuation preserves exact tool links: ${wrap("link")}`, () => {
+    for (const url of ["https://www.doctours.com/payment/gold", "https://www.doctours.com/clinic/heva/checkout"]) {
+      const response = `Here: ${wrap(url)}`;
+      const out = postProcess(reply({ response }), new Set([url]));
+      assert.equal(out.escalate, false);
+      assert.equal(out.response.split("\n").at(-1), url);
+      assert.equal(postProcess(reply({ response }), new Set()).escalate, true);
+    }
+  });
+}

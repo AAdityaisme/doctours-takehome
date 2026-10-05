@@ -149,9 +149,9 @@ function assertReply(value: unknown): asserts value is Reply {
   if (error) throw new Error(`Reply schema: ${error}`);
 }
 
-// Scheme matched case-insensitively (HTTPS:// is valid). Stops before whitespace, quotes and brackets; never ends
+// Scheme matched case-insensitively (HTTPS:// is valid). Stops before whitespace, quotes, Unicode punctuation, markdown marks and brackets; never ends
 // on sentence punctuation. Bare domains ("hims.com") are sentence text, not links, and are left alone.
-const URL_PATTERN = /https?:\/\/[^\s<>"'()[\]{}]*[^\s<>"'()[\]{}.,;:!?]/gi;
+const URL_PATTERN = /https?:\/\/[^\s<>"'()[\]{}“”‘’…—–*`]*[^\s<>"'()[\]{}“”‘’…—–*`.,;:!?]/gi;
 
 /** Every http(s) URL in `text`, in order of first appearance, without duplicates. */
 export const findUrls = (text: string): string[] => [...new Set(text.match(URL_PATTERN) ?? [])];
@@ -192,14 +192,14 @@ export function postProcess(raw: unknown, toolUrls: ReadonlySet<string>): Reply 
     return escalated;
   }
   // Scan URL-like tokens independently of URL-last formatting; scheme-less links are tappable in SMS.
-  const tokens = raw.response.match(/[^\s<>"'()[\]{}]+/g) ?? [];
+  const tokens = raw.response.match(/[^\s<>"'()[\]{}“”‘’…—–*`]+/g) ?? [];
   const untrustedPayment = tokens.some((token) => {
     const url = token.replace(/[.,;:!?]+$/, "");
     // Decode valid escapes individually so a malformed escape elsewhere cannot hide the route.
     const decoded = url.replace(/%([0-9a-f]{2})/gi, (_, hex: string) =>
       String.fromCharCode(parseInt(hex, 16))).toLowerCase();
-    const urlLike = decoded.includes("://") || decoded.includes("/") ||
-      /[a-z0-9]\.[a-z]/i.test(decoded);
+    const urlLike = decoded.includes("://") ||
+      /^(?:[^\s/@]+@)?[a-z0-9-]+(?:\.[a-z0-9-]+)+\.?(?:[:/?#]|$)/.test(decoded);
     return urlLike && /payment|checkout/.test(decoded) && !toolUrls.has(url);
   });
   // system_error describes a failed output check, rather than a patient's request for a person.
