@@ -261,8 +261,9 @@ not output fields, and went to `deposit-and-payment`.
 - `prompts/router.md` (new). Its request-or-question test (experiment E1) says `cannot_do` needs a request to act;
   a question about whether, how, what we need or who they are texting goes to the reply. It carries five contrastive
   pairs, each tied to a packet rule: the payment link (L908, L1316), creator contact (L956), a first versus a second
-  clinic-contact ask (L980), surgeon contact after the deposit (L1454) and the identity answer (L1512). Every example
-  is worded apart from the eval texts.
+  clinic-contact ask (L980), surgeon contact after the deposit (L1454) and the identity answer (L1512). The
+  policy-question examples are holding a date (L921, L1317) and promo codes (L1317, L1322). Every example names a
+  class of message; router.md quotes no patient message, so none restates an eval case or sample.
 
 ## Rule conflicts with a recorded winner
 - **The seven "routed to a person" rules** (L913, L955, L980, L1039, L1317, L1407, L1436) describe an upstream

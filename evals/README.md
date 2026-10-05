@@ -60,9 +60,11 @@ defaults to 4.
 Per run it reports:
 - escalate accuracy (all, should escalate, should not);
 - category accuracy on correct escalations;
-- every false positive with the router's reason, every false negative with its intent, and every wrong category;
+- every false positive with the router's reason, every false negative with its intent, and every wrong category. A
+  false-negative line carries the router's intent, not a reason: the router gives a reason only when it escalates;
 - router failures, counted on their own line and scored as no escalation, which is what restructured mode does with
-  them (it replies on its fallback path);
+  them (it replies on its fallback path). The client is the CLI's (`maxRetries: 8`, no harness retries), so a 429
+  left after the SDK's retries is a router failure here too;
 - p50/p95 latency and cost.
 
 It writes `results/router-<YYYY-MM-DD-HHMM>.json` with the same no-overwrite rule as `run.ts`. A router false negative
