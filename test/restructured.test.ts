@@ -18,9 +18,16 @@ const routeResponse = (route: object) => {
 };
 
 const formatName = (body: ResponseCreateParamsNonStreaming) => (body.text?.format as { name?: string }).name;
-const developer = (body: ResponseCreateParamsNonStreaming) =>
-  String((body.input as { role?: string; content?: string }[]).find((item) => item.role === "developer")?.content);
+type Content = string | { text: string }[];
+const developerMessages = (body: ResponseCreateParamsNonStreaming) =>
+  (body.input as { role?: string; content?: Content }[]).filter((item) => item.role === "developer");
+const text = (content: Content | undefined) => (typeof content === "string" ? content : (content ?? []).map((part) => part.text).join(""));
+/** All developer text in one string, whatever the message split. */
+const developer = (body: ResponseCreateParamsNonStreaming) => developerMessages(body).map((m) => text(m.content)).join("\n\n");
 const toolNames = (body: ResponseCreateParamsNonStreaming) => (body.tools ?? []).map((tool) => (tool as { name: string }).name);
+/** The names `tool_choice: allowed_tools` lets this request call. */
+const allowedNames = (body: ResponseCreateParamsNonStreaming) =>
+  (body.tool_choice as { type: string; tools: { name: string }[] }).tools.map((tool) => tool.name);
 const skillText = (id: string) => SKILLS.find((skill) => skill.id === id)!.body;
 
 /** A fake API: the router answers `route`, the reply model plays `replies` in order. Every request is kept. */
@@ -69,9 +76,10 @@ test("routing → assembly: core + the PIPELINE_STATUS stage + the router's skil
   assert.ok(!system.includes(skillText("travel").slice(0, 300)), "unrouted skill not loaded");
   assert.ok(system.includes(constants.CHAT_LIST), "placeholders filled");
   assert.doesNotMatch(system, /\{\{(?!clinic\.slug\}\})/);
-  assert.ok(toolNames(body!).includes("getSavedClinicsTool"), "stage tool");
-  assert.ok(toolNames(body!).includes("loadSkill"));
-  assert.ok(!toolNames(body!).includes("getPaymentLinkTool"), "no skill asked for it");
+  assert.ok(allowedNames(body!).includes("getSavedClinicsTool"), "stage tool");
+  assert.ok(allowedNames(body!).includes("loadSkill"));
+  assert.ok(!allowedNames(body!).includes("getPaymentLinkTool"), "no skill asked for it");
+  assert.ok(toolNames(body!).includes("getPaymentLinkTool"), "but its definition is always sent");
   assert.ok(!toolNames(body!).includes("issuePromoCodeTool"), "PROMO_OFFER is null");
   const schema = (body!.text?.format as unknown as { schema: { properties: Record<string, { description?: string }> } }).schema;
   assert.match(String(schema.properties.highEngagement!.description), /high engagement signals/);
@@ -97,7 +105,7 @@ test("deterministic rules: intake on outstanding collection or first contact; pr
 
   assert.throws(() => assemble([], { ...constants, PIPELINE_STATUS: "NOPE" }), /no stage file/);
   const booked = assemble([], { ...constants, PIPELINE_STATUS: "MEETING_COMPLETED" });
-  assert.ok(booked.system.includes("## MEETING_BOOKED / MEETING_COMPLETED"));
+  assert.ok(booked.prefix.includes("## MEETING_BOOKED / MEETING_COMPLETED"));
 });
 
 test("loadSkill: returns the skill's text, offers its tools from the next round, and is traced", async () => {
@@ -108,8 +116,9 @@ test("loadSkill: returns the skill's text, offers its tools from the next round,
   ]);
   const { reply, trace } = await run(client, "is it free?");
   const [first, second, third] = replyRequests();
-  assert.ok(!toolNames(first!).includes("getConsultationRescheduleLinkTool"));
-  assert.ok(toolNames(second!).includes("getConsultationRescheduleLinkTool"), "skill tools offered after loading");
+  assert.ok(!allowedNames(first!).includes("getConsultationRescheduleLinkTool"));
+  assert.ok(allowedNames(second!).includes("getConsultationRescheduleLinkTool"), "skill tools allowed after loading");
+  assert.deepEqual(second!.tools, first!.tools, "tool definitions never change within a turn");
   const loadDescription = (first!.tools!.find((tool) => (tool as { name: string }).name === "loadSkill") as { description: string }).description;
   assert.match(loadDescription, /- consultation: .* Sections: CONSULTATION RESCHEDULING; PHONE CONTACT/);
 

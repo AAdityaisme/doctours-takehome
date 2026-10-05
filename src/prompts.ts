@@ -127,40 +127,58 @@ export function ruleSkills(context: Context): string[] {
 }
 
 export interface Assembly {
-  system: string;
+  /** Core + the stage file, filled: the same for every message in a stage, so it is the cached prefix. */
+  prefix: string;
+  /** Developer message 2: a line naming the loaded skills, then their text, filled. */
+  skillsText: string;
+  /** Tool definitions sent on every call: every tool restructured mode can offer, fixed order (cache-stable). */
+  offered: Tool[];
+  /** What this message may call (`allowed_tools`): today's selection, in TOOLS order. */
   tools: Tool[];
   /** Loaded skill ids, catalog order. */
   skills: string[];
   /** Ids the router returned that no skill has; ignored. */
   unknownSkills: string[];
-  /** Skills not loaded, offered through `loadSkill`. */
-  rest: Skill[];
 }
 
+// Every tool a prompt file declares. issuePromoCodeTool is added only when PROMO_OFFER is set, in both lists.
+const declaredTools = new Set([
+  ...coreTools,
+  ...[...STAGES.values()].flatMap((stage) => strings(stage, "tools")),
+  ...SKILLS.flatMap((skill) => skill.tools),
+]);
+const withPromo = (names: Set<string>, context: Context): Tool[] =>
+  // ponytail: the packet ships only the no-promo ACTIVE PROMO OFFER text (discounts-and-quotes), matching its fixed
+  // PROMO_OFFER = null. A live offer also needs its section generated from PROMO_OFFER; add that with the first real one.
+  TOOLS.filter((tool) => names.has(tool.name) || (tool.name === "issuePromoCodeTool" && context.PROMO_OFFER != null));
+
 /**
- * The reply's system prompt (SPEC step 3): core, the stage file for PIPELINE_STATUS, then the router's skills plus
- * the rule skills, every placeholder filled. Tools: the front-matter tools of all of those, in TOOLS order, plus
- * issuePromoCodeTool only when PROMO_OFFER is set.
+ * The reply's instructions (SPEC step 3): core and the stage file for PIPELINE_STATUS as one cache-stable prefix,
+ * then the router's skills plus the rule skills, every placeholder filled. `tools` is the front-matter tools of all
+ * of those (today's selection); `offered` is the fixed superset sent on every call so the tools prefix never changes.
  */
 export function assemble(routed: string[], context: Context = constants): Assembly {
   const stage = STAGES.get(context.PIPELINE_STATUS);
   if (!stage) throw new Error(`no stage file for PIPELINE_STATUS ${context.PIPELINE_STATUS}`);
   const wanted = new Set([...routed, ...ruleSkills(context)]);
   const skills = SKILLS.filter((skill) => wanted.has(skill.id));
-  const names = new Set([
-    ...coreTools,
-    ...strings(stage, "tools"),
-    ...skills.flatMap((skill) => skill.tools),
-    // ponytail: the packet ships only the no-promo ACTIVE PROMO OFFER text (discounts-and-quotes), matching its fixed
-    // PROMO_OFFER = null. A live offer also needs its section generated from PROMO_OFFER; add that with the first real one.
-    ...(context.PROMO_OFFER != null ? ["issuePromoCodeTool"] : []),
-  ]);
+  const names = new Set([...coreTools, ...strings(stage, "tools"), ...skills.flatMap((skill) => skill.tools)]);
   return {
-    system: fill([CORE, stage, ...skills].map((file) => file.body).join("\n\n"), context),
-    tools: TOOLS.filter((tool) => names.has(tool.name)),
+    prefix: fill([CORE, stage].map((file) => file.body).join("\n\n"), context),
+    // loadSkill's fixed description lists every skill, so this line is how the model knows which it already has.
+    skillsText: fill(
+      [
+        skills.length
+          ? `Skills already loaded below: ${skills.map((skill) => skill.id).join(", ")}. Call loadSkill only for a skill not in this list.`
+          : "No skills are loaded. Call loadSkill for any skill this message needs.",
+        ...skills.map((skill) => skill.body),
+      ].join("\n\n"),
+      context,
+    ),
+    offered: withPromo(declaredTools, context),
+    tools: withPromo(names, context),
     skills: skills.map((skill) => skill.id),
     unknownSkills: [...new Set(routed)].filter((id) => !skillsById.has(id)),
-    rest: SKILLS.filter((skill) => !wanted.has(skill.id)),
   };
 }
 
@@ -176,26 +194,28 @@ export interface LoadSkillCall {
   result: "loaded" | "already loaded" | "unknown";
 }
 
+// One fixed definition for every message (cache-stable): every skill, catalog order. Its description lists each one's
+// id, description and `# ` headings, so "see TIME-BOUND PAUSE" resolves.
+const LOAD_SKILL_TOOL: SkillLoader["tool"] = {
+  name: "loadSkill",
+  description: [
+    "Load a skill whose instructions are not in your developer messages yet, when this message needs it or your instructions refer to one of its sections by name. Returns its instructions.",
+    "Skills:",
+    ...SKILLS.map(
+      (skill) => `- ${skill.id}: ${skill.description}${skill.headings.length ? ` Sections: ${skill.headings.join("; ")}` : ""}`,
+    ),
+  ].join("\n"),
+  parameters: strictObject({ id: { type: "string", enum: SKILLS.map((skill) => skill.id) } }),
+};
+
 /**
- * `loadSkill(id)` for the skills the assembly left out (SPEC step 3). Its description lists each one's id,
- * description and `# ` headings, so "see TIME-BOUND PAUSE" resolves. Every call lands in `calls`.
+ * `loadSkill(id)` (SPEC step 3). A skill already in the instructions, or loaded earlier this turn, answers
+ * "already loaded". Every call lands in `calls`.
  */
-export function skillLoader(rest: Skill[], calls: LoadSkillCall[], context: Context = constants): SkillLoader | null {
-  if (rest.length === 0) return null;
-  const loaded = new Set<string>();
-  const lines = rest.map(
-    (skill) => `- ${skill.id}: ${skill.description}${skill.headings.length ? ` Sections: ${skill.headings.join("; ")}` : ""}`,
-  );
+export function skillLoader(loadedIds: string[], calls: LoadSkillCall[], context: Context = constants): SkillLoader {
+  const loaded = new Set(loadedIds);
   return {
-    tool: {
-      name: "loadSkill",
-      description: [
-        "Load a skill that is not in your instructions yet, when this message needs it or your instructions refer to one of its sections by name. Returns its instructions.",
-        "Not loaded:",
-        ...lines,
-      ].join("\n"),
-      parameters: strictObject({ id: { type: "string", enum: rest.map((skill) => skill.id) } }),
-    },
+    tool: LOAD_SKILL_TOOL,
     load(argumentsJson) {
       let id = "";
       try {
@@ -203,7 +223,7 @@ export function skillLoader(rest: Skill[], calls: LoadSkillCall[], context: Cont
       } catch {
         // falls through as unknown
       }
-      const skill = rest.find((candidate) => candidate.id === id);
+      const skill = skillsById.get(id);
       const result = !skill ? "unknown" : loaded.has(id) ? "already loaded" : "loaded";
       calls.push({ id, result });
       if (!skill || result !== "loaded") return { output: JSON.stringify({ error: `${result} skill ${id}` }), tools: [] };
