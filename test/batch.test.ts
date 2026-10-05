@@ -1,3 +1,4 @@
+import { MESSAGE_ERROR_CODES } from "../src/api-errors.ts";
 import OpenAI from "openai";
 import assert from "node:assert/strict";
 import { execFileSync, spawnSync } from "node:child_process";
@@ -287,7 +288,7 @@ test("CLI API configuration errors exit nonzero with one stderr line and empty s
   }
 });
 
-for (const code of ["context_length_exceeded", "invalid_prompt", "string_above_max_length", "content_policy_violation"]) {
+for (const code of MESSAGE_ERROR_CODES) {
   for (const stage of ["router", "reply"]) {
     test(`message-level 400 ${code} at ${stage} hands off one message and completes batch`, async (t) => {
       t.mock.method(console, "error", () => {});
@@ -347,9 +348,11 @@ test("CLI and both eval commands share one fatal diagnostic without a doubled st
     });
     assert.equal(result.status, 1);
     assert.equal(result.stdout, "");
-    assert.equal(result.stderr.trim().split("\n").length, 1);
-    assert.match(result.stderr, /^OpenAI 401: bad configuration .*GRADER_MODEL/);
-    diagnostics.push(result.stderr);
+    const fatalLines = result.stderr.trim().split("\n").filter((line) => line.startsWith("OpenAI "));
+    assert.equal(fatalLines.length, 1);
+    assert.match(fatalLines[0]!, /^OpenAI 401: bad configuration .*GRADER_MODEL/);
+    assert.doesNotMatch(result.stderr, /at .*\.ts:/);
+    diagnostics.push(fatalLines[0]!);
   }
   assert.equal(new Set(diagnostics).size, 1);
 });

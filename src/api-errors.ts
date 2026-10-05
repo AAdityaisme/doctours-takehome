@@ -3,6 +3,11 @@ import OpenAI, { type APIError } from "openai";
 /** Request content can fail independently of the next patient's message. */
 export const MESSAGE_ERROR_CODES = new Set([
   "context_length_exceeded", "invalid_prompt", "string_above_max_length", "content_policy_violation",
+  // Content-specific ResponseError codes from the installed SDK; configuration and server codes stay fatal.
+  "bio_policy", "misalignment_policy_violation", "invalid_image", "invalid_image_format",
+  "invalid_base64_image", "invalid_image_url", "image_too_large", "image_too_small", "image_parse_error",
+  "image_content_policy_violation", "image_file_too_large", "unsupported_image_media_type",
+  "empty_image_file", "failed_to_download_image", "image_file_not_found",
 ]);
 
 export function messageApiError(error: unknown): APIError | null {
