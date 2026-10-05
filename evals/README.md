@@ -48,7 +48,7 @@ comparison comes later, from merged heads.
 
 ## Cases
 
-`cases.json` holds 76 hand-written patient messages. Each one is sent as a new message on the packet's fixed
+`cases.json` holds 86 hand-written patient messages. Each one is sent as a new message on the packet's fixed
 history, the same way the graders' hidden suite is run (packet L690). The cases try to predict how that suite behaves.
 They test breadth across the prompt's topics and both sides of the escalation boundary.
 
@@ -122,3 +122,22 @@ response time.
 | `airport` | no escalate (content contested) | No tool returns an airport, yet the prompt's examples name IST. The positive claim accepts naming IST or a plain "not available"; the prohibitions catch drive times, "SAW is closer" and transfer claims. |
 
 If the graders' suite disagrees with one of these decisions, flip that case and record the change here.
+
+## Completeness cases (defect 10)
+
+The ten `completeness` cases measure SPEC packet defect 10. The L759 grading note says graders check facts such as a
+package's deposit, the assessment link and the consultation link. The prompt's brevity rules (L883 and L1549: no
+repeated link unless asked; L994: a simple question gets the answer alone) make replies drop them. All ten are
+`ambiguous: true` and share a topic, so the summary reports them apart. A short reply that has the facts passes.
+
+- Price with deposit: `cheapest-package-price`, `heva-gold-ballpark`, `hakan-budget-check`.
+- How to pay, assessment link required: `book-on-my-own`, `pay-online-or-phone`.
+- Decided patient, payment link required: `decided-sapphire-next-step`. This is a control, because the prompt itself
+  requires that url (L1310).
+- Consultation link required with the answer: `consult-surgeon-or-team`, `consult-caller-number`. The cost question is
+  the packet's own `consultation` sample, so no case repeats it.
+- Near-misses where any link fails: `price-lock-length`, `cash-deposit-on-arrival`. A paste-every-link policy can't
+  pass these.
+
+The facts come from tool data and prompt lines. L759 decides only which facts are required. The expected replies
+(L717-758) were not used.
