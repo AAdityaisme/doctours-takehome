@@ -72,7 +72,7 @@ test("every original line is verbatim in its mapped file exactly once, or listed
     }
   }
   for (const [text, want] of expected) assert.equal(counts.get(text), want, `copies of ${JSON.stringify(text.slice(0, 60))}`);
-  assert.deepEqual(tally, { verbatim: 623, rewritten: 5, code: 6, deleted: 7 });
+  assert.deepEqual(tally, { verbatim: 622, rewritten: 6, code: 6, deleted: 7 });
 });
 
 test("the output-field rules that moved to code are the schema's field descriptions, verbatim", () => {
