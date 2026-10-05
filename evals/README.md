@@ -5,9 +5,9 @@ node --env-file="$HOME/.config/openai/doctours.env" evals/run.ts --mode restruct
 ```
 
 With no key file, `export OPENAI_API_KEY=...` and drop `--env-file`. `--mode` takes any mode `src/cli.ts` exports.
-`--cases-file` replaces the hand-written set (default `./cases.json`); paths resolve relative to `evals/run.ts`.
+`--cases-file` replaces the handwritten set (default `./cases.json`); paths resolve relative to `evals/run.ts`.
 The results' `settings.casesFile` and printed summary record the file used. Packet samples still run and are scored
-separately. `--cases` picks ids from the selected file or packet samples, and `--repeat k` adds pass^k. `--concurrency` (default 2) caps messages in
+separately. `--cases` picks IDs from the selected file or packet samples, and `--repeat k` adds pass^k. `--concurrency` (default 2) caps messages in
 flight; the baseline prompt is about 40k tokens per call, so more than that can hit a 500k tokens-per-minute limit.
 The clients use the CLI's eight SDK retries. The report counts the 429 responses seen (most retried inside the SDK, a
 terminal one included) and any harness waits after that, separately for replies (inside the latency figures) and the grader (outside them, since grading runs after). Models come from `REPLY_MODEL`/`REPLY_EFFORT` and
@@ -15,7 +15,7 @@ terminal one included) and any harness waits after that, separately for replies 
 `ROUTER_MODEL`/`ROUTER_EFFORT` (default `gpt-6-luna` at `none`, as in the CLI), and its router tokens are priced
 separately. `--mode` defaults to the CLI's default mode.
 
-Each run sends the hand-written set (`cases.json` by default, or the file given with `--cases-file`) and
+Each run sends the handwritten set (`cases.json` by default, or the file given with `--cases-file`) and
 `packet-samples.json` through `replyAll` in one batch, with a trace. It scores:
 
 - `escalate`, exactly. A trial with no reply (the CLI's system-error escalation) or no usable grade (a failed grader
@@ -40,7 +40,7 @@ It writes `results/<mode>-<YYYY-MM-DD-HHMM>.json` (UTC) and prints a markdown su
 accuracy (overall, expected true, expected false), claim pass rates, case pass, pass^k, a per-topic table, tokens and
 cost for replies and grader, and p50/p95 latency per message. The cost uses SPEC prices; cache writes are billed at
 1.25× input. The packet samples get their own section. Their grading facts are only the ones packet L759 names.
-`test/samples-guard.test.ts` fails if anything under `src/` or `prompts/` mentions the file, a sample id or a sample
+`test/samples-guard.test.ts` fails if anything under `src/` or `prompts/` mentions the file, a sample ID or a sample
 sentence.
 
 `results/baseline-2026-10-04-0745.json` is a harness check, not a measurement. It is one full run on PR1's baseline
@@ -60,7 +60,7 @@ restructured mode makes, with the same `ROUTER_MODEL`/`ROUTER_EFFORT` defaults, 
 A run costs about a cent, so router changes are screened here before anyone pays for a full run. `--concurrency`
 defaults to 4.
 
-Per run it reports:
+Per run, it reports:
 - escalate accuracy (all, should escalate, should not);
 - category accuracy on correct escalations;
 - every false positive with the router's reason, every false negative with its intent, and every wrong category. A
@@ -83,7 +83,7 @@ screen used `gpt-6.1-sol` at `low` for replies. These are branch screens, not th
 
 ## Cases
 
-`cases.json` holds 87 hand-written patient messages. Each one is sent as a new message on the packet's fixed
+`cases.json` holds 87 handwritten patient messages. Each one is sent as a new message on the packet's fixed
 history, the same way the graders' hidden suite is run (packet L690). The cases try to predict how that suite behaves.
 They test breadth across the prompt's topics and both sides of the escalation boundary.
 
@@ -91,7 +91,7 @@ They test breadth across the prompt's topics and both sides of the escalation bo
 
 `evals/holdout.json` is 30 cases written blind by a separate agent from the packet, before any experiment was tuned.
 Its SHA-256 is `a96df30a97f2721824be86153dc975a295e71df4c6f10f0058c1a14f99960c58`, recorded on 2026-10-04
-before the experiments ran. It was not used for any decision and is run only in the final measurement.
+in my experiment log outside this repo before any tuning run. It was not used for any decision and is run only in the final measurement.
 
 The holdout carries shape validation only. Every escalated dev case carries two handoff-wording claims ("over text",
 "names a role"); of the 9 escalated holdout cases, 4 carry the "over text" exclusion and none carries the role
@@ -193,7 +193,7 @@ answer alone) make replies drop them. All 11 are
 - Decided patient, payment link required: `decided-sapphire-next-step`, a paired control with `silver-payment-link`.
   The prompt itself requires that url (L1310).
 - Consultation facts (free, phone call) and booking link required with the answer: `consult-surgeon-or-team`,
-  `consult-caller-number`. Neither has a scheduled call or declines another, and the link has not been sent. The
+  `consult-caller-number`. Neither has a scheduled call nor declines another, and the link has not been sent. The
   cost question is the packet's own `consultation` sample, so no case repeats it.
 - Near-misses where any link fails: `price-lock-length`, `cash-deposit-on-arrival`. A paste-every-link policy can't
   pass these.
