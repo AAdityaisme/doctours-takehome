@@ -137,6 +137,31 @@ test("payment and checkout URLs require an exact tool result this turn; public p
   }
 });
 
+test("an evil URL glued before a real tool payment URL hands off", () => {
+  const url = "https://www.doctours.com/payment/gold";
+  const out = postProcess(reply({ response: `https://evil.example/${url}` }), new Set([url]));
+  assert.equal(out.escalationReason, "system error");
+  assert.equal(out.response, HANDOFFS.system_error.sentence);
+});
+
+test("a tool URL with a plain nested scheme in its query passes whole", () => {
+  for (const nested of ["https://www.doctours.com/thanks", "HTTP://www.doctours.com/checkout"]) {
+    const url = `https://www.doctours.com/payment/gold?return=${nested}`;
+    assert.equal(postProcess(reply({ response: `Link:${url}.` }), new Set([url])).escalate, false);
+    assert.equal(postProcess(reply({ response: url }), new Set()).escalationReason, "system error");
+  }
+});
+
+test("two real tool URLs glued without a space hand off", () => {
+  const payment = "https://www.doctours.com/payment/gold";
+  const checkout = "https://www.doctours.com/clinic/heva/checkout";
+  const returned = new Set([payment, checkout]);
+  for (const urls of [[payment, checkout], [checkout, payment]]) {
+    assert.equal(postProcess(reply({ response: urls.join("") }), returned).escalationReason, "system error");
+    assert.equal(postProcess(reply({ response: urls.join(" ") }), returned).escalate, false);
+  }
+});
+
 for (const prefix of ["Link:", "here:", "("]) {
   test(`glued payment links compare from the scheme: ${prefix}`, () => {
     for (const scheme of ["https", "http"]) {
