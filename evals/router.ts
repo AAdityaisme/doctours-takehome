@@ -64,8 +64,8 @@ export async function routeCases(
 const share = (hits: number, total: number) => ({ hits, total, rate: total === 0 ? null : hits / total });
 
 /**
- * Scores one run. A router failure is scored as no escalation, because that is what restructured mode does with it
- * (it replies on the fallback path), and it is also counted on its own; so a variant can't look better by failing on
+ * Scores one run. A router failure is scored as no escalation because the router made no decision, and it is also
+ * counted on its own; so a variant can't look better by failing on
  * hard cases. A false positive is a handoff the case says to answer; a false negative is a missed handoff, which the
  * reply model may still catch, but the router is measured on its own here.
  */

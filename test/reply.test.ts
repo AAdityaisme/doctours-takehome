@@ -137,6 +137,20 @@ test("payment and checkout URLs require an exact tool result this turn; public p
   }
 });
 
+for (const prefix of ["Link:", "here:", "("]) {
+  test(`glued payment links compare from the scheme: ${prefix}`, () => {
+    for (const scheme of ["https", "http"]) {
+      const url = `${scheme}://www.doctours.com/payment/gold`;
+      const response = `${prefix}${url}`;
+      assert.equal(postProcess(reply({ response }), new Set([url])).escalate, false);
+      assert.equal(postProcess(reply({ response }), new Set()).escalationReason, "system error");
+      const encoded = `${scheme}://www.doctours.com/%70ayment/gold`;
+      assert.equal(postProcess(reply({ response: `${prefix}${encoded}` }), new Set([encoded])).escalate, false);
+      assert.equal(postProcess(reply({ response: `${prefix}${encoded}` }), new Set()).escalationReason, "system error");
+    }
+  });
+}
+
 for (const [form, link] of [
   ["bare domain", "doctours.com/payment/gold"],
   ["no scheme", "www.doctours.com/clinic/heva/checkout"],
