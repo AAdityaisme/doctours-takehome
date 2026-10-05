@@ -12,8 +12,8 @@ recorded deletion. Text was moved, not rewritten: the only changed lines are lis
 | What | Size |
 |------|------|
 | Original prompt, L764-1554 | 164,678 chars, ~41,169 tokens |
-| `core.md` alone | 38,887 chars, ~9,722 tokens |
-| Core + largest stage (`PRE_CLINICAL_SENT`) + two largest skills (`financing`, `packages-and-pricing`) | 78,592 chars, ~19,648 tokens |
+| `core.md` alone | 39,066 chars, ~9,767 tokens |
+| Core + largest stage (`PRE_CLINICAL_SENT`) + two largest skills (`financing`, `packages-and-pricing`) | 78,771 chars, ~19,693 tokens |
 
 Sizes count the files as written, before `{{NAME}}` placeholders are filled and without front matter. Filling adds
 the same per-patient values (transcript, summary, memory) to both the original and the split version.
@@ -273,14 +273,14 @@ not output fields, and went to `deposit-and-payment`.
 - **Asking for the coordinator by name** is not a request for a person: the model is that coordinator (L1512).
 - **VOICE bans handoff wording** (L877, and L769 bans channel-blaming): kept as is. Code writes the escalation
   sentence, so the model never writes handoff wording and the rule still holds for every word it does write.
-- **A prescribed reply vs ESCALATION rule 2** (E2). A prescribed reply replaces escalation only when it settles
-  what the patient wants: it gives them what they need (such as a preference noted in chat, L918), or gives a policy
-  refusal for something nobody at Doctours would do (insurance paperwork, L836). Rule 2's listed actions and the
-  "routed to a person" requests still escalate. A limit on the assistant's capability does not settle a request
-  that a person on the team could carry out, even if another line prescribes a decline. A patient asking to add or
-  update an allergy, medication or medical condition on their record escalates; a medical fact mentioned while
-  asking something else and the assistant's own working-memory storage are not record-update requests, so the
-  question is answered.
+- **A prescribed reply vs ESCALATION rule 2** (E2). A reply written for that specific kind of request
+  (a CORRECT example, or a line naming the request and saying what to say) wins: this covers assessment notes
+  (L918) and insurance paperwork (L836). A request met only by a general limit on the assistant's capability
+  (sending emails, contacting a hotel or other third party, coordinating a booking, L899-901) escalates when a
+  person on the team could do it. Rule 2's listed actions and the "routed to a person" requests still escalate.
+  A patient asking to add or update an allergy, medication or medical condition on their record escalates; a
+  medical fact mentioned while asking something else and the assistant's own working-memory storage are not
+  record-update requests, so the question is answered.
 
 ## Conflicts left as found (recorded, not resolved)
 - L902 ends "then give interim browse guidance"; L1428 says the flight-help line is the answer, "no need to name
