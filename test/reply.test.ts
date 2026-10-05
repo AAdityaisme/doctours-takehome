@@ -196,6 +196,11 @@ for (const prefix of [
 for (const [form, link] of [
   ["bare domain", "doctours.com/payment/gold"],
   ["no scheme", "www.doctours.com/clinic/heva/checkout"],
+  ["glued label", "Pay:doctours.com/payment/gold"],
+  ["glued hash", "#doctours.com/payment/gold"],
+  ["glued equals", "=doctours.com/payment/gold"],
+  ["encoded space", "%20doctours.com/payment/gold"],
+  ["glued checkout label", "Pay:www.doctours.com/clinic/heva/checkout"],
   ["subdomain", "https://pay.doctours.com/payment/gold"],
   ["trailing dot", "https://www.doctours.com./payment/gold"],
   ["percent-encoding", "https://www.doctours.com/%70ayment/gold"],
@@ -214,6 +219,13 @@ for (const [form, link] of [
     assert.equal(out.workingMemoryUpdates, null);
   });
 }
+
+test("a real tool URL glued after Link: passes", () => {
+  const url = "https://www.doctours.com/payment/gold";
+  const out = postProcess(reply({ response: `Link:${url}` }), new Set([url]));
+  assert.equal(out.escalate, false);
+  assert.equal(out.response, `Link:\n${url}`);
+});
 
 test("malformed static URL does not throw or force a handoff; payment words in prose stay allowed", () => {
   for (const response of ["See https://www.doctours.com:99999/consultation", "Your payment and checkout options are available."]) {

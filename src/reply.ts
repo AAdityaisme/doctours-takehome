@@ -204,7 +204,7 @@ export function postProcess(raw: unknown, toolUrls: ReadonlySet<string>): Reply 
     const decoded = url.replace(/%([0-9a-f]{2})/gi, (_, hex: string) =>
       String.fromCharCode(parseInt(hex, 16))).toLowerCase();
     const urlLike = decoded.includes("://") ||
-      /^(?:[^\s/@]+@)?[a-z0-9-]+(?:\.[a-z0-9-]+)+\.?(?:[:/?#]|$)/.test(decoded);
+      /[a-z0-9-]+(?:\.[a-z0-9-]+)+\.?(?:[:/?#]|$)/.test(decoded);
     return urlLike && /payment|checkout/.test(decoded) && !toolUrls.has(url);
   });
   // system_error describes a failed output check, rather than a patient's request for a person.
