@@ -15,7 +15,8 @@ terminal one included) and any harness waits after that, separately for replies 
 `ROUTER_MODEL`/`ROUTER_EFFORT` (default `gpt-6-luna` at `none`, as in the CLI), and its router tokens are priced
 separately. `--mode` defaults to the CLI's default mode.
 
-Each run sends `cases.json` and `packet-samples.json` through `replyAll` in one batch, with a trace. It scores:
+Each run sends the hand-written set (`cases.json` by default, or the file given with `--cases-file`) and
+`packet-samples.json` through `replyAll` in one batch, with a trace. It scores:
 
 - `escalate`, exactly. A trial with no reply (the CLI's system-error escalation) or no usable grade (a failed grader
   call) is counted as errored. An errored trial is left out of every rate and is never a pass. pass^k covers only
@@ -86,6 +87,10 @@ They test breadth across the prompt's topics and both sides of the escalation bo
 `evals/holdout.json` is 30 cases written blind by a separate agent from the packet, before any experiment was tuned.
 Its SHA-256 is `a96df30a97f2721824be86153dc975a295e71df4c6f10f0058c1a14f99960c58`, recorded on 2026-10-04
 before the experiments ran. It was not used for any decision and is run only in the final measurement.
+
+The holdout carries shape validation only; it lacks the two handoff-wording claims every escalated dev case carries
+("over text", "names a role"). It stays unedited because it is hash-locked, and those claims test the code-written
+handoff sentence, which the unit tests cover.
 
 The writer used packet constants, tool data, the message template, prompt rules and SPEC's escalation boundary,
 without opening `cases.json` or the packet's expected replies. The writer did see this README's ambiguous-case table

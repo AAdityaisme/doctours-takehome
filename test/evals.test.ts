@@ -200,7 +200,7 @@ test("case files are well formed: unique ids, consistent escalation, handoff che
   }
 });
 
-test("--cases-file loads the blind holdout with the same case shape", () => {
+test("--cases-file loads the blind holdout and checks shape only", () => {
   assert.equal(parseOptions([]).values["cases-file"], "./cases.json");
   const { values } = parseOptions(["--cases-file", "./holdout.json"]);
   const cases = load(values["cases-file"]);
