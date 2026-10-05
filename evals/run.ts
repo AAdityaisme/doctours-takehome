@@ -83,6 +83,7 @@ interface Settings {
   /** The grader's own client, so its rate limits are counted apart from the replies'; defaults to `client`. */
   graderClient?: Client;
   concurrency: number;
+  casesFile: string;
   mode: Mode;
   model: string;
   effort: string;
@@ -149,15 +150,20 @@ export const fail = (message: string): never => {
 
 export const money = (value: number | null) => (value === null ? "n/a" : `$${value.toFixed(2)}`);
 
-if (import.meta.main) {
-  const { values } = parseArgs({
+export const parseOptions = (args?: string[]) =>
+  parseArgs({
+    args,
     options: {
       mode: { type: "string", default: MODES[0] },
       cases: { type: "string" },
+      "cases-file": { type: "string", default: "./cases.json" },
       repeat: { type: "string", default: "1" },
       concurrency: { type: "string", default: "2" },
     },
   });
+
+if (import.meta.main) {
+  const { values } = parseOptions();
   const mode = values.mode as Mode;
   if (!MODES.includes(mode)) fail(`unknown --mode ${values.mode}; expected one of: ${MODES.join(", ")}`);
   const repeat = Number(values.repeat);
@@ -166,7 +172,7 @@ if (import.meta.main) {
   if (!Number.isInteger(concurrency) || concurrency < 1) fail("--concurrency must be a positive integer");
   if (!process.env.OPENAI_API_KEY) fail("OPENAI_API_KEY is not set");
 
-  const sets = { cases: load("./cases.json"), samples: load("./packet-samples.json") };
+  const sets = { cases: load(values["cases-file"]), samples: load("./packet-samples.json") };
   const wanted = values.cases?.split(",").map((id) => id.trim());
   if (wanted) {
     const known = new Set([...sets.cases, ...sets.samples].map((c) => c.id));
@@ -187,6 +193,7 @@ if (import.meta.main) {
     client: makeClient(replyWaits),
     graderClient: makeClient(graderWaits),
     concurrency,
+    casesFile: values["cases-file"],
     mode,
     model: process.env.REPLY_MODEL ?? "gpt-6.1-sol",
     effort: process.env.REPLY_EFFORT ?? "low",
@@ -257,6 +264,8 @@ if (import.meta.main) {
 
   const report = [
     `## Eval: mode \`${mode}\`, ${settings.model} (${settings.effort}), ${repeat} run(s), sha ${sha?.slice(0, 7) ?? "n/a"}`,
+    "",
+    `Cases file: \`${settings.casesFile}\``,
     "",
     markdown(`Hand-written cases (${sets.cases.length})`, summary.cases, caseResults, repeat),
     "",

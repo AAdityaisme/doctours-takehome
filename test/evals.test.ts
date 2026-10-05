@@ -8,7 +8,7 @@ import { mkdtempSync, rmSync, writeFileSync as writeFile } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { counting429, writeResults } from "../evals/run.ts";
+import { counting429, load, parseOptions, writeResults } from "../evals/run.ts";
 import {
   checkLiteral,
   containsLiteral,
@@ -45,7 +45,21 @@ const caseOf = (expect: Partial<Case["expect"]> = {}, topic = "t"): Case => ({
   expect: { escalate: false, escalationCategory: null, mustInclude: [], mustNotInclude: [], notes: "", ...expect },
 });
 
-const load = (name: string): Case[] => JSON.parse(readFileSync(new URL(`../evals/${name}`, import.meta.url), "utf8"));
+const assertCaseShape = (cases: Case[]) => {
+  const ids = cases.map((c) => c.id);
+  assert.equal(new Set(ids).size, ids.length);
+  for (const c of cases) {
+    for (const field of ["id", "text", "topic", "source"] as const) assert.equal(typeof c[field], "string", c.id);
+    assert.equal(typeof c.expect.escalate, "boolean", c.id);
+    assert.ok([null, "human_requested", "cannot_do"].includes(c.expect.escalationCategory), c.id);
+    assert.ok(c.expect.escalate === (c.expect.escalationCategory !== null), c.id);
+    for (const field of ["mustInclude", "mustNotInclude"] as const) {
+      assert.ok(Array.isArray(c.expect[field]) && c.expect[field].every((claim) => typeof claim === "string"), c.id);
+    }
+    assert.equal(typeof c.expect.notes, "string", c.id);
+    assert.ok(c.ambiguous === undefined || typeof c.ambiguous === "boolean", c.id);
+  }
+};
 
 test("literal claims are URLs, emails, dollar amounts and digit strings; the rest go to the grader", () => {
   for (const claim of ["https://www.doctours.com/consultation", "molly@doctours.com", "$600", "$3,000", "4111 1111 1111 1111", "08/29", "1111"]) {
@@ -179,17 +193,19 @@ test("percentile is nearest-rank", () => {
 test("case files are well formed: unique ids, consistent escalation, handoff checks on every escalated case", () => {
   const cases = load("cases.json");
   const samples = load("packet-samples.json");
-  const ids = [...cases, ...samples].map((c) => c.id);
-  assert.equal(new Set(ids).size, ids.length);
-  for (const c of [...cases, ...samples]) {
-    assert.equal(typeof c.text, "string", c.id);
-    assert.equal(c.expect.escalate, c.expect.escalationCategory !== null, c.id);
-    assert.ok(Array.isArray(c.expect.mustInclude) && Array.isArray(c.expect.mustNotInclude), c.id);
-  }
+  assertCaseShape([...cases, ...samples]);
   for (const c of cases.filter((c) => c.expect.escalate)) {
     assert.ok(c.expect.mustNotInclude.some((claim) => claim.includes("over text")), `${c.id}: L769 check`);
     assert.ok(c.expect.mustNotInclude.some((claim) => claim.startsWith("names a role")), `${c.id}: L877 check`);
   }
+});
+
+test("--cases-file loads the blind holdout with the same case shape", () => {
+  assert.equal(parseOptions([]).values["cases-file"], "./cases.json");
+  const { values } = parseOptions(["--cases-file", "./holdout.json"]);
+  const cases = load(values["cases-file"]);
+  assert.equal(cases.length, 30);
+  assertCaseShape([...cases, ...load("./packet-samples.json")]);
 });
 
 test("a failed reply or grader call errors the trial: never a pass, never in the rates", () => {

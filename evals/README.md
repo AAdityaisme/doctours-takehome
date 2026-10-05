@@ -1,11 +1,13 @@
 # Eval cases and harness
 
 ```sh
-node --env-file="$HOME/.config/openai/doctours.env" evals/run.ts --mode restructured|baseline [--cases id1,id2] [--repeat k]
+node --env-file="$HOME/.config/openai/doctours.env" evals/run.ts --mode restructured|baseline [--cases-file path] [--cases id1,id2] [--repeat k]
 ```
 
 With no key file, `export OPENAI_API_KEY=...` and drop `--env-file`. `--mode` takes any mode `src/cli.ts` exports.
-`--cases` picks ids from either file, and `--repeat k` adds pass^k. `--concurrency` (default 2) caps messages in
+`--cases-file` replaces the hand-written set (default `./cases.json`); paths resolve relative to `evals/run.ts`.
+The results' `settings.casesFile` and printed summary record the file used. Packet samples still run and are scored
+separately. `--cases` picks ids from the selected file or packet samples, and `--repeat k` adds pass^k. `--concurrency` (default 2) caps messages in
 flight; the baseline prompt is about 40k tokens per call, so more than that can hit a 500k tokens-per-minute limit.
 The clients use the CLI's eight SDK retries. The report counts the 429 responses seen (most retried inside the SDK, a
 terminal one included) and any harness waits after that, separately for replies (inside the latency figures) and the grader (outside them, since grading runs after). Models come from `REPLY_MODEL`/`REPLY_EFFORT` and
@@ -78,6 +80,21 @@ effort none and low (V0, V1), then the request-or-question prompt at none and lo
 `cases.json` holds 76 hand-written patient messages. Each one is sent as a new message on the packet's fixed
 history, the same way the graders' hidden suite is run (packet L690). The cases try to predict how that suite behaves.
 They test breadth across the prompt's topics and both sides of the escalation boundary.
+
+## Holdout
+
+`evals/holdout.json` is 30 cases written blind by a separate agent from the packet, before any experiment was tuned.
+Its SHA-256 is `a96df30a97f2721824be86153dc975a295e71df4c6f10f0058c1a14f99960c58`, recorded on 2026-10-04
+before the experiments ran. It was not used for any decision and is run only in the final measurement.
+
+The writer used packet constants, tool data, the message template, prompt rules and SPEC's escalation boundary,
+without opening `cases.json` or the packet's expected replies. The writer did see this README's ambiguous-case table
+and topic list, so the set is independent in wording and facts, with overlapping topic coverage. Two escalation
+decisions are ambiguous. Cases use the packet's fixed patient history; expectations cite packet lines.
+
+```sh
+node --env-file=<key file> evals/run.ts --mode restructured --cases-file ./holdout.json --repeat 3
+```
 
 ## Fields
 
