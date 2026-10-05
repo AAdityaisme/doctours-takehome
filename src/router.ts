@@ -1,4 +1,4 @@
-import { nonRetryableApiError } from "./api-errors.ts";
+import { messageApiError, nonRetryableApiError } from "./api-errors.ts";
 import type { ReasoningEffort } from "openai/resources/shared";
 import { ROUTER_SYSTEM, SKILLS } from "./prompts.ts";
 import { userMessage } from "./prompt.ts";
@@ -81,7 +81,7 @@ export async function route(client: Client, text: string, options: { model: stri
       null,
     );
   } catch (error) {
-    if (nonRetryableApiError(error)) throw error;
+    if (nonRetryableApiError(error) || messageApiError(error)) throw error;
     return done(null, error instanceof Error ? error.message : String(error));
   }
 }

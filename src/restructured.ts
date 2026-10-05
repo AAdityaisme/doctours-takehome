@@ -2,7 +2,7 @@ import * as constants from "./data.ts";
 import { toEscalation } from "./escalation.ts";
 import { userMessage } from "./prompt.ts";
 import { DESCRIBED_REPLY_SCHEMA, SKILLS, assemble, ruleSkills, skillLoader, type LoadSkillCall } from "./prompts.ts";
-import type { Reply } from "./reply.ts";
+import { replyEscalationCategory, type Reply } from "./reply.ts";
 import { TurnError, respond, sumUsage, type Client, type Turn } from "./respond.ts";
 import { redactNumbers, route } from "./router.ts";
 
@@ -87,7 +87,7 @@ export async function restructuredTurn(
       loader: skillLoader(assembly.skills, loadSkillCalls),
     });
     const reply = intent(turn.reply);
-    const by = reply.escalate ? "reply" : null;
+    const by = replyEscalationCategory(reply);
     return { reply, totals: withRouter(turn), trace: { ...trace(), escalatedBy: by, escalationCategory: by } };
   } catch (error) {
     if (error instanceof TurnError) throw new TurnError(error.cause, withRouter(error.progress), trace());

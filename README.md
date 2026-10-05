@@ -22,7 +22,7 @@ This system handed off every message that needed a person in the final runs.
 | Fully correct | 1 of 5 | 5 of 5 in every run |
 | **Cost per message on dev** | $0.0149 | $0.0079 |
 
-I wrote the test cases and their expected answers; the 30-case holdout was written by a separate agent before tuning; a model grader (`gpt-6.1-sol`, the same model family as the replies) checks the prose facts, with literal facts checked in code.
+I wrote the 87 dev cases and their expected answers; the 30-case holdout was written by a separate agent before tuning; a model grader (`gpt-6.1-sol`, the same model and low effort as the replies) checks the prose facts, with literal facts checked in code.
 
 The gain on unseen cases is correct handoffs; facts and checks held about level.
 
@@ -140,7 +140,7 @@ flowchart TD
     router -->|No| prompt["Build prompt:<br/>core + stage + chosen skills"]
     prompt --> model["Reply model with tools:<br/>load another skill or hand off"]
     model -->|Hand off| handoff
-    model -->|Answer| checks["Code checks output:<br/>links last<br/>attachments only from tools<br/>schema"]
+    model -->|Answer| checks["Code checks output:<br/>links last<br/>attachments only from tools<br/>payment links from tools<br/>schema"]
     checks --> reply["Reply"]
 ```
 
@@ -151,7 +151,7 @@ The deliverable is a batch command with a narrow contract, so I chose no agent f
 | Read intent, choose skills, decide on a handoff | [Router](src/router.ts), [instructions](prompts/router.md) | A cheap model picks topic rules and can skip the reply call. |
 | Build core + stage + selected skills | [Prompt assembly](src/prompts.ts), [turn](src/restructured.ts) | Code chooses the stage from `PIPELINE_STATUS`, fills constants, and rejects unfilled placeholders. |
 | Reply with tools | [Reply loop](src/respond.ts), [tools](src/tools.ts) | Tools supply facts; `loadSkill` adds missing rules, and code enforces which tools may run. |
-| Check and clean the output | [Reply checks](src/reply.ts) | Code sets `templateId` to null, puts URLs last, and keeps only attachments returned by tools this turn. |
+| Check and clean the output | [Reply checks](src/reply.ts) | Code sets `templateId` to null, puts URLs last, keeps only attachments returned by tools this turn, and hands off untrusted payment or checkout links. |
 | Write a handoff and stop | [Handoff code](src/escalation.ts) | Code sends one sentence without a continued answer or echoed payment details. |
 
 The router's intent becomes `Reply.intent` when routing succeeds. A reply-model handoff stops the loop before any tools returned alongside it run. [src/cli.ts](src/cli.ts) preserves batch order and lets other messages finish if a turn fails.
@@ -188,13 +188,13 @@ I hand off requests for a person or work no tool and no rule can perform, follow
 
 A request to do the action hands off; a policy question gets an answer, even when the answer is no. Asking for the named coordinator does not hand off because the model replies as that coordinator. Payment links, consultation booking/rescheduling, and package facts stay automated. These decisions include judgment calls; [evals/README.md](evals/README.md) records the alternatives.
 
-The router decides first, using `human_requested` or `cannot_do`. The reply model catches misses, follows prescribed policy refusals, and hands off medical safety updates; a passing medical mention is not a record-update request. Code writes the sentence and clears attachments, follow-up, and working-memory updates. Payment (`/payment/<package>`) and checkout (`/clinic/<slug>/checkout`) links in the reply must exactly match a URL a tool returned this turn; otherwise code writes a `system_error` handoff. Static consultation, clinic, and assessment pages stay allowed.
+The router decides first, using `human_requested` or `cannot_do`. The reply model catches misses, follows prescribed policy refusals, and hands off medical safety updates; a passing medical mention is not a record-update request. Code writes the sentence and clears attachments, follow-up, and working-memory updates. Every URL-like token, with or without a scheme, is percent-decoded and lowercased for the check. If it contains `payment` or `checkout`, its original spelling must exactly match a URL a tool returned this turn; otherwise code writes a `system_error` handoff. Static consultation, clinic, and assessment pages stay allowed.
 
 <details><summary>Failures, handoff reasons, and trace categories</summary>
 
-A 400, 401, 403, or 404 API error stops the batch and eval runs. The command prints the status, message, and a hint to check `ROUTER_MODEL` / `REPLY_MODEL` to stderr, exits nonzero, and writes nothing to stdout.
+A 401, 403, 404, billing error (`insufficient_quota`), or configuration 400 stops the batch and eval runs. The CLI and both eval commands print the same one-line status, message, and configuration hint (including `GRADER_MODEL`) to stderr and exit nonzero without writing results. The batch CLI writes nothing to stdout. Message-level 400 codes `context_length_exceeded`, `invalid_prompt`, `string_above_max_length`, and `content_policy_violation` hand off only that message as `system_error`.
 
-Rate limits (429), server errors (5xx), timeouts, and connection errors keep the fallback paths: a failed reply turn hands off as `system_error` after retries.
+Other rate limits (429), server errors (5xx), timeouts, and connection errors keep the fallback paths: a failed reply turn hands off as `system_error` after retries.
 
 A temporary router failure falls back to a reply with core + stage + any skill code always adds (`intake` when needed) and `loadSkill` available; it does not automatically page a person.
 

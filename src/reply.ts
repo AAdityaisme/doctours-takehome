@@ -191,13 +191,16 @@ export function postProcess(raw: unknown, toolUrls: ReadonlySet<string>): Reply 
     assertReply(escalated);
     return escalated;
   }
-  const untrustedPayment = findUrls(raw.response).some((url) => {
-    const parsed = new URL(url);
-    // getPaymentLink returns /payment/<package> or /clinic/<slug>/checkout; promo's paymentUrl
-    // is currently null. Check these routes, including modified query strings, by exact tool URL.
-    const financial = parsed.hostname === "www.doctours.com" &&
-      (/^\/payment(?:\/|$)/i.test(parsed.pathname) || /^\/clinic\/[^/]+\/checkout(?:\/|$)/i.test(parsed.pathname));
-    return financial && !toolUrls.has(url);
+  // Scan URL-like tokens independently of URL-last formatting; scheme-less links are tappable in SMS.
+  const tokens = raw.response.match(/[^\s<>"'()[\]{}]+/g) ?? [];
+  const untrustedPayment = tokens.some((token) => {
+    const url = token.replace(/[.,;:!?]+$/, "");
+    // Decode valid escapes individually so a malformed escape elsewhere cannot hide the route.
+    const decoded = url.replace(/%([0-9a-f]{2})/gi, (_, hex: string) =>
+      String.fromCharCode(parseInt(hex, 16))).toLowerCase();
+    const urlLike = decoded.includes("://") || decoded.includes("/") ||
+      /[a-z0-9]\.[a-z]/i.test(decoded);
+    return urlLike && /payment|checkout/.test(decoded) && !toolUrls.has(url);
   });
   // system_error describes a failed output check, rather than a patient's request for a person.
   if (untrustedPayment) return toEscalation("system_error");
@@ -212,3 +215,7 @@ export function postProcess(raw: unknown, toolUrls: ReadonlySet<string>): Reply 
   assertReply(reply);
   return reply;
 }
+
+/** Output-check handoffs and model handoffs have different diagnostic categories. */
+export const replyEscalationCategory = (reply: Reply): "reply" | "system_error" | null =>
+  reply.escalate ? (reply.escalationReason === "system error" ? "system_error" : "reply") : null;

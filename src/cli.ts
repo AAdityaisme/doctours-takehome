@@ -1,10 +1,10 @@
 import { appendFileSync, readFileSync, writeFileSync } from "node:fs";
 import { parseArgs } from "node:util";
 import OpenAI from "openai";
-import { nonRetryableApiError } from "./api-errors.ts";
+import { apiErrorMessage, nonRetryableApiError } from "./api-errors.ts";
 import { baselineMessages } from "./baseline.ts";
 import { toEscalation } from "./escalation.ts";
-import type { Reply } from "./reply.ts";
+import { replyEscalationCategory, type Reply } from "./reply.ts";
 import { restructuredTurn } from "./restructured.ts";
 import { TurnError, respond, type Client } from "./respond.ts";
 import { TOOLS } from "./tools.ts";
@@ -67,7 +67,7 @@ async function replyOne(item: unknown, index: number, options: BatchOptions): Pr
       ...base,
       ok: true,
       escalate: turn.reply.escalate,
-      escalationCategory: turn.reply.escalate ? "reply" : null,
+      escalationCategory: replyEscalationCategory(turn.reply),
       toolCalls: turn.toolCalls,
       apiCalls: turn.apiCalls,
       tokens: turn.usage,
@@ -166,7 +166,7 @@ if (import.meta.main) {
     process.stdout.write(`${JSON.stringify(replies, null, 2)}\n`);
   } catch (error) {
     const fatal = nonRetryableApiError(error);
-    if (fatal) fail(`OpenAI ${fatal.status}: ${fatal.message.replace(/\s+/g, " ")} — check OPENAI_API_KEY and ROUTER_MODEL / REPLY_MODEL access and parameters`);
+    if (fatal) fail(apiErrorMessage(fatal));
     fail(error instanceof Error ? error.message : String(error));
   }
 }

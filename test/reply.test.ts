@@ -136,3 +136,31 @@ test("payment and checkout URLs require an exact tool result this turn; public p
     assert.equal(postProcess(reply({ response: url }), new Set()).escalate, false);
   }
 });
+
+for (const [form, link] of [
+  ["bare domain", "doctours.com/payment/gold"],
+  ["no scheme", "www.doctours.com/clinic/heva/checkout"],
+  ["subdomain", "https://pay.doctours.com/payment/gold"],
+  ["trailing dot", "https://www.doctours.com./payment/gold"],
+  ["percent-encoding", "https://www.doctours.com/%70ayment/gold"],
+  ["userinfo", "https://www.doctours.com@evil.example/payment/gold"],
+  ["markdown", "[Pay](https://doctours.com/payment/gold)"],
+  ["double slash", "https://www.doctours.com//payment/gold"],
+  ["outside domain", "https://evil.example/checkout"],
+  ["malformed escape", "https://doctours.com/%70ayment/%ZZ"],
+]) {
+  test(`untrusted payment bypass: ${form}`, () => {
+    const out = postProcess(reply({ response: link, shouldFollowUp: true }), new Set());
+    assert.equal(out.escalationReason, "system error");
+    assert.equal(out.response, HANDOFFS.system_error.sentence);
+    assert.equal(out.shouldFollowUp, false);
+    assert.equal(out.attachmentUrls, null);
+    assert.equal(out.workingMemoryUpdates, null);
+  });
+}
+
+test("malformed static URL does not throw or force a handoff; payment words in prose stay allowed", () => {
+  for (const response of ["See https://www.doctours.com:99999/consultation", "Your payment and checkout options are available."]) {
+    assert.equal(postProcess(reply({ response }), new Set()).escalate, false);
+  }
+});

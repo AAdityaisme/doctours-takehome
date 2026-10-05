@@ -1,3 +1,4 @@
+import { apiErrorMessage, nonRetryableApiError } from "../src/api-errors.ts";
 import { execFileSync } from "node:child_process";
 import { mkdirSync } from "node:fs";
 import { parseArgs } from "node:util";
@@ -84,7 +85,7 @@ export function scoreRouter(results: RouterResult[], model: string) {
 const pct = (r: { hits: number; total: number; rate: number | null }) =>
   r.rate === null ? "n/a" : `${(r.rate * 100).toFixed(1)}% (${r.hits}/${r.total})`;
 
-if (import.meta.main) {
+async function main() {
   const { values } = parseArgs({
     options: { repeat: { type: "string", default: "1" }, concurrency: { type: "string", default: "4" } },
   });
@@ -154,4 +155,12 @@ if (import.meta.main) {
     `Results: ${out.pathname}`,
   ];
   process.stdout.write(`${lines.join("\n")}\n`);
+}
+
+if (import.meta.main) {
+  main().catch((error: unknown) => {
+    const fatal = nonRetryableApiError(error);
+    console.error(fatal ? apiErrorMessage(fatal) : error instanceof Error ? error.message : String(error));
+    process.exit(1);
+  });
 }
