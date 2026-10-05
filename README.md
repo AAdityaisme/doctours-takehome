@@ -190,7 +190,17 @@ The router decides first, using `human_requested` or `cannot_do`. The reply mode
 
 <details><summary>Failures, handoff reasons, and trace categories</summary>
 
-A failed reply turn hands off as `system_error` after retries. A router failure falls back to a reply with core + stage + any skill code always adds (`intake` when needed) and `loadSkill` available; it does not automatically page a person. `Reply.escalate` flags takeover; `Reply.escalationReason` carries the code-set reason. `Reply` has no category field. The trace's `escalationCategory` is `human_requested`, `cannot_do`, `reply`, or `system_error`. `reply` means the reply model handed off after the router did not, so no category was assigned; the trace still records the router's intent. When the router hands off, the trace also keeps its one-line reason. [Handoff tests](test/escalation.test.ts) and [turn tests](test/restructured.test.ts) cover these paths.
+A failed reply turn hands off as `system_error` after retries.
+
+A router failure falls back to a reply with core + stage + any skill code always adds (`intake` when needed) and `loadSkill` available; it does not automatically page a person.
+
+`Reply.escalate` flags takeover; `Reply.escalationReason` carries the code-set reason. `Reply` has no category field.
+
+The trace's `escalationCategory` is `human_requested`, `cannot_do`, `reply`, or `system_error`. `reply` means the reply model handed off after the router did not, so the router assigned no handoff category.
+
+When routing succeeds, the trace records the router's intent; when routing fails, it records the router's error instead. When the router hands off, the trace also keeps its one-line reason.
+
+[Handoff tests](test/escalation.test.ts) and [turn tests](test/restructured.test.ts) cover these paths.
 
 </details>
 
@@ -235,7 +245,15 @@ flowchart TD
 
 <details><summary>What counts as fully correct</summary>
 
-Handoff decisions are checked exactly in code, as are facts that are only a URL, email, dollar amount, or digit string. URLs, emails, and dollar amounts inside a prose fact are also checked in code. Forbidden literals are searched in every decoded `Reply` string, not only `response`; the grader judges forbidden prose. The grader sees only the message, reply, and claims, and judges the remaining claims by meaning. A case is fully correct only when its handoff decision, any scored category, and every fact and check pass; an answer must also be nonempty. “Passed in all 3 runs” counts cases that passed every repeat, rather than averaging trial scores. Errored trials are excluded from rates and reported separately; the final runs have 0. The holdout checks output shape but lacks some handoff-wording checks present in dev; offline tests cover those rules.
+- Code checks handoff decisions exactly.
+- Code checks facts that are only a URL, email, dollar amount, or digit string.
+- Code also checks URLs, emails, and dollar amounts inside prose facts.
+- Forbidden literals are searched in every decoded `Reply` string, not only `response`.
+- The grader sees only the message, reply, and claims; it judges forbidden prose and the remaining claims by meaning.
+- A case is fully correct only when its handoff decision, any scored category, and every fact and check pass; an answer must also be nonempty.
+- “Passed in all 3 runs” counts cases that passed every repeat, rather than averaging trial scores.
+- Errored trials are excluded from rates and reported separately; the final runs have 0.
+- The holdout checks output shape but lacks some handoff-wording checks present in dev; offline tests cover those rules.
 
 </details>
 
@@ -243,12 +261,12 @@ Handoff decisions are checked exactly in code, as are facts that are only a URL,
 
 These are pre-merge development comparisons, separate from the final results above. They use `gpt-6-luna` at `none` for routing and `gpt-6.1-sol` at `low` when measuring replies.
 
-| Shipped change | What changed and what the development tests showed |
-|---|---|
-| Router precision | A request to act differs from a policy question; in 3 router-only runs, mistaken handoffs were 3, 4, 4 versus the old router's 6, 5, 5, with missed handoffs 1, 1, 1, all caught end to end in 9/9 trials. |
-| Escalation scope | A prescribed refusal wins over a general capability limit. Before it, the reply model handed off insurance-paperwork and assessment-note on dev; with the final rule, in 3 runs, both were answered 3/3, allergy-note was still handed off 3/3, and 4 medical-mention probes were answered 12/12. |
-| Prompt caching | Fixed definitions, core + stage prefix, and a loaded-skill list cut full-dev reply cost in 1 run from $1.27 to $0.61; facts and checks were 95.1% against 95.7%, with 93% of reply input read from cache. |
-| Complete answers | Prices include deposits, pages include links, and consultation answers keep their facts; the initial 3-run check rose from 9/30 to 30/30, then the expanded set passed 33/33 and fact samples 9/9 after review fixes. |
+| Shipped change | What changed | Development comparison | Other development results |
+|---|---|---|---|
+| Router precision | A request to act differs from a policy question. | In 3 router-only runs, mistaken handoffs were 3, 4, 4 versus the old router's 6, 5, 5. | Missed handoffs were 1, 1, 1, all caught end to end in 9/9 trials. |
+| Escalation scope | A prescribed refusal wins over a general capability limit. | In 3 runs with the final rule, insurance-paperwork and assessment-note were answered 3/3; previously, the reply model handed both off on dev. | `allergy-note` was still handed off 3/3; 4 medical-mention probes were answered 12/12. |
+| Prompt caching | Fixed definitions, core + stage prefix, and a loaded-skill list. | Full-dev reply cost fell from $1.27 to $0.61 in 1 run. | Facts and checks were 95.1% against 95.7%; 93% of reply input was read from cache. |
+| Complete answers | Prices include deposits, pages include links, and consultation answers keep their facts. | The initial 3-run check rose from 9/30 to 30/30. | Then, after review fixes, the expanded set passed 33/33 and fact samples 9/9. |
 
 I wrote the consultation and all-packages rules after seeing sample failures, so those samples are not independent evidence. Review tightened the checks and stopped the system from sending a booking link to patients who had already booked a consultation or declined one. The holdout checks unseen cases and shows no overall gain in facts and checks.
 
@@ -284,7 +302,7 @@ I would first reduce early false handoffs, which skip the reply model's chance t
 - The router can still hand off requests with prescribed policy refusals, including insurance paperwork and financing enrollment (L836/L858). I would test letting the reply model decide those cases against new request/question pairs.
 - In the final runs, all false handoffs came from the router. Clinic contact, card talk, and surgeon contact are the main repeats; identity and creator policy also misfired on dev.
 - Some answers still omit facts. I would add independent checks before changing rules, without writing around a holdout sentence.
-- The holdout is small and uses a fixed patient state. I would test new histories and stage transitions, keep a new blind set, and lock the recorded hash in CI.
+- The holdout is small and uses a fixed patient state. I would test new histories and stage transitions, keep a new blind set, and lock the recorded hash in automated checks.
 - The tools are mocks and no staff queue is connected. I would connect real services, verify workflow contracts, and redact sensitive traces before product use.
 
 <details><summary>Remaining false handoffs, answer failures, and integration limits</summary>
@@ -300,7 +318,7 @@ These are case IDs and counts, not patient texts:
 | Dev (3 runs) | `creator-question` | 1/3 |
 | Unseen (3 runs) | `h-website-contact-heva` | 3/3 |
 
-Other final failures include omitted financing mechanics on dev. Holdout failures include a clinic-specialty omission, unnecessary clarification about surgeon involvement, and an omitted cash-pay fact. Repeats measure consistency on the same cases; today's CI checks holdout shape but does not lock its hash.
+Other final failures include omitted financing mechanics on dev. Holdout failures include a clinic-specialty omission, unnecessary clarification about surgeon involvement, and an omitted cash-pay fact. Repeats measure consistency on the same cases; today's automated checks verify holdout shape but do not lock its hash.
 
 Mock writes do not persist across turns, and `escalate: true` is an output signal without a connected staff queue. The documented assessment-revision and follow-up workflows are assumed, not implemented. A second care line and bulk call-log delegation would need their own prompts and measurements.
 
