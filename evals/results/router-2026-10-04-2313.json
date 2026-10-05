@@ -1,0 +1,5417 @@
+{
+  "sha": "5787838b9e63a9ba2700b77493e8dbff3fc197c8",
+  "startedAt": "2026-10-04T23:13:36.776Z",
+  "repeat": 3,
+  "settings": {
+    "model": "gpt-6-luna",
+    "effort": "low",
+    "concurrency": 4
+  },
+  "rateLimits": {
+    "observed429s": 85,
+    "harnessWaits": 0,
+    "harnessWaitSeconds": 0
+  },
+  "runs": [
+    {
+      "score": {
+        "escalate": {
+          "all": {
+            "hits": 74,
+            "total": 81,
+            "rate": 0.9135802469135802
+          },
+          "should": {
+            "hits": 22,
+            "total": 25,
+            "rate": 0.88
+          },
+          "shouldNot": {
+            "hits": 52,
+            "total": 56,
+            "rate": 0.9285714285714286
+          }
+        },
+        "category": {
+          "hits": 22,
+          "total": 22,
+          "rate": 1
+        },
+        "falsePositives": [
+          {
+            "id": "insurance-paperwork",
+            "category": "cannot_do",
+            "reason": "send paperwork to insurance company"
+          },
+          {
+            "id": "creator-question",
+            "category": "cannot_do",
+            "reason": "content creator partnership inquiry"
+          },
+          {
+            "id": "surgeon-before-deposit",
+            "category": "cannot_do",
+            "reason": "set up a call with the surgeon"
+          },
+          {
+            "id": "are-you-real",
+            "category": "human_requested",
+            "reason": "asks whether they are speaking with a real person"
+          }
+        ],
+        "falseNegatives": [
+          {
+            "id": "heva-feb-availability",
+            "intent": "ask whether Heva has availability in the second week of February"
+          },
+          {
+            "id": "update-email",
+            "intent": "change the email on their account"
+          },
+          {
+            "id": "allergy-note",
+            "intent": "add a lidocaine allergy to their file"
+          }
+        ],
+        "wrongCategory": [],
+        "routerFailures": [],
+        "latencyMs": {
+          "p50": 1851,
+          "p95": 2769
+        },
+        "usage": {
+          "input": 152763,
+          "cached": 122480,
+          "cacheWrite": 30040,
+          "output": 5867,
+          "reasoning": 2779
+        },
+        "cost": 0.0079376
+      },
+      "results": [
+        {
+          "id": "gold-vs-silver",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "compare Heva Gold and Silver package value",
+          "skills": [
+            "packages-and-pricing",
+            "reversibility"
+          ],
+          "error": null,
+          "latencyMs": 1450,
+          "usage": {
+            "input": 1883,
+            "cached": 1531,
+            "cacheWrite": 349,
+            "output": 37,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "torn-heva-hakan",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask which clinic to choose",
+          "skills": [
+            "clinics",
+            "reversibility"
+          ],
+          "error": null,
+          "latencyMs": 2336,
+          "usage": {
+            "input": 1889,
+            "cached": 1531,
+            "cacheWrite": 355,
+            "output": 104,
+            "reasoning": 70
+          }
+        },
+        {
+          "id": "hakan-4c",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether Dr. Hakan Clinic treats 4C hair",
+          "skills": [
+            "clinics"
+          ],
+          "error": null,
+          "latencyMs": 1619,
+          "usage": {
+            "input": 1884,
+            "cached": 0,
+            "cacheWrite": 1881,
+            "output": 35,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "saturday-procedure",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether Heva performs procedures on Saturdays",
+          "skills": [
+            "clinics",
+            "scheduling"
+          ],
+          "error": null,
+          "latencyMs": 2363,
+          "usage": {
+            "input": 1882,
+            "cached": 1531,
+            "cacheWrite": 348,
+            "output": 83,
+            "reasoning": 47
+          }
+        },
+        {
+          "id": "open-tomorrow",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether Heva is open tomorrow",
+          "skills": [
+            "clinics",
+            "scheduling"
+          ],
+          "error": null,
+          "latencyMs": 1630,
+          "usage": {
+            "input": 1875,
+            "cached": 1531,
+            "cacheWrite": 341,
+            "output": 76,
+            "reasoning": 41
+          }
+        },
+        {
+          "id": "mexico-clinics",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether there are clinics in Mexico",
+          "skills": [
+            "clinics"
+          ],
+          "error": null,
+          "latencyMs": 1667,
+          "usage": {
+            "input": 1886,
+            "cached": 1531,
+            "cacheWrite": 352,
+            "output": 80,
+            "reasoning": 48
+          }
+        },
+        {
+          "id": "heva-feb-availability",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": null,
+          "intent": "ask whether Heva has availability in the second week of February",
+          "skills": [
+            "clinics",
+            "scheduling"
+          ],
+          "error": null,
+          "latencyMs": 2041,
+          "usage": {
+            "input": 1881,
+            "cached": 1531,
+            "cacheWrite": 347,
+            "output": 85,
+            "reasoning": 45
+          }
+        },
+        {
+          "id": "winter-dates-question",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask about winter clinic busyness and how procedure dates are set",
+          "skills": [
+            "scheduling",
+            "clinics"
+          ],
+          "error": null,
+          "latencyMs": 2312,
+          "usage": {
+            "input": 1887,
+            "cached": 1531,
+            "cacheWrite": 353,
+            "output": 107,
+            "reasoning": 67
+          }
+        },
+        {
+          "id": "hold-date-no-deposit",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether a May date can be held without paying a deposit",
+          "skills": [
+            "scheduling",
+            "deposit-and-payment"
+          ],
+          "error": null,
+          "latencyMs": 1884,
+          "usage": {
+            "input": 1882,
+            "cached": 1531,
+            "cacheWrite": 348,
+            "output": 96,
+            "reasoning": 55
+          }
+        },
+        {
+          "id": "hakan-incisions",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask who performs incisions at Dr. Hakan's clinic",
+          "skills": [
+            "clinics",
+            "procedure"
+          ],
+          "error": null,
+          "latencyMs": 1284,
+          "usage": {
+            "input": 1890,
+            "cached": 1531,
+            "cacheWrite": 356,
+            "output": 37,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "heva-silver-incisions",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask who performs the incisions in Heva’s Silver package",
+          "skills": [
+            "procedure",
+            "packages-and-pricing"
+          ],
+          "error": null,
+          "latencyMs": 1865,
+          "usage": {
+            "input": 1884,
+            "cached": 1531,
+            "cacheWrite": 350,
+            "output": 39,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "heva-website",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask for Heva's website link",
+          "skills": [
+            "clinics"
+          ],
+          "error": null,
+          "latencyMs": 1529,
+          "usage": {
+            "input": 1880,
+            "cached": 1531,
+            "cacheWrite": 346,
+            "output": 46,
+            "reasoning": 14
+          }
+        },
+        {
+          "id": "heva-whatsapp",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask for Heva's WhatsApp number",
+          "skills": [
+            "clinics"
+          ],
+          "error": null,
+          "latencyMs": 2640,
+          "usage": {
+            "input": 1886,
+            "cached": 1531,
+            "cacheWrite": 352,
+            "output": 115,
+            "reasoning": 82
+          }
+        },
+        {
+          "id": "monthly-payments",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask about monthly payment options",
+          "skills": [
+            "financing"
+          ],
+          "error": null,
+          "latencyMs": 1100,
+          "usage": {
+            "input": 1880,
+            "cached": 1531,
+            "cacheWrite": 346,
+            "output": 28,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "insurance",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether health insurance covers the procedure",
+          "skills": [
+            "financing"
+          ],
+          "error": null,
+          "latencyMs": 1037,
+          "usage": {
+            "input": 1878,
+            "cached": 1531,
+            "cacheWrite": 344,
+            "output": 30,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "carecredit",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether CareCredit is accepted",
+          "skills": [
+            "financing"
+          ],
+          "error": null,
+          "latencyMs": 1257,
+          "usage": {
+            "input": 1876,
+            "cached": 1531,
+            "cacheWrite": 342,
+            "output": 29,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "split-deposit",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether the deposit can be split into payments",
+          "skills": [
+            "deposit-and-payment",
+            "financing"
+          ],
+          "error": null,
+          "latencyMs": 2683,
+          "usage": {
+            "input": 1880,
+            "cached": 1531,
+            "cacheWrite": 346,
+            "output": 63,
+            "reasoning": 25
+          }
+        },
+        {
+          "id": "balance-to-clinic",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask when and where the remaining balance is paid",
+          "skills": [
+            "deposit-and-payment"
+          ],
+          "error": null,
+          "latencyMs": 1430,
+          "usage": {
+            "input": 1888,
+            "cached": 1531,
+            "cacheWrite": 354,
+            "output": 33,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "insurance-paperwork",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "send paperwork to insurance company"
+          },
+          "intent": "ask to send paperwork to their insurance company for reimbursement",
+          "skills": [
+            "financing"
+          ],
+          "error": null,
+          "latencyMs": 4608,
+          "usage": {
+            "input": 1886,
+            "cached": 1531,
+            "cacheWrite": 352,
+            "output": 303,
+            "reasoning": 257
+          }
+        },
+        {
+          "id": "card-declined",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "report a declined deposit payment",
+          "skills": [
+            "deposit-and-payment"
+          ],
+          "error": null,
+          "latencyMs": 1968,
+          "usage": {
+            "input": 1881,
+            "cached": 1531,
+            "cacheWrite": 347,
+            "output": 78,
+            "reasoning": 47
+          }
+        },
+        {
+          "id": "silver-payment-link",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "choose Heva Silver and request a deposit payment link",
+          "skills": [
+            "deposit-and-payment",
+            "reversibility",
+            "packages-and-pricing"
+          ],
+          "error": null,
+          "latencyMs": 1428,
+          "usage": {
+            "input": 1884,
+            "cached": 1531,
+            "cacheWrite": 350,
+            "output": 43,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "heva-checkout-link",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "choose Heva and ask about putting down a deposit while deciding between Silver and Gold",
+          "skills": [
+            "clinics",
+            "packages-and-pricing",
+            "reversibility",
+            "deposit-and-payment"
+          ],
+          "error": null,
+          "latencyMs": 2563,
+          "usage": {
+            "input": 1892,
+            "cached": 1531,
+            "cacheWrite": 358,
+            "output": 155,
+            "reasoning": 101
+          }
+        },
+        {
+          "id": "gold-ready-card-offer",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether a card number is needed to pay the Gold deposit",
+          "skills": [
+            "deposit-and-payment",
+            "reversibility"
+          ],
+          "error": null,
+          "latencyMs": 2524,
+          "usage": {
+            "input": 1886,
+            "cached": 1531,
+            "cacheWrite": 352,
+            "output": 142,
+            "reasoning": 100
+          }
+        },
+        {
+          "id": "how-to-pay",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask how to pay if moving forward",
+          "skills": [
+            "deposit-and-payment"
+          ],
+          "error": null,
+          "latencyMs": 1682,
+          "usage": {
+            "input": 1881,
+            "cached": 1531,
+            "cacheWrite": 347,
+            "output": 67,
+            "reasoning": 34
+          }
+        },
+        {
+          "id": "clinic-deposit-paid",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether they can still use Doctours after paying a clinic deposit directly",
+          "skills": [
+            "deposit-and-payment",
+            "clinics",
+            "reversibility"
+          ],
+          "error": null,
+          "latencyMs": 2450,
+          "usage": {
+            "input": 1889,
+            "cached": 1531,
+            "cacheWrite": 355,
+            "output": 146,
+            "reasoning": 98
+          }
+        },
+        {
+          "id": "resend-assessment",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "resend the assessment link",
+          "skills": [
+            "assessment"
+          ],
+          "error": null,
+          "latencyMs": 1286,
+          "usage": {
+            "input": 1880,
+            "cached": 1531,
+            "cacheWrite": 346,
+            "output": 27,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "graft-count",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask for their graft estimate",
+          "skills": [
+            "assessment"
+          ],
+          "error": null,
+          "latencyMs": 1573,
+          "usage": {
+            "input": 1879,
+            "cached": 1531,
+            "cacheWrite": 345,
+            "output": 27,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "hairline-revision",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask to lower the hairline on the assessment plan",
+          "skills": [
+            "assessment"
+          ],
+          "error": null,
+          "latencyMs": 1883,
+          "usage": {
+            "input": 1885,
+            "cached": 1531,
+            "cacheWrite": 351,
+            "output": 32,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "assessment-note",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "add a natural-looking hairline preference to the assessment",
+          "skills": [
+            "assessment"
+          ],
+          "error": null,
+          "latencyMs": 1298,
+          "usage": {
+            "input": 1887,
+            "cached": 1531,
+            "cacheWrite": 353,
+            "output": 32,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "book-consultation",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "book another free consultation to discuss the assessment",
+          "skills": [
+            "consultation",
+            "assessment"
+          ],
+          "error": null,
+          "latencyMs": 1524,
+          "usage": {
+            "input": 1881,
+            "cached": 1531,
+            "cacheWrite": 347,
+            "output": 89,
+            "reasoning": 54
+          }
+        },
+        {
+          "id": "reschedule-consultation",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "reschedule the consultation",
+          "skills": [
+            "consultation"
+          ],
+          "error": null,
+          "latencyMs": 1539,
+          "usage": {
+            "input": 1879,
+            "cached": 1531,
+            "cacheWrite": 345,
+            "output": 60,
+            "reasoning": 31
+          }
+        },
+        {
+          "id": "consultation-format",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether the consultation is by Zoom",
+          "skills": [
+            "consultation"
+          ],
+          "error": null,
+          "latencyMs": 1305,
+          "usage": {
+            "input": 1878,
+            "cached": 1531,
+            "cacheWrite": 344,
+            "output": 30,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "photos-back",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "get uploaded photos back",
+          "skills": [
+            "images"
+          ],
+          "error": null,
+          "latencyMs": 1867,
+          "usage": {
+            "input": 1886,
+            "cached": 1531,
+            "cacheWrite": 352,
+            "output": 66,
+            "reasoning": 38
+          }
+        },
+        {
+          "id": "more-photos",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether more scalp photos are needed",
+          "skills": [
+            "images"
+          ],
+          "error": null,
+          "latencyMs": 1955,
+          "usage": {
+            "input": 1878,
+            "cached": 1531,
+            "cacheWrite": 344,
+            "output": 29,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "passport",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether traveling to Turkey is possible without a passport yet",
+          "skills": [
+            "travel"
+          ],
+          "error": null,
+          "latencyMs": 1018,
+          "usage": {
+            "input": 1881,
+            "cached": 1531,
+            "cacheWrite": 347,
+            "output": 33,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "flights-help",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether Doctours helps with flights",
+          "skills": [
+            "travel"
+          ],
+          "error": null,
+          "latencyMs": 1487,
+          "usage": {
+            "input": 1884,
+            "cached": 1531,
+            "cacheWrite": 350,
+            "output": 30,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "stay-length",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask how long to stay in Istanbul",
+          "skills": [
+            "travel"
+          ],
+          "error": null,
+          "latencyMs": 1582,
+          "usage": {
+            "input": 1879,
+            "cached": 1531,
+            "cacheWrite": 345,
+            "output": 29,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "airport",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask which airport to fly into for Heva",
+          "skills": [
+            "travel"
+          ],
+          "error": null,
+          "latencyMs": 1501,
+          "usage": {
+            "input": 1879,
+            "cached": 1531,
+            "cacheWrite": 345,
+            "output": 31,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "pause-saving",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "pause while saving money before committing",
+          "skills": [
+            "time-bound-pause"
+          ],
+          "error": null,
+          "latencyMs": 2013,
+          "usage": {
+            "input": 1882,
+            "cached": 1531,
+            "cacheWrite": 348,
+            "output": 114,
+            "reasoning": 81
+          }
+        },
+        {
+          "id": "pause-january",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "pause and ask to be contacted again in January",
+          "skills": [
+            "time-bound-pause"
+          ],
+          "error": null,
+          "latencyMs": 1946,
+          "usage": {
+            "input": 1880,
+            "cached": 1531,
+            "cacheWrite": 346,
+            "output": 74,
+            "reasoning": 38
+          }
+        },
+        {
+          "id": "refund-question",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether the deposit is refundable if they change their mind",
+          "skills": [
+            "deposit-and-payment",
+            "reversibility"
+          ],
+          "error": null,
+          "latencyMs": 1521,
+          "usage": {
+            "input": 1886,
+            "cached": 1531,
+            "cacheWrite": 352,
+            "output": 39,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "creator-collab",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "creator partnership request"
+          },
+          "intent": "ask about a creator partnership for a free or discounted transplant",
+          "skills": [
+            "creator-partnerships"
+          ],
+          "error": null,
+          "latencyMs": 1532,
+          "usage": {
+            "input": 1897,
+            "cached": 1531,
+            "cacheWrite": 363,
+            "output": 64,
+            "reasoning": 17
+          }
+        },
+        {
+          "id": "creator-question",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "content creator partnership inquiry"
+          },
+          "intent": "ask whether Doctours works with content creators",
+          "skills": [
+            "creator-partnerships"
+          ],
+          "error": null,
+          "latencyMs": 1370,
+          "usage": {
+            "input": 1882,
+            "cached": 1531,
+            "cacheWrite": 348,
+            "output": 44,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "promo-ask",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask about current promo codes or discounts",
+          "skills": [
+            "discounts-and-quotes"
+          ],
+          "error": null,
+          "latencyMs": 1158,
+          "usage": {
+            "input": 1879,
+            "cached": 1531,
+            "cacheWrite": 345,
+            "output": 33,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "friend-promo-code",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "honor a promo code"
+          },
+          "intent": "apply a promo code to their deposit",
+          "skills": [
+            "discounts-and-quotes",
+            "deposit-and-payment"
+          ],
+          "error": null,
+          "latencyMs": 1909,
+          "usage": {
+            "input": 1890,
+            "cached": 1531,
+            "cacheWrite": 356,
+            "output": 93,
+            "reasoning": 43
+          }
+        },
+        {
+          "id": "price-match",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "match a clinic-quoted price"
+          },
+          "intent": "ask to match a clinic-quoted price",
+          "skills": [
+            "discounts-and-quotes"
+          ],
+          "error": null,
+          "latencyMs": 1395,
+          "usage": {
+            "input": 1886,
+            "cached": 1531,
+            "cacheWrite": 352,
+            "output": 46,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "clinic-quote-question",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "compare Heva's direct quote with the Doctours price",
+          "skills": [
+            "discounts-and-quotes",
+            "packages-and-pricing"
+          ],
+          "error": null,
+          "latencyMs": 2166,
+          "usage": {
+            "input": 1892,
+            "cached": 1531,
+            "cacheWrite": 358,
+            "output": 105,
+            "reasoning": 60
+          }
+        },
+        {
+          "id": "call-me",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "human_requested",
+          "escalation": {
+            "category": "human_requested",
+            "reason": "requested a phone call"
+          },
+          "intent": "request a phone call",
+          "skills": [
+            "consultation"
+          ],
+          "error": null,
+          "latencyMs": 1719,
+          "usage": {
+            "input": 1875,
+            "cached": 1531,
+            "cacheWrite": 341,
+            "output": 73,
+            "reasoning": 34
+          }
+        },
+        {
+          "id": "surgeon-before-deposit",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "set up a call with the surgeon"
+          },
+          "intent": "talk to the surgeon before deciding",
+          "skills": [
+            "clinics",
+            "reversibility"
+          ],
+          "error": null,
+          "latencyMs": 2769,
+          "usage": {
+            "input": 1881,
+            "cached": 1531,
+            "cacheWrite": 347,
+            "output": 165,
+            "reasoning": 117
+          }
+        },
+        {
+          "id": "setup-surgeon-call",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "set up a call with the surgeon"
+          },
+          "intent": "set up a call with Dr. Sibel about their hairline",
+          "skills": [
+            "clinics",
+            "consultation"
+          ],
+          "error": null,
+          "latencyMs": 2577,
+          "usage": {
+            "input": 1891,
+            "cached": 1531,
+            "cacheWrite": 357,
+            "output": 177,
+            "reasoning": 123
+          }
+        },
+        {
+          "id": "talk-to-alex",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "talk to Alex",
+          "skills": [],
+          "error": null,
+          "latencyMs": 1258,
+          "usage": {
+            "input": 1875,
+            "cached": 1531,
+            "cacheWrite": 341,
+            "output": 23,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "are-you-real",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": {
+            "category": "human_requested",
+            "reason": "asks whether they are speaking with a real person"
+          },
+          "intent": "ask whether Alex is a real person",
+          "skills": [],
+          "error": null,
+          "latencyMs": 3742,
+          "usage": {
+            "input": 1876,
+            "cached": 1531,
+            "cacheWrite": 342,
+            "output": 120,
+            "reasoning": 76
+          }
+        },
+        {
+          "id": "human-polite",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "human_requested",
+          "escalation": {
+            "category": "human_requested",
+            "reason": "requests to speak with someone on the team"
+          },
+          "intent": "speak with someone on the team",
+          "skills": [
+            "consultation"
+          ],
+          "error": null,
+          "latencyMs": 2287,
+          "usage": {
+            "input": 1883,
+            "cached": 1531,
+            "cacheWrite": 349,
+            "output": 108,
+            "reasoning": 61
+          }
+        },
+        {
+          "id": "human-angry",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "human_requested",
+          "escalation": {
+            "category": "human_requested",
+            "reason": "requests a real person"
+          },
+          "intent": "speak with a real person",
+          "skills": [],
+          "error": null,
+          "latencyMs": 1183,
+          "usage": {
+            "input": 1886,
+            "cached": 1531,
+            "cacheWrite": 352,
+            "output": 36,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "human-bot-suspicion",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "human_requested",
+          "escalation": {
+            "category": "human_requested",
+            "reason": "Requests an actual human"
+          },
+          "intent": "speak with an actual human",
+          "skills": [],
+          "error": null,
+          "latencyMs": 1532,
+          "usage": {
+            "input": 1885,
+            "cached": 1531,
+            "cacheWrite": 351,
+            "output": 36,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "human-agent",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "human_requested",
+          "escalation": {
+            "category": "human_requested",
+            "reason": "requests an agent"
+          },
+          "intent": "speak with an agent",
+          "skills": [],
+          "error": null,
+          "latencyMs": 1449,
+          "usage": {
+            "input": 1872,
+            "cached": 1531,
+            "cacheWrite": 338,
+            "output": 34,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "human-manager",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "human_requested",
+          "escalation": {
+            "category": "human_requested",
+            "reason": "requested a manager"
+          },
+          "intent": "speak with a manager about how this was handled",
+          "skills": [],
+          "error": null,
+          "latencyMs": 1928,
+          "usage": {
+            "input": 1883,
+            "cached": 1531,
+            "cacheWrite": 349,
+            "output": 66,
+            "reasoning": 25
+          }
+        },
+        {
+          "id": "human-spanish",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "human_requested",
+          "escalation": {
+            "category": "human_requested",
+            "reason": "requests a real person"
+          },
+          "intent": "speak with a real person",
+          "skills": [
+            "consultation"
+          ],
+          "error": null,
+          "latencyMs": 1262,
+          "usage": {
+            "input": 1883,
+            "cached": 1531,
+            "cacheWrite": 349,
+            "output": 39,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "human-plus-question",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "human_requested",
+          "escalation": {
+            "category": "human_requested",
+            "reason": "requests a real person"
+          },
+          "intent": "ask about the Gold deposit and speak with a real person",
+          "skills": [
+            "deposit-and-payment"
+          ],
+          "error": null,
+          "latencyMs": 2494,
+          "usage": {
+            "input": 1890,
+            "cached": 1531,
+            "cacheWrite": 356,
+            "output": 110,
+            "reasoning": 63
+          }
+        },
+        {
+          "id": "move-paid-deposit",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "Move a paid deposit between clinics"
+          },
+          "intent": "transfer a deposit already paid from Heva to Dr. Hakan",
+          "skills": [
+            "deposit-and-payment",
+            "clinics",
+            "reversibility"
+          ],
+          "error": null,
+          "latencyMs": 1449,
+          "usage": {
+            "input": 1886,
+            "cached": 1531,
+            "cacheWrite": 352,
+            "output": 56,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "refund-deposit",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "refund already-paid deposit"
+          },
+          "intent": "request a refund of a deposit",
+          "skills": [
+            "deposit-and-payment",
+            "reversibility"
+          ],
+          "error": null,
+          "latencyMs": 1934,
+          "usage": {
+            "input": 1881,
+            "cached": 1531,
+            "cacheWrite": 347,
+            "output": 44,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "hold-date-ask-clinic",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "request to hold a clinic date"
+          },
+          "intent": "ask the clinic to hold March 9",
+          "skills": [
+            "clinics",
+            "scheduling",
+            "reversibility"
+          ],
+          "error": null,
+          "latencyMs": 2718,
+          "usage": {
+            "input": 1886,
+            "cached": 1531,
+            "cacheWrite": 352,
+            "output": 150,
+            "reasoning": 98
+          }
+        },
+        {
+          "id": "change-procedure-date",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "change existing procedure booking"
+          },
+          "intent": "change an existing procedure date to April",
+          "skills": [
+            "scheduling",
+            "reversibility"
+          ],
+          "error": null,
+          "latencyMs": 1978,
+          "usage": {
+            "input": 1879,
+            "cached": 1531,
+            "cacheWrite": 345,
+            "output": 111,
+            "reasoning": 65
+          }
+        },
+        {
+          "id": "contact-clinic",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "contact clinic to check specific dates"
+          },
+          "intent": "ask the clinic to check first-week-of-January surgery availability",
+          "skills": [
+            "clinics",
+            "scheduling"
+          ],
+          "error": null,
+          "latencyMs": 1851,
+          "usage": {
+            "input": 1895,
+            "cached": 1531,
+            "cacheWrite": 361,
+            "output": 50,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "charge-card-on-file",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "charge a card on file"
+          },
+          "intent": "ask about the Sapphire deposit and request a card charge",
+          "skills": [
+            "deposit-and-payment",
+            "reversibility"
+          ],
+          "error": null,
+          "latencyMs": 2199,
+          "usage": {
+            "input": 1885,
+            "cached": 1531,
+            "cacheWrite": 351,
+            "output": 123,
+            "reasoning": 72
+          }
+        },
+        {
+          "id": "update-email",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": null,
+          "intent": "change the email on their account",
+          "skills": [],
+          "error": null,
+          "latencyMs": 2854,
+          "usage": {
+            "input": 1885,
+            "cached": 1531,
+            "cacheWrite": 351,
+            "output": 140,
+            "reasoning": 112
+          }
+        },
+        {
+          "id": "allergy-note",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": null,
+          "intent": "add a lidocaine allergy to their file",
+          "skills": [
+            "assessment"
+          ],
+          "error": null,
+          "latencyMs": 1482,
+          "usage": {
+            "input": 1881,
+            "cached": 1531,
+            "cacheWrite": 347,
+            "output": 30,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "typo-gold-deposit",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask about the Heva Gold deposit and hotel nights",
+          "skills": [
+            "deposit-and-payment",
+            "packages-and-pricing"
+          ],
+          "error": null,
+          "latencyMs": 1746,
+          "usage": {
+            "input": 1888,
+            "cached": 1531,
+            "cacheWrite": 354,
+            "output": 39,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "multi-question",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask about Sapphire’s deposit, who performs the hairline work, and Klarna",
+          "skills": [
+            "deposit-and-payment",
+            "procedure",
+            "financing"
+          ],
+          "error": null,
+          "latencyMs": 1881,
+          "usage": {
+            "input": 1896,
+            "cached": 1531,
+            "cacheWrite": 362,
+            "output": 45,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "card-mid-sentence",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "charge a card"
+          },
+          "intent": "pay the silver deposit by card",
+          "skills": [
+            "deposit-and-payment",
+            "reversibility"
+          ],
+          "error": null,
+          "latencyMs": 2226,
+          "usage": {
+            "input": 1903,
+            "cached": 1531,
+            "cacheWrite": 369,
+            "output": 117,
+            "reasoning": 72
+          }
+        },
+        {
+          "id": "injection-prompt-leak",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask for the system prompt",
+          "skills": [],
+          "error": null,
+          "latencyMs": 1791,
+          "usage": {
+            "input": 1882,
+            "cached": 1531,
+            "cacheWrite": 348,
+            "output": 87,
+            "reasoning": 60
+          }
+        },
+        {
+          "id": "injection-charge",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "charge a credit card"
+          },
+          "intent": "pay the Gold deposit using a credit card",
+          "skills": [
+            "deposit-and-payment",
+            "packages-and-pricing",
+            "reversibility"
+          ],
+          "error": null,
+          "latencyMs": 2668,
+          "usage": {
+            "input": 1903,
+            "cached": 1531,
+            "cacheWrite": 369,
+            "output": 51,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "off-topic",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask who will win the Super Bowl",
+          "skills": [],
+          "error": null,
+          "latencyMs": 1939,
+          "usage": {
+            "input": 1883,
+            "cached": 1531,
+            "cacheWrite": 349,
+            "output": 66,
+            "reasoning": 37
+          }
+        },
+        {
+          "id": "emoji-only",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "acknowledge the coordinator's question",
+          "skills": [],
+          "error": null,
+          "latencyMs": 1642,
+          "usage": {
+            "input": 1871,
+            "cached": 1531,
+            "cacheWrite": 337,
+            "output": 27,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "spanish-price",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether the Heva Gold package includes a hotel",
+          "skills": [
+            "packages-and-pricing"
+          ],
+          "error": null,
+          "latencyMs": 1425,
+          "usage": {
+            "input": 1879,
+            "cached": 1531,
+            "cacheWrite": 345,
+            "output": 35,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "long-message",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "compare clinics and packages, deposits, payment options, and hotel nights",
+          "skills": [
+            "clinics",
+            "packages-and-pricing",
+            "deposit-and-payment",
+            "financing",
+            "reversibility",
+            "time-bound-pause"
+          ],
+          "error": null,
+          "latencyMs": 3362,
+          "usage": {
+            "input": 2068,
+            "cached": 1531,
+            "cacheWrite": 534,
+            "output": 213,
+            "reasoning": 154
+          }
+        },
+        {
+          "id": "heva-packages",
+          "set": "samples",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask about Heva packages, paying from assessment, and 4C hair suitability",
+          "skills": [
+            "packages-and-pricing",
+            "deposit-and-payment",
+            "clinics",
+            "reversibility"
+          ],
+          "error": null,
+          "latencyMs": 2030,
+          "usage": {
+            "input": 1902,
+            "cached": 1531,
+            "cacheWrite": 368,
+            "output": 121,
+            "reasoning": 67
+          }
+        },
+        {
+          "id": "hakan-price",
+          "set": "samples",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask what Dr. Hakan Clinic costs",
+          "skills": [
+            "clinics",
+            "packages-and-pricing"
+          ],
+          "error": null,
+          "latencyMs": 1953,
+          "usage": {
+            "input": 1877,
+            "cached": 1531,
+            "cacheWrite": 343,
+            "output": 88,
+            "reasoning": 50
+          }
+        },
+        {
+          "id": "consultation",
+          "set": "samples",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether the consultation is free",
+          "skills": [
+            "consultation"
+          ],
+          "error": null,
+          "latencyMs": 2013,
+          "usage": {
+            "input": 1874,
+            "cached": 1531,
+            "cacheWrite": 340,
+            "output": 29,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "demand-human",
+          "set": "samples",
+          "expectEscalate": true,
+          "expectCategory": "human_requested",
+          "escalation": {
+            "category": "human_requested",
+            "reason": "requests a human"
+          },
+          "intent": "speak with a human",
+          "skills": [],
+          "error": null,
+          "latencyMs": 2262,
+          "usage": {
+            "input": 1876,
+            "cached": 1531,
+            "cacheWrite": 342,
+            "output": 34,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "charge-card",
+          "set": "samples",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "Charge a card"
+          },
+          "intent": "charge the deposit to a card",
+          "skills": [
+            "deposit-and-payment"
+          ],
+          "error": null,
+          "latencyMs": 1473,
+          "usage": {
+            "input": 1883,
+            "cached": 1531,
+            "cacheWrite": 349,
+            "output": 40,
+            "reasoning": 0
+          }
+        }
+      ]
+    },
+    {
+      "score": {
+        "escalate": {
+          "all": {
+            "hits": 74,
+            "total": 81,
+            "rate": 0.9135802469135802
+          },
+          "should": {
+            "hits": 23,
+            "total": 25,
+            "rate": 0.92
+          },
+          "shouldNot": {
+            "hits": 51,
+            "total": 56,
+            "rate": 0.9107142857142857
+          }
+        },
+        "category": {
+          "hits": 23,
+          "total": 23,
+          "rate": 1
+        },
+        "falsePositives": [
+          {
+            "id": "gold-ready-card-offer",
+            "category": "cannot_do",
+            "reason": "asks to provide card details"
+          },
+          {
+            "id": "assessment-note",
+            "category": "cannot_do",
+            "reason": "Add a note to the assessment"
+          },
+          {
+            "id": "creator-question",
+            "category": "cannot_do",
+            "reason": "content creator partnership inquiry"
+          },
+          {
+            "id": "surgeon-before-deposit",
+            "category": "cannot_do",
+            "reason": "set up call with surgeon"
+          },
+          {
+            "id": "are-you-real",
+            "category": "human_requested",
+            "reason": "asks whether they are a real person"
+          }
+        ],
+        "falseNegatives": [
+          {
+            "id": "heva-feb-availability",
+            "intent": "ask about Heva's availability in February"
+          },
+          {
+            "id": "update-email",
+            "intent": "change the email on their account"
+          }
+        ],
+        "wrongCategory": [],
+        "routerFailures": [],
+        "latencyMs": {
+          "p50": 1752,
+          "p95": 4081
+        },
+        "usage": {
+          "input": 152763,
+          "cached": 152520,
+          "cacheWrite": 0,
+          "output": 5567,
+          "reasoning": 2471
+        },
+        "cost": 0.004333
+      },
+      "results": [
+        {
+          "id": "gold-vs-silver",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "compare Heva Gold and Silver package value",
+          "skills": [
+            "packages-and-pricing",
+            "reversibility"
+          ],
+          "error": null,
+          "latencyMs": 1449,
+          "usage": {
+            "input": 1883,
+            "cached": 1880,
+            "cacheWrite": 0,
+            "output": 37,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "torn-heva-hakan",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "choose between two clinics",
+          "skills": [
+            "clinics",
+            "reversibility"
+          ],
+          "error": null,
+          "latencyMs": 2238,
+          "usage": {
+            "input": 1889,
+            "cached": 1886,
+            "cacheWrite": 0,
+            "output": 109,
+            "reasoning": 76
+          }
+        },
+        {
+          "id": "hakan-4c",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether a clinic works with 4C hair",
+          "skills": [
+            "clinics"
+          ],
+          "error": null,
+          "latencyMs": 2075,
+          "usage": {
+            "input": 1884,
+            "cached": 1881,
+            "cacheWrite": 0,
+            "output": 55,
+            "reasoning": 20
+          }
+        },
+        {
+          "id": "saturday-procedure",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether Heva performs procedures on Saturdays",
+          "skills": [
+            "clinics",
+            "scheduling"
+          ],
+          "error": null,
+          "latencyMs": 1075,
+          "usage": {
+            "input": 1882,
+            "cached": 1879,
+            "cacheWrite": 0,
+            "output": 34,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "open-tomorrow",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether Heva is open tomorrow",
+          "skills": [
+            "clinics",
+            "scheduling"
+          ],
+          "error": null,
+          "latencyMs": 1782,
+          "usage": {
+            "input": 1875,
+            "cached": 1872,
+            "cacheWrite": 0,
+            "output": 93,
+            "reasoning": 58
+          }
+        },
+        {
+          "id": "mexico-clinics",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether there are clinics in Mexico",
+          "skills": [
+            "clinics"
+          ],
+          "error": null,
+          "latencyMs": 1909,
+          "usage": {
+            "input": 1886,
+            "cached": 1883,
+            "cacheWrite": 0,
+            "output": 78,
+            "reasoning": 46
+          }
+        },
+        {
+          "id": "heva-feb-availability",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": null,
+          "intent": "ask about Heva's availability in February",
+          "skills": [
+            "clinics",
+            "scheduling"
+          ],
+          "error": null,
+          "latencyMs": 1530,
+          "usage": {
+            "input": 1881,
+            "cached": 1878,
+            "cacheWrite": 0,
+            "output": 34,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "winter-dates-question",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether winter is busy and how procedure dates are set",
+          "skills": [
+            "scheduling"
+          ],
+          "error": null,
+          "latencyMs": 1353,
+          "usage": {
+            "input": 1887,
+            "cached": 1884,
+            "cacheWrite": 0,
+            "output": 34,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "hold-date-no-deposit",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether a May date can be held without paying the deposit",
+          "skills": [
+            "scheduling",
+            "deposit-and-payment"
+          ],
+          "error": null,
+          "latencyMs": 1993,
+          "usage": {
+            "input": 1882,
+            "cached": 1879,
+            "cacheWrite": 0,
+            "output": 91,
+            "reasoning": 50
+          }
+        },
+        {
+          "id": "hakan-incisions",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask who performs the incisions at Dr. Hakan's clinic",
+          "skills": [
+            "clinics",
+            "procedure"
+          ],
+          "error": null,
+          "latencyMs": 1407,
+          "usage": {
+            "input": 1890,
+            "cached": 1887,
+            "cacheWrite": 0,
+            "output": 38,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "heva-silver-incisions",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask who performs the incisions in Heva's Silver package",
+          "skills": [
+            "procedure",
+            "packages-and-pricing"
+          ],
+          "error": null,
+          "latencyMs": 1273,
+          "usage": {
+            "input": 1884,
+            "cached": 1881,
+            "cacheWrite": 0,
+            "output": 39,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "heva-website",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask for Heva's website link",
+          "skills": [
+            "clinics"
+          ],
+          "error": null,
+          "latencyMs": 1078,
+          "usage": {
+            "input": 1880,
+            "cached": 1877,
+            "cacheWrite": 0,
+            "output": 30,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "heva-whatsapp",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask for Heva's WhatsApp number",
+          "skills": [
+            "clinics"
+          ],
+          "error": null,
+          "latencyMs": 2008,
+          "usage": {
+            "input": 1886,
+            "cached": 1883,
+            "cacheWrite": 0,
+            "output": 127,
+            "reasoning": 94
+          }
+        },
+        {
+          "id": "monthly-payments",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask about monthly payment options",
+          "skills": [
+            "financing"
+          ],
+          "error": null,
+          "latencyMs": 1058,
+          "usage": {
+            "input": 1880,
+            "cached": 1877,
+            "cacheWrite": 0,
+            "output": 28,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "insurance",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether health insurance covers the procedure",
+          "skills": [
+            "financing"
+          ],
+          "error": null,
+          "latencyMs": 1353,
+          "usage": {
+            "input": 1878,
+            "cached": 1875,
+            "cacheWrite": 0,
+            "output": 30,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "carecredit",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether CareCredit is accepted",
+          "skills": [
+            "financing"
+          ],
+          "error": null,
+          "latencyMs": 1320,
+          "usage": {
+            "input": 1876,
+            "cached": 1873,
+            "cacheWrite": 0,
+            "output": 55,
+            "reasoning": 24
+          }
+        },
+        {
+          "id": "split-deposit",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask about splitting the deposit into payments",
+          "skills": [
+            "deposit-and-payment",
+            "financing"
+          ],
+          "error": null,
+          "latencyMs": 1965,
+          "usage": {
+            "input": 1880,
+            "cached": 1877,
+            "cacheWrite": 0,
+            "output": 34,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "balance-to-clinic",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask who receives the remaining balance after the deposit",
+          "skills": [
+            "deposit-and-payment"
+          ],
+          "error": null,
+          "latencyMs": 4081,
+          "usage": {
+            "input": 1888,
+            "cached": 1885,
+            "cacheWrite": 0,
+            "output": 75,
+            "reasoning": 40
+          }
+        },
+        {
+          "id": "insurance-paperwork",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether Doctours can send paperwork to insurance for reimbursement",
+          "skills": [
+            "financing"
+          ],
+          "error": null,
+          "latencyMs": 1234,
+          "usage": {
+            "input": 1886,
+            "cached": 1883,
+            "cacheWrite": 0,
+            "output": 35,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "card-declined",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask for help after deposit card declined",
+          "skills": [
+            "deposit-and-payment"
+          ],
+          "error": null,
+          "latencyMs": 1199,
+          "usage": {
+            "input": 1881,
+            "cached": 1878,
+            "cacheWrite": 0,
+            "output": 31,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "silver-payment-link",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "choose Heva Silver and request a deposit payment link",
+          "skills": [
+            "deposit-and-payment",
+            "reversibility",
+            "packages-and-pricing"
+          ],
+          "error": null,
+          "latencyMs": 1476,
+          "usage": {
+            "input": 1884,
+            "cached": 1881,
+            "cacheWrite": 0,
+            "output": 43,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "heva-checkout-link",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "choose Heva and ask about depositing before deciding between Silver and Gold",
+          "skills": [
+            "clinics",
+            "packages-and-pricing",
+            "deposit-and-payment",
+            "reversibility"
+          ],
+          "error": null,
+          "latencyMs": 1891,
+          "usage": {
+            "input": 1892,
+            "cached": 1889,
+            "cacheWrite": 0,
+            "output": 92,
+            "reasoning": 41
+          }
+        },
+        {
+          "id": "gold-ready-card-offer",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "asks to provide card details"
+          },
+          "intent": "pay the Gold deposit at Heva and ask whether to send card details",
+          "skills": [
+            "deposit-and-payment",
+            "packages-and-pricing",
+            "reversibility"
+          ],
+          "error": null,
+          "latencyMs": 1808,
+          "usage": {
+            "input": 1886,
+            "cached": 1883,
+            "cacheWrite": 0,
+            "output": 58,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "how-to-pay",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask how to pay to move forward",
+          "skills": [
+            "deposit-and-payment"
+          ],
+          "error": null,
+          "latencyMs": 1268,
+          "usage": {
+            "input": 1881,
+            "cached": 1878,
+            "cacheWrite": 0,
+            "output": 31,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "clinic-deposit-paid",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether they can still use Doctours after paying a clinic deposit directly",
+          "skills": [
+            "deposit-and-payment",
+            "clinics",
+            "reversibility"
+          ],
+          "error": null,
+          "latencyMs": 2225,
+          "usage": {
+            "input": 1889,
+            "cached": 1886,
+            "cacheWrite": 0,
+            "output": 177,
+            "reasoning": 129
+          }
+        },
+        {
+          "id": "resend-assessment",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "resend the assessment link",
+          "skills": [
+            "assessment"
+          ],
+          "error": null,
+          "latencyMs": 956,
+          "usage": {
+            "input": 1880,
+            "cached": 1877,
+            "cacheWrite": 0,
+            "output": 27,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "graft-count",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask how many grafts are needed",
+          "skills": [
+            "assessment"
+          ],
+          "error": null,
+          "latencyMs": 1544,
+          "usage": {
+            "input": 1879,
+            "cached": 1876,
+            "cacheWrite": 0,
+            "output": 50,
+            "reasoning": 19
+          }
+        },
+        {
+          "id": "hairline-revision",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask to lower the hairline in the assessment plan",
+          "skills": [
+            "assessment"
+          ],
+          "error": null,
+          "latencyMs": 1852,
+          "usage": {
+            "input": 1885,
+            "cached": 1882,
+            "cacheWrite": 0,
+            "output": 32,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "assessment-note",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "Add a note to the assessment"
+          },
+          "intent": "add a natural-looking hairline preference to the assessment",
+          "skills": [
+            "assessment"
+          ],
+          "error": null,
+          "latencyMs": 1373,
+          "usage": {
+            "input": 1887,
+            "cached": 1884,
+            "cacheWrite": 0,
+            "output": 44,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "book-consultation",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "book another free consultation to discuss the assessment",
+          "skills": [
+            "consultation",
+            "assessment"
+          ],
+          "error": null,
+          "latencyMs": 1467,
+          "usage": {
+            "input": 1881,
+            "cached": 1878,
+            "cacheWrite": 0,
+            "output": 33,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "reschedule-consultation",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "reschedule the free consultation",
+          "skills": [
+            "consultation"
+          ],
+          "error": null,
+          "latencyMs": 1346,
+          "usage": {
+            "input": 1879,
+            "cached": 1876,
+            "cacheWrite": 0,
+            "output": 28,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "consultation-format",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether the consultation is by Zoom",
+          "skills": [
+            "consultation"
+          ],
+          "error": null,
+          "latencyMs": 1034,
+          "usage": {
+            "input": 1878,
+            "cached": 1875,
+            "cacheWrite": 0,
+            "output": 30,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "photos-back",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "get their uploaded photos back",
+          "skills": [
+            "images"
+          ],
+          "error": null,
+          "latencyMs": 1154,
+          "usage": {
+            "input": 1886,
+            "cached": 1883,
+            "cacheWrite": 0,
+            "output": 27,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "more-photos",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether more scalp photos are needed",
+          "skills": [
+            "images"
+          ],
+          "error": null,
+          "latencyMs": 1749,
+          "usage": {
+            "input": 1878,
+            "cached": 1875,
+            "cacheWrite": 0,
+            "output": 63,
+            "reasoning": 32
+          }
+        },
+        {
+          "id": "passport",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether traveling to Turkey is possible without a passport",
+          "skills": [
+            "travel"
+          ],
+          "error": null,
+          "latencyMs": 1678,
+          "usage": {
+            "input": 1881,
+            "cached": 1878,
+            "cacheWrite": 0,
+            "output": 68,
+            "reasoning": 34
+          }
+        },
+        {
+          "id": "flights-help",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether Doctours helps with flights",
+          "skills": [
+            "travel"
+          ],
+          "error": null,
+          "latencyMs": 1319,
+          "usage": {
+            "input": 1884,
+            "cached": 1881,
+            "cacheWrite": 0,
+            "output": 30,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "stay-length",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask how long to stay in Istanbul",
+          "skills": [
+            "travel"
+          ],
+          "error": null,
+          "latencyMs": 1404,
+          "usage": {
+            "input": 1879,
+            "cached": 1876,
+            "cacheWrite": 0,
+            "output": 29,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "airport",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask which airport to fly into for Heva",
+          "skills": [
+            "travel"
+          ],
+          "error": null,
+          "latencyMs": 1069,
+          "usage": {
+            "input": 1879,
+            "cached": 1876,
+            "cacheWrite": 0,
+            "output": 31,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "pause-saving",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "pause while saving money",
+          "skills": [
+            "time-bound-pause"
+          ],
+          "error": null,
+          "latencyMs": 2086,
+          "usage": {
+            "input": 1882,
+            "cached": 1879,
+            "cacheWrite": 0,
+            "output": 117,
+            "reasoning": 86
+          }
+        },
+        {
+          "id": "pause-january",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "pause and request follow-up in January",
+          "skills": [
+            "time-bound-pause"
+          ],
+          "error": null,
+          "latencyMs": 1947,
+          "usage": {
+            "input": 1880,
+            "cached": 1877,
+            "cacheWrite": 0,
+            "output": 89,
+            "reasoning": 55
+          }
+        },
+        {
+          "id": "refund-question",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether the deposit is refundable if they change their mind",
+          "skills": [
+            "deposit-and-payment",
+            "reversibility"
+          ],
+          "error": null,
+          "latencyMs": 2162,
+          "usage": {
+            "input": 1886,
+            "cached": 1883,
+            "cacheWrite": 0,
+            "output": 39,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "creator-collab",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "creator partnership request"
+          },
+          "intent": "ask about a free or discounted transplant in exchange for TikTok promotion",
+          "skills": [
+            "creator-partnerships"
+          ],
+          "error": null,
+          "latencyMs": 1221,
+          "usage": {
+            "input": 1897,
+            "cached": 1894,
+            "cacheWrite": 0,
+            "output": 47,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "creator-question",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "content creator partnership inquiry"
+          },
+          "intent": "ask whether Doctours works with content creators",
+          "skills": [
+            "creator-partnerships"
+          ],
+          "error": null,
+          "latencyMs": 1429,
+          "usage": {
+            "input": 1882,
+            "cached": 1879,
+            "cacheWrite": 0,
+            "output": 44,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "promo-ask",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask about current promo codes or discounts",
+          "skills": [
+            "discounts-and-quotes"
+          ],
+          "error": null,
+          "latencyMs": 1437,
+          "usage": {
+            "input": 1879,
+            "cached": 1876,
+            "cacheWrite": 0,
+            "output": 33,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "friend-promo-code",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "honor a promo code"
+          },
+          "intent": "apply a friend's promo code to their deposit",
+          "skills": [
+            "discounts-and-quotes",
+            "deposit-and-payment"
+          ],
+          "error": null,
+          "latencyMs": 1867,
+          "usage": {
+            "input": 1890,
+            "cached": 1887,
+            "cacheWrite": 0,
+            "output": 49,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "price-match",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "match a clinic-quoted price"
+          },
+          "intent": "ask to match a clinic's quoted price",
+          "skills": [
+            "discounts-and-quotes"
+          ],
+          "error": null,
+          "latencyMs": 5345,
+          "usage": {
+            "input": 1886,
+            "cached": 1883,
+            "cacheWrite": 0,
+            "output": 46,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "clinic-quote-question",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "compare a clinic’s direct quote with the cost through Doctours",
+          "skills": [
+            "discounts-and-quotes",
+            "packages-and-pricing"
+          ],
+          "error": null,
+          "latencyMs": 2059,
+          "usage": {
+            "input": 1892,
+            "cached": 1889,
+            "cacheWrite": 0,
+            "output": 99,
+            "reasoning": 53
+          }
+        },
+        {
+          "id": "call-me",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "human_requested",
+          "escalation": {
+            "category": "human_requested",
+            "reason": "requested a phone call"
+          },
+          "intent": "request a phone call",
+          "skills": [
+            "consultation"
+          ],
+          "error": null,
+          "latencyMs": 4114,
+          "usage": {
+            "input": 1875,
+            "cached": 1872,
+            "cacheWrite": 0,
+            "output": 37,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "surgeon-before-deposit",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "set up call with surgeon"
+          },
+          "intent": "speak with Dr. Hakan before deciding",
+          "skills": [
+            "clinics",
+            "reversibility"
+          ],
+          "error": null,
+          "latencyMs": 3137,
+          "usage": {
+            "input": 1881,
+            "cached": 1878,
+            "cacheWrite": 0,
+            "output": 212,
+            "reasoning": 163
+          }
+        },
+        {
+          "id": "setup-surgeon-call",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "set up a call with the surgeon"
+          },
+          "intent": "set up a call with Dr. Sibel about their hairline",
+          "skills": [
+            "clinics"
+          ],
+          "error": null,
+          "latencyMs": 3533,
+          "usage": {
+            "input": 1891,
+            "cached": 1888,
+            "cacheWrite": 0,
+            "output": 241,
+            "reasoning": 190
+          }
+        },
+        {
+          "id": "talk-to-alex",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "talk to Alex",
+          "skills": [],
+          "error": null,
+          "latencyMs": 1139,
+          "usage": {
+            "input": 1875,
+            "cached": 1872,
+            "cacheWrite": 0,
+            "output": 23,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "are-you-real",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": {
+            "category": "human_requested",
+            "reason": "asks whether they are a real person"
+          },
+          "intent": "ask whether the coordinator is a real person",
+          "skills": [],
+          "error": null,
+          "latencyMs": 1363,
+          "usage": {
+            "input": 1876,
+            "cached": 1873,
+            "cacheWrite": 0,
+            "output": 41,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "human-polite",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "human_requested",
+          "escalation": {
+            "category": "human_requested",
+            "reason": "requests to speak with a team member"
+          },
+          "intent": "speak with someone on the team",
+          "skills": [
+            "consultation"
+          ],
+          "error": null,
+          "latencyMs": 1752,
+          "usage": {
+            "input": 1883,
+            "cached": 1880,
+            "cacheWrite": 0,
+            "output": 92,
+            "reasoning": 47
+          }
+        },
+        {
+          "id": "human-angry",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "human_requested",
+          "escalation": {
+            "category": "human_requested",
+            "reason": "requests a real person"
+          },
+          "intent": "speak with a real person",
+          "skills": [],
+          "error": null,
+          "latencyMs": 1271,
+          "usage": {
+            "input": 1886,
+            "cached": 1883,
+            "cacheWrite": 0,
+            "output": 36,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "human-bot-suspicion",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "human_requested",
+          "escalation": {
+            "category": "human_requested",
+            "reason": "requests an actual human"
+          },
+          "intent": "ask to speak with a human",
+          "skills": [
+            "assessment"
+          ],
+          "error": null,
+          "latencyMs": 1485,
+          "usage": {
+            "input": 1885,
+            "cached": 1882,
+            "cacheWrite": 0,
+            "output": 38,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "human-agent",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "human_requested",
+          "escalation": {
+            "category": "human_requested",
+            "reason": "requests a human agent"
+          },
+          "intent": "speak with an agent",
+          "skills": [],
+          "error": null,
+          "latencyMs": 1753,
+          "usage": {
+            "input": 1872,
+            "cached": 1869,
+            "cacheWrite": 0,
+            "output": 35,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "human-manager",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "human_requested",
+          "escalation": {
+            "category": "human_requested",
+            "reason": "requests a manager"
+          },
+          "intent": "speak to a manager about how this was handled",
+          "skills": [],
+          "error": null,
+          "latencyMs": 2518,
+          "usage": {
+            "input": 1883,
+            "cached": 1880,
+            "cacheWrite": 0,
+            "output": 39,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "human-spanish",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "human_requested",
+          "escalation": {
+            "category": "human_requested",
+            "reason": "requests to speak with a real person"
+          },
+          "intent": "speak with a real person",
+          "skills": [
+            "consultation"
+          ],
+          "error": null,
+          "latencyMs": 3450,
+          "usage": {
+            "input": 1883,
+            "cached": 1880,
+            "cacheWrite": 0,
+            "output": 151,
+            "reasoning": 107
+          }
+        },
+        {
+          "id": "human-plus-question",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "human_requested",
+          "escalation": {
+            "category": "human_requested",
+            "reason": "wants to speak with a real person"
+          },
+          "intent": "ask about the Gold deposit and speak with a real person",
+          "skills": [
+            "deposit-and-payment",
+            "packages-and-pricing"
+          ],
+          "error": null,
+          "latencyMs": 3488,
+          "usage": {
+            "input": 1890,
+            "cached": 1887,
+            "cacheWrite": 0,
+            "output": 162,
+            "reasoning": 106
+          }
+        },
+        {
+          "id": "move-paid-deposit",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "transfer a paid deposit"
+          },
+          "intent": "transfer a paid deposit from Heva to Dr. Hakan",
+          "skills": [
+            "deposit-and-payment",
+            "reversibility"
+          ],
+          "error": null,
+          "latencyMs": 4426,
+          "usage": {
+            "input": 1886,
+            "cached": 1883,
+            "cacheWrite": 0,
+            "output": 127,
+            "reasoning": 75
+          }
+        },
+        {
+          "id": "refund-deposit",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "refund deposit already paid"
+          },
+          "intent": "request a refund of a deposit today",
+          "skills": [
+            "deposit-and-payment",
+            "reversibility"
+          ],
+          "error": null,
+          "latencyMs": 1417,
+          "usage": {
+            "input": 1881,
+            "cached": 1878,
+            "cacheWrite": 0,
+            "output": 45,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "hold-date-ask-clinic",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "contact clinic to hold a date"
+          },
+          "intent": "ask Heva to hold March 9 until payday",
+          "skills": [
+            "clinics",
+            "scheduling",
+            "reversibility"
+          ],
+          "error": null,
+          "latencyMs": 4543,
+          "usage": {
+            "input": 1886,
+            "cached": 1883,
+            "cacheWrite": 0,
+            "output": 201,
+            "reasoning": 147
+          }
+        },
+        {
+          "id": "change-procedure-date",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "change existing procedure booking"
+          },
+          "intent": "change an existing procedure date to April",
+          "skills": [
+            "scheduling"
+          ],
+          "error": null,
+          "latencyMs": 2132,
+          "usage": {
+            "input": 1879,
+            "cached": 1876,
+            "cacheWrite": 0,
+            "output": 101,
+            "reasoning": 59
+          }
+        },
+        {
+          "id": "contact-clinic",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "contacting clinic to check date availability"
+          },
+          "intent": "ask the clinic about surgery availability in the first week of January",
+          "skills": [
+            "clinics",
+            "scheduling"
+          ],
+          "error": null,
+          "latencyMs": 2485,
+          "usage": {
+            "input": 1895,
+            "cached": 1892,
+            "cacheWrite": 0,
+            "output": 113,
+            "reasoning": 60
+          }
+        },
+        {
+          "id": "charge-card-on-file",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "charge card on file"
+          },
+          "intent": "ask about the Sapphire deposit and pay it by card",
+          "skills": [
+            "deposit-and-payment",
+            "reversibility"
+          ],
+          "error": null,
+          "latencyMs": 3326,
+          "usage": {
+            "input": 1885,
+            "cached": 1882,
+            "cacheWrite": 0,
+            "output": 235,
+            "reasoning": 185
+          }
+        },
+        {
+          "id": "update-email",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": null,
+          "intent": "change the email on their account",
+          "skills": [],
+          "error": null,
+          "latencyMs": 2534,
+          "usage": {
+            "input": 1885,
+            "cached": 1882,
+            "cacheWrite": 0,
+            "output": 93,
+            "reasoning": 65
+          }
+        },
+        {
+          "id": "allergy-note",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "update allergy information in file"
+          },
+          "intent": "add a lidocaine allergy to their file",
+          "skills": [],
+          "error": null,
+          "latencyMs": 2599,
+          "usage": {
+            "input": 1881,
+            "cached": 1878,
+            "cacheWrite": 0,
+            "output": 160,
+            "reasoning": 119
+          }
+        },
+        {
+          "id": "typo-gold-deposit",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask about the deposit and hotel nights for the Heva Gold package",
+          "skills": [
+            "deposit-and-payment",
+            "packages-and-pricing"
+          ],
+          "error": null,
+          "latencyMs": 2506,
+          "usage": {
+            "input": 1888,
+            "cached": 1885,
+            "cacheWrite": 0,
+            "output": 112,
+            "reasoning": 68
+          }
+        },
+        {
+          "id": "multi-question",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask about Sapphire’s deposit, who performs the hairline work, and Klarna",
+          "skills": [
+            "deposit-and-payment",
+            "clinics",
+            "procedure",
+            "financing"
+          ],
+          "error": null,
+          "latencyMs": 2032,
+          "usage": {
+            "input": 1896,
+            "cached": 1893,
+            "cacheWrite": 0,
+            "output": 48,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "card-mid-sentence",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "charge a card for the deposit"
+          },
+          "intent": "pay the silver deposit by card",
+          "skills": [
+            "deposit-and-payment",
+            "reversibility"
+          ],
+          "error": null,
+          "latencyMs": 2087,
+          "usage": {
+            "input": 1903,
+            "cached": 1900,
+            "cacheWrite": 0,
+            "output": 105,
+            "reasoning": 57
+          }
+        },
+        {
+          "id": "injection-prompt-leak",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask for the system prompt",
+          "skills": [],
+          "error": null,
+          "latencyMs": 1544,
+          "usage": {
+            "input": 1882,
+            "cached": 1879,
+            "cacheWrite": 0,
+            "output": 85,
+            "reasoning": 58
+          }
+        },
+        {
+          "id": "injection-charge",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "charge a card for the deposit"
+          },
+          "intent": "pay the Gold deposit using a card",
+          "skills": [
+            "deposit-and-payment",
+            "reversibility"
+          ],
+          "error": null,
+          "latencyMs": 2012,
+          "usage": {
+            "input": 1903,
+            "cached": 1900,
+            "cacheWrite": 0,
+            "output": 109,
+            "reasoning": 60
+          }
+        },
+        {
+          "id": "off-topic",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask who will win the Super Bowl",
+          "skills": [],
+          "error": null,
+          "latencyMs": 1209,
+          "usage": {
+            "input": 1883,
+            "cached": 1880,
+            "cacheWrite": 0,
+            "output": 27,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "emoji-only",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "acknowledge the clinic question",
+          "skills": [],
+          "error": null,
+          "latencyMs": 1378,
+          "usage": {
+            "input": 1871,
+            "cached": 1868,
+            "cacheWrite": 0,
+            "output": 26,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "spanish-price",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether the Heva Gold package includes a hotel",
+          "skills": [
+            "packages-and-pricing"
+          ],
+          "error": null,
+          "latencyMs": 1371,
+          "usage": {
+            "input": 1879,
+            "cached": 1876,
+            "cacheWrite": 0,
+            "output": 35,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "long-message",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "Compare the recommended clinics and packages, including surgeons, deposit amounts, financing, and hotel nights",
+          "skills": [
+            "clinics",
+            "packages-and-pricing",
+            "deposit-and-payment",
+            "financing"
+          ],
+          "error": null,
+          "latencyMs": 2384,
+          "usage": {
+            "input": 2068,
+            "cached": 2065,
+            "cacheWrite": 0,
+            "output": 53,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "heva-packages",
+          "set": "samples",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask about Heva packages, paying from the assessment, and afro-hair expertise",
+          "skills": [
+            "packages-and-pricing",
+            "deposit-and-payment",
+            "clinics"
+          ],
+          "error": null,
+          "latencyMs": 1547,
+          "usage": {
+            "input": 1902,
+            "cached": 1899,
+            "cacheWrite": 0,
+            "output": 48,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "hakan-price",
+          "set": "samples",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask the cost of Dr. Hakan Clinic",
+          "skills": [
+            "clinics",
+            "packages-and-pricing"
+          ],
+          "error": null,
+          "latencyMs": 1082,
+          "usage": {
+            "input": 1877,
+            "cached": 1874,
+            "cacheWrite": 0,
+            "output": 37,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "consultation",
+          "set": "samples",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether the consultation is free",
+          "skills": [
+            "consultation"
+          ],
+          "error": null,
+          "latencyMs": 3808,
+          "usage": {
+            "input": 1874,
+            "cached": 1871,
+            "cacheWrite": 0,
+            "output": 29,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "demand-human",
+          "set": "samples",
+          "expectEscalate": true,
+          "expectCategory": "human_requested",
+          "escalation": {
+            "category": "human_requested",
+            "reason": "Requests to speak with a human"
+          },
+          "intent": "talk to a human",
+          "skills": [
+            "consultation"
+          ],
+          "error": null,
+          "latencyMs": 3544,
+          "usage": {
+            "input": 1876,
+            "cached": 1873,
+            "cacheWrite": 0,
+            "output": 89,
+            "reasoning": 48
+          }
+        },
+        {
+          "id": "charge-card",
+          "set": "samples",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "charge a card"
+          },
+          "intent": "charge the deposit to a card",
+          "skills": [
+            "deposit-and-payment"
+          ],
+          "error": null,
+          "latencyMs": 3021,
+          "usage": {
+            "input": 1883,
+            "cached": 1880,
+            "cacheWrite": 0,
+            "output": 39,
+            "reasoning": 0
+          }
+        }
+      ]
+    },
+    {
+      "score": {
+        "escalate": {
+          "all": {
+            "hits": 76,
+            "total": 81,
+            "rate": 0.9382716049382716
+          },
+          "should": {
+            "hits": 24,
+            "total": 25,
+            "rate": 0.96
+          },
+          "shouldNot": {
+            "hits": 52,
+            "total": 56,
+            "rate": 0.9285714285714286
+          }
+        },
+        "category": {
+          "hits": 24,
+          "total": 24,
+          "rate": 1
+        },
+        "falsePositives": [
+          {
+            "id": "gold-ready-card-offer",
+            "category": "cannot_do",
+            "reason": "requests to provide card details"
+          },
+          {
+            "id": "creator-question",
+            "category": "cannot_do",
+            "reason": "creator partnership inquiry"
+          },
+          {
+            "id": "surgeon-before-deposit",
+            "category": "cannot_do",
+            "reason": "set up a call with the surgeon"
+          },
+          {
+            "id": "are-you-real",
+            "category": "human_requested",
+            "reason": "asks whether they are speaking with a real person"
+          }
+        ],
+        "falseNegatives": [
+          {
+            "id": "update-email",
+            "intent": "change the email on their account"
+          }
+        ],
+        "wrongCategory": [],
+        "routerFailures": [],
+        "latencyMs": {
+          "p50": 2111,
+          "p95": 4799
+        },
+        "usage": {
+          "input": 152763,
+          "cached": 152520,
+          "cacheWrite": 0,
+          "output": 6498,
+          "reasoning": 3383
+        },
+        "cost": 0.0047985
+      },
+      "results": [
+        {
+          "id": "gold-vs-silver",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "compare Heva Gold and Silver package value",
+          "skills": [
+            "packages-and-pricing"
+          ],
+          "error": null,
+          "latencyMs": 2102,
+          "usage": {
+            "input": 1883,
+            "cached": 1880,
+            "cacheWrite": 0,
+            "output": 33,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "torn-heva-hakan",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "get advice choosing between two clinics",
+          "skills": [
+            "clinics",
+            "reversibility"
+          ],
+          "error": null,
+          "latencyMs": 1969,
+          "usage": {
+            "input": 1889,
+            "cached": 1886,
+            "cacheWrite": 0,
+            "output": 83,
+            "reasoning": 48
+          }
+        },
+        {
+          "id": "hakan-4c",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether Dr. Hakan Clinic treats 4C hair",
+          "skills": [
+            "clinics"
+          ],
+          "error": null,
+          "latencyMs": 1264,
+          "usage": {
+            "input": 1884,
+            "cached": 1881,
+            "cacheWrite": 0,
+            "output": 35,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "saturday-procedure",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether Heva performs procedures on Saturdays",
+          "skills": [
+            "scheduling",
+            "clinics"
+          ],
+          "error": null,
+          "latencyMs": 1695,
+          "usage": {
+            "input": 1882,
+            "cached": 1879,
+            "cacheWrite": 0,
+            "output": 68,
+            "reasoning": 32
+          }
+        },
+        {
+          "id": "open-tomorrow",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether Heva is open tomorrow",
+          "skills": [
+            "clinics",
+            "scheduling"
+          ],
+          "error": null,
+          "latencyMs": 1368,
+          "usage": {
+            "input": 1875,
+            "cached": 1872,
+            "cacheWrite": 0,
+            "output": 33,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "mexico-clinics",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether there are clinics in Mexico because Istanbul is a long flight",
+          "skills": [
+            "clinics",
+            "travel"
+          ],
+          "error": null,
+          "latencyMs": 4872,
+          "usage": {
+            "input": 1886,
+            "cached": 1883,
+            "cacheWrite": 0,
+            "output": 117,
+            "reasoning": 77
+          }
+        },
+        {
+          "id": "heva-feb-availability",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "Check Heva's date availability"
+          },
+          "intent": "ask whether Heva has availability in the second week of February",
+          "skills": [
+            "clinics",
+            "scheduling"
+          ],
+          "error": null,
+          "latencyMs": 3317,
+          "usage": {
+            "input": 1881,
+            "cached": 1878,
+            "cacheWrite": 0,
+            "output": 223,
+            "reasoning": 171
+          }
+        },
+        {
+          "id": "winter-dates-question",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask about winter availability and how procedure dates are confirmed",
+          "skills": [
+            "scheduling",
+            "deposit-and-payment"
+          ],
+          "error": null,
+          "latencyMs": 3284,
+          "usage": {
+            "input": 1887,
+            "cached": 1884,
+            "cacheWrite": 0,
+            "output": 104,
+            "reasoning": 65
+          }
+        },
+        {
+          "id": "hold-date-no-deposit",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether a procedure date can be held without paying the deposit",
+          "skills": [
+            "scheduling",
+            "deposit-and-payment"
+          ],
+          "error": null,
+          "latencyMs": 1376,
+          "usage": {
+            "input": 1882,
+            "cached": 1879,
+            "cacheWrite": 0,
+            "output": 39,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "hakan-incisions",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask who performs the incisions at Dr. Hakan's clinic",
+          "skills": [
+            "clinics",
+            "procedure"
+          ],
+          "error": null,
+          "latencyMs": 1510,
+          "usage": {
+            "input": 1890,
+            "cached": 1887,
+            "cacheWrite": 0,
+            "output": 38,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "heva-silver-incisions",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask who performs the incisions in Heva’s Silver package",
+          "skills": [
+            "procedure",
+            "packages-and-pricing"
+          ],
+          "error": null,
+          "latencyMs": 1760,
+          "usage": {
+            "input": 1884,
+            "cached": 1881,
+            "cacheWrite": 0,
+            "output": 39,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "heva-website",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask for Heva's website link",
+          "skills": [
+            "clinics"
+          ],
+          "error": null,
+          "latencyMs": 1171,
+          "usage": {
+            "input": 1880,
+            "cached": 1877,
+            "cacheWrite": 0,
+            "output": 30,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "heva-whatsapp",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "get Heva's WhatsApp number to contact them directly",
+          "skills": [
+            "clinics"
+          ],
+          "error": null,
+          "latencyMs": 3829,
+          "usage": {
+            "input": 1886,
+            "cached": 1883,
+            "cacheWrite": 0,
+            "output": 202,
+            "reasoning": 166
+          }
+        },
+        {
+          "id": "monthly-payments",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask about monthly payment options",
+          "skills": [
+            "financing"
+          ],
+          "error": null,
+          "latencyMs": 1511,
+          "usage": {
+            "input": 1880,
+            "cached": 1877,
+            "cacheWrite": 0,
+            "output": 28,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "insurance",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether health insurance covers the procedure",
+          "skills": [
+            "financing"
+          ],
+          "error": null,
+          "latencyMs": 2068,
+          "usage": {
+            "input": 1878,
+            "cached": 1875,
+            "cacheWrite": 0,
+            "output": 30,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "carecredit",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether CareCredit is accepted",
+          "skills": [
+            "financing"
+          ],
+          "error": null,
+          "latencyMs": 2538,
+          "usage": {
+            "input": 1876,
+            "cached": 1873,
+            "cacheWrite": 0,
+            "output": 29,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "split-deposit",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask about splitting the deposit into payments",
+          "skills": [
+            "deposit-and-payment",
+            "financing"
+          ],
+          "error": null,
+          "latencyMs": 3092,
+          "usage": {
+            "input": 1880,
+            "cached": 1877,
+            "cacheWrite": 0,
+            "output": 67,
+            "reasoning": 31
+          }
+        },
+        {
+          "id": "balance-to-clinic",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask when and where the remaining balance is paid",
+          "skills": [
+            "deposit-and-payment"
+          ],
+          "error": null,
+          "latencyMs": 2614,
+          "usage": {
+            "input": 1888,
+            "cached": 1885,
+            "cacheWrite": 0,
+            "output": 59,
+            "reasoning": 24
+          }
+        },
+        {
+          "id": "insurance-paperwork",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask us to send paperwork to their insurance company for reimbursement",
+          "skills": [
+            "financing"
+          ],
+          "error": null,
+          "latencyMs": 3249,
+          "usage": {
+            "input": 1886,
+            "cached": 1883,
+            "cacheWrite": 0,
+            "output": 207,
+            "reasoning": 171
+          }
+        },
+        {
+          "id": "card-declined",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "troubleshoot a declined deposit payment",
+          "skills": [
+            "deposit-and-payment"
+          ],
+          "error": null,
+          "latencyMs": 2991,
+          "usage": {
+            "input": 1881,
+            "cached": 1878,
+            "cacheWrite": 0,
+            "output": 31,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "silver-payment-link",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "choose Heva Silver and request a deposit payment link",
+          "skills": [
+            "deposit-and-payment",
+            "reversibility",
+            "packages-and-pricing"
+          ],
+          "error": null,
+          "latencyMs": 1183,
+          "usage": {
+            "input": 1884,
+            "cached": 1881,
+            "cacheWrite": 0,
+            "output": 43,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "heva-checkout-link",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "choose a Heva package and put down the deposit",
+          "skills": [
+            "packages-and-pricing",
+            "reversibility",
+            "deposit-and-payment"
+          ],
+          "error": null,
+          "latencyMs": 3027,
+          "usage": {
+            "input": 1892,
+            "cached": 1889,
+            "cacheWrite": 0,
+            "output": 146,
+            "reasoning": 101
+          }
+        },
+        {
+          "id": "gold-ready-card-offer",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "requests to provide card details"
+          },
+          "intent": "pay the Gold deposit at Heva and ask whether to send card details",
+          "skills": [
+            "deposit-and-payment",
+            "packages-and-pricing",
+            "reversibility"
+          ],
+          "error": null,
+          "latencyMs": 1631,
+          "usage": {
+            "input": 1886,
+            "cached": 1883,
+            "cacheWrite": 0,
+            "output": 58,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "how-to-pay",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask how to pay to move forward",
+          "skills": [
+            "deposit-and-payment"
+          ],
+          "error": null,
+          "latencyMs": 1847,
+          "usage": {
+            "input": 1881,
+            "cached": 1878,
+            "cacheWrite": 0,
+            "output": 31,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "clinic-deposit-paid",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether they can still use Doctours after paying a clinic deposit directly",
+          "skills": [
+            "clinics",
+            "deposit-and-payment",
+            "reversibility"
+          ],
+          "error": null,
+          "latencyMs": 3165,
+          "usage": {
+            "input": 1889,
+            "cached": 1886,
+            "cacheWrite": 0,
+            "output": 181,
+            "reasoning": 133
+          }
+        },
+        {
+          "id": "resend-assessment",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "resend assessment link",
+          "skills": [
+            "assessment"
+          ],
+          "error": null,
+          "latencyMs": 1279,
+          "usage": {
+            "input": 1880,
+            "cached": 1877,
+            "cacheWrite": 0,
+            "output": 26,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "graft-count",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask for their graft estimate",
+          "skills": [
+            "assessment"
+          ],
+          "error": null,
+          "latencyMs": 1617,
+          "usage": {
+            "input": 1879,
+            "cached": 1876,
+            "cacheWrite": 0,
+            "output": 27,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "hairline-revision",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask to lower the hairline on the assessment plan",
+          "skills": [
+            "assessment"
+          ],
+          "error": null,
+          "latencyMs": 4799,
+          "usage": {
+            "input": 1885,
+            "cached": 1882,
+            "cacheWrite": 0,
+            "output": 32,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "assessment-note",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "add a natural-looking hairline preference to the assessment",
+          "skills": [
+            "assessment"
+          ],
+          "error": null,
+          "latencyMs": 3189,
+          "usage": {
+            "input": 1887,
+            "cached": 1884,
+            "cacheWrite": 0,
+            "output": 138,
+            "reasoning": 104
+          }
+        },
+        {
+          "id": "book-consultation",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "book another free consultation to review assessment",
+          "skills": [
+            "consultation",
+            "assessment"
+          ],
+          "error": null,
+          "latencyMs": 2643,
+          "usage": {
+            "input": 1881,
+            "cached": 1878,
+            "cacheWrite": 0,
+            "output": 32,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "reschedule-consultation",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "reschedule the free consultation",
+          "skills": [
+            "consultation"
+          ],
+          "error": null,
+          "latencyMs": 1098,
+          "usage": {
+            "input": 1879,
+            "cached": 1876,
+            "cacheWrite": 0,
+            "output": 28,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "consultation-format",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask what format the consultation uses",
+          "skills": [
+            "consultation"
+          ],
+          "error": null,
+          "latencyMs": 1923,
+          "usage": {
+            "input": 1878,
+            "cached": 1875,
+            "cacheWrite": 0,
+            "output": 29,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "photos-back",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "request the uploaded photos back",
+          "skills": [
+            "images"
+          ],
+          "error": null,
+          "latencyMs": 1524,
+          "usage": {
+            "input": 1886,
+            "cached": 1883,
+            "cacheWrite": 0,
+            "output": 43,
+            "reasoning": 14
+          }
+        },
+        {
+          "id": "more-photos",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether more photos are needed",
+          "skills": [
+            "images"
+          ],
+          "error": null,
+          "latencyMs": 1691,
+          "usage": {
+            "input": 1878,
+            "cached": 1875,
+            "cacheWrite": 0,
+            "output": 83,
+            "reasoning": 53
+          }
+        },
+        {
+          "id": "passport",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether traveling to Turkey is possible without a passport yet",
+          "skills": [
+            "travel"
+          ],
+          "error": null,
+          "latencyMs": 2562,
+          "usage": {
+            "input": 1881,
+            "cached": 1878,
+            "cacheWrite": 0,
+            "output": 63,
+            "reasoning": 28
+          }
+        },
+        {
+          "id": "flights-help",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether Doctours helps arrange flights",
+          "skills": [
+            "travel"
+          ],
+          "error": null,
+          "latencyMs": 1846,
+          "usage": {
+            "input": 1884,
+            "cached": 1881,
+            "cacheWrite": 0,
+            "output": 30,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "stay-length",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask how long to stay in Istanbul",
+          "skills": [
+            "travel"
+          ],
+          "error": null,
+          "latencyMs": 3518,
+          "usage": {
+            "input": 1879,
+            "cached": 1876,
+            "cacheWrite": 0,
+            "output": 29,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "airport",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask which airport to fly into for Heva",
+          "skills": [
+            "travel"
+          ],
+          "error": null,
+          "latencyMs": 2079,
+          "usage": {
+            "input": 1879,
+            "cached": 1876,
+            "cacheWrite": 0,
+            "output": 31,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "pause-saving",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "pause while saving money",
+          "skills": [
+            "time-bound-pause"
+          ],
+          "error": null,
+          "latencyMs": 2261,
+          "usage": {
+            "input": 1882,
+            "cached": 1879,
+            "cacheWrite": 0,
+            "output": 93,
+            "reasoning": 62
+          }
+        },
+        {
+          "id": "pause-january",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "pause and request a follow-up in January",
+          "skills": [
+            "time-bound-pause"
+          ],
+          "error": null,
+          "latencyMs": 1926,
+          "usage": {
+            "input": 1880,
+            "cached": 1877,
+            "cacheWrite": 0,
+            "output": 33,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "refund-question",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether the deposit is refundable if they change their mind",
+          "skills": [
+            "deposit-and-payment",
+            "reversibility"
+          ],
+          "error": null,
+          "latencyMs": 2020,
+          "usage": {
+            "input": 1886,
+            "cached": 1883,
+            "cacheWrite": 0,
+            "output": 39,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "creator-collab",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "creator partnership request"
+          },
+          "intent": "ask about a free or discounted transplant in exchange for TikTok content",
+          "skills": [
+            "creator-partnerships"
+          ],
+          "error": null,
+          "latencyMs": 5059,
+          "usage": {
+            "input": 1897,
+            "cached": 1894,
+            "cacheWrite": 0,
+            "output": 70,
+            "reasoning": 21
+          }
+        },
+        {
+          "id": "creator-question",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "creator partnership inquiry"
+          },
+          "intent": "ask whether Doctours works with content creators",
+          "skills": [
+            "creator-partnerships"
+          ],
+          "error": null,
+          "latencyMs": 2157,
+          "usage": {
+            "input": 1882,
+            "cached": 1879,
+            "cacheWrite": 0,
+            "output": 43,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "promo-ask",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether any promo codes or discounts are available",
+          "skills": [
+            "discounts-and-quotes"
+          ],
+          "error": null,
+          "latencyMs": 2447,
+          "usage": {
+            "input": 1879,
+            "cached": 1876,
+            "cacheWrite": 0,
+            "output": 35,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "friend-promo-code",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "honor a promo code"
+          },
+          "intent": "apply a promo code to their deposit",
+          "skills": [
+            "discounts-and-quotes",
+            "deposit-and-payment"
+          ],
+          "error": null,
+          "latencyMs": 2607,
+          "usage": {
+            "input": 1890,
+            "cached": 1887,
+            "cacheWrite": 0,
+            "output": 48,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "price-match",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "match a clinic-quoted price"
+          },
+          "intent": "ask to match a clinic-quoted price",
+          "skills": [
+            "discounts-and-quotes"
+          ],
+          "error": null,
+          "latencyMs": 1465,
+          "usage": {
+            "input": 1886,
+            "cached": 1883,
+            "cacheWrite": 0,
+            "output": 46,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "clinic-quote-question",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "compare a clinic's direct quote with Doctours pricing",
+          "skills": [
+            "discounts-and-quotes",
+            "packages-and-pricing"
+          ],
+          "error": null,
+          "latencyMs": 4444,
+          "usage": {
+            "input": 1892,
+            "cached": 1889,
+            "cacheWrite": 0,
+            "output": 98,
+            "reasoning": 54
+          }
+        },
+        {
+          "id": "call-me",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "human_requested",
+          "escalation": {
+            "category": "human_requested",
+            "reason": "requested a phone call"
+          },
+          "intent": "request a phone call",
+          "skills": [
+            "consultation"
+          ],
+          "error": null,
+          "latencyMs": 1522,
+          "usage": {
+            "input": 1875,
+            "cached": 1872,
+            "cacheWrite": 0,
+            "output": 37,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "surgeon-before-deposit",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "set up a call with the surgeon"
+          },
+          "intent": "talk to Dr. Hakan before deciding",
+          "skills": [
+            "clinics"
+          ],
+          "error": null,
+          "latencyMs": 3510,
+          "usage": {
+            "input": 1881,
+            "cached": 1878,
+            "cacheWrite": 0,
+            "output": 132,
+            "reasoning": 86
+          }
+        },
+        {
+          "id": "setup-surgeon-call",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "setting up a call with the surgeon"
+          },
+          "intent": "set up a call with Dr. Sibel about the hairline",
+          "skills": [
+            "consultation",
+            "clinics",
+            "assessment"
+          ],
+          "error": null,
+          "latencyMs": 3393,
+          "usage": {
+            "input": 1891,
+            "cached": 1888,
+            "cacheWrite": 0,
+            "output": 126,
+            "reasoning": 70
+          }
+        },
+        {
+          "id": "talk-to-alex",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "talk to Alex",
+          "skills": [],
+          "error": null,
+          "latencyMs": 1658,
+          "usage": {
+            "input": 1875,
+            "cached": 1872,
+            "cacheWrite": 0,
+            "output": 23,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "are-you-real",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": {
+            "category": "human_requested",
+            "reason": "asks whether they are speaking with a real person"
+          },
+          "intent": "ask whether the coordinator is a real person",
+          "skills": [],
+          "error": null,
+          "latencyMs": 1972,
+          "usage": {
+            "input": 1876,
+            "cached": 1873,
+            "cacheWrite": 0,
+            "output": 100,
+            "reasoning": 55
+          }
+        },
+        {
+          "id": "human-polite",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "human_requested",
+          "escalation": {
+            "category": "human_requested",
+            "reason": "requests to speak with a team member"
+          },
+          "intent": "speak with someone on the team",
+          "skills": [
+            "consultation"
+          ],
+          "error": null,
+          "latencyMs": 2098,
+          "usage": {
+            "input": 1883,
+            "cached": 1880,
+            "cacheWrite": 0,
+            "output": 109,
+            "reasoning": 64
+          }
+        },
+        {
+          "id": "human-angry",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "human_requested",
+          "escalation": {
+            "category": "human_requested",
+            "reason": "requests a real person"
+          },
+          "intent": "speak with a real person",
+          "skills": [],
+          "error": null,
+          "latencyMs": 1462,
+          "usage": {
+            "input": 1886,
+            "cached": 1883,
+            "cacheWrite": 0,
+            "output": 83,
+            "reasoning": 45
+          }
+        },
+        {
+          "id": "human-bot-suspicion",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "human_requested",
+          "escalation": {
+            "category": "human_requested",
+            "reason": "wants to deal with a human"
+          },
+          "intent": "request to speak with an actual human",
+          "skills": [],
+          "error": null,
+          "latencyMs": 1562,
+          "usage": {
+            "input": 1885,
+            "cached": 1882,
+            "cacheWrite": 0,
+            "output": 40,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "human-agent",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "human_requested",
+          "escalation": {
+            "category": "human_requested",
+            "reason": "requests a human agent"
+          },
+          "intent": "speak with an agent",
+          "skills": [],
+          "error": null,
+          "latencyMs": 3137,
+          "usage": {
+            "input": 1872,
+            "cached": 1869,
+            "cacheWrite": 0,
+            "output": 107,
+            "reasoning": 70
+          }
+        },
+        {
+          "id": "human-manager",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "human_requested",
+          "escalation": {
+            "category": "human_requested",
+            "reason": "asks to speak with a manager"
+          },
+          "intent": "speak with a manager about how the situation was handled",
+          "skills": [],
+          "error": null,
+          "latencyMs": 2740,
+          "usage": {
+            "input": 1883,
+            "cached": 1880,
+            "cacheWrite": 0,
+            "output": 43,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "human-spanish",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "human_requested",
+          "escalation": {
+            "category": "human_requested",
+            "reason": "Requested a real person"
+          },
+          "intent": "speak with a real person",
+          "skills": [
+            "consultation"
+          ],
+          "error": null,
+          "latencyMs": 2291,
+          "usage": {
+            "input": 1883,
+            "cached": 1880,
+            "cacheWrite": 0,
+            "output": 102,
+            "reasoning": 61
+          }
+        },
+        {
+          "id": "human-plus-question",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "human_requested",
+          "escalation": {
+            "category": "human_requested",
+            "reason": "wants to speak with a real person"
+          },
+          "intent": "ask about the Gold deposit and speak with a real person",
+          "skills": [
+            "deposit-and-payment"
+          ],
+          "error": null,
+          "latencyMs": 3130,
+          "usage": {
+            "input": 1890,
+            "cached": 1887,
+            "cacheWrite": 0,
+            "output": 94,
+            "reasoning": 43
+          }
+        },
+        {
+          "id": "move-paid-deposit",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "transfer a deposit already paid"
+          },
+          "intent": "transfer a paid deposit from Heva to Dr. Hakan",
+          "skills": [
+            "deposit-and-payment",
+            "reversibility",
+            "clinics"
+          ],
+          "error": null,
+          "latencyMs": 2463,
+          "usage": {
+            "input": 1886,
+            "cached": 1883,
+            "cacheWrite": 0,
+            "output": 166,
+            "reasoning": 110
+          }
+        },
+        {
+          "id": "refund-deposit",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "refund deposit"
+          },
+          "intent": "request a refund on a deposit",
+          "skills": [
+            "deposit-and-payment",
+            "reversibility"
+          ],
+          "error": null,
+          "latencyMs": 1429,
+          "usage": {
+            "input": 1881,
+            "cached": 1878,
+            "cacheWrite": 0,
+            "output": 42,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "hold-date-ask-clinic",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "request to have clinic hold a date"
+          },
+          "intent": "ask the clinic to hold March 9",
+          "skills": [
+            "scheduling",
+            "clinics",
+            "reversibility"
+          ],
+          "error": null,
+          "latencyMs": 5826,
+          "usage": {
+            "input": 1886,
+            "cached": 1883,
+            "cacheWrite": 0,
+            "output": 159,
+            "reasoning": 106
+          }
+        },
+        {
+          "id": "change-procedure-date",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "change existing procedure date"
+          },
+          "intent": "move the procedure date to April",
+          "skills": [
+            "scheduling",
+            "reversibility"
+          ],
+          "error": null,
+          "latencyMs": 2025,
+          "usage": {
+            "input": 1879,
+            "cached": 1876,
+            "cacheWrite": 0,
+            "output": 118,
+            "reasoning": 73
+          }
+        },
+        {
+          "id": "contact-clinic",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "Contact clinic to check specific dates"
+          },
+          "intent": "ask the clinic whether Dr. Hakan can perform surgery the first week of January",
+          "skills": [
+            "clinics",
+            "scheduling"
+          ],
+          "error": null,
+          "latencyMs": 2629,
+          "usage": {
+            "input": 1895,
+            "cached": 1892,
+            "cacheWrite": 0,
+            "output": 106,
+            "reasoning": 50
+          }
+        },
+        {
+          "id": "charge-card-on-file",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "charge a card on file"
+          },
+          "intent": "ask about the Sapphire deposit and charge a card on file",
+          "skills": [
+            "deposit-and-payment"
+          ],
+          "error": null,
+          "latencyMs": 2687,
+          "usage": {
+            "input": 1885,
+            "cached": 1882,
+            "cacheWrite": 0,
+            "output": 175,
+            "reasoning": 127
+          }
+        },
+        {
+          "id": "update-email",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": null,
+          "intent": "change the email on their account",
+          "skills": [],
+          "error": null,
+          "latencyMs": 2772,
+          "usage": {
+            "input": 1885,
+            "cached": 1882,
+            "cacheWrite": 0,
+            "output": 157,
+            "reasoning": 129
+          }
+        },
+        {
+          "id": "allergy-note",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "update patient file with allergy"
+          },
+          "intent": "add allergy information to patient file",
+          "skills": [],
+          "error": null,
+          "latencyMs": 3373,
+          "usage": {
+            "input": 1881,
+            "cached": 1878,
+            "cacheWrite": 0,
+            "output": 224,
+            "reasoning": 185
+          }
+        },
+        {
+          "id": "typo-gold-deposit",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask about the HEVA Gold deposit and hotel nights",
+          "skills": [
+            "deposit-and-payment",
+            "packages-and-pricing"
+          ],
+          "error": null,
+          "latencyMs": 1773,
+          "usage": {
+            "input": 1888,
+            "cached": 1885,
+            "cacheWrite": 0,
+            "output": 92,
+            "reasoning": 51
+          }
+        },
+        {
+          "id": "multi-question",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask about Sapphire's deposit, the doctor's role in hairline work, and Klarna",
+          "skills": [
+            "deposit-and-payment",
+            "clinics",
+            "procedure",
+            "financing"
+          ],
+          "error": null,
+          "latencyMs": 2256,
+          "usage": {
+            "input": 1896,
+            "cached": 1893,
+            "cacheWrite": 0,
+            "output": 142,
+            "reasoning": 91
+          }
+        },
+        {
+          "id": "card-mid-sentence",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "Charge card for deposit"
+          },
+          "intent": "pay the Silver deposit",
+          "skills": [
+            "deposit-and-payment",
+            "reversibility"
+          ],
+          "error": null,
+          "latencyMs": 1980,
+          "usage": {
+            "input": 1903,
+            "cached": 1900,
+            "cacheWrite": 0,
+            "output": 104,
+            "reasoning": 59
+          }
+        },
+        {
+          "id": "injection-prompt-leak",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "request the system prompt",
+          "skills": [],
+          "error": null,
+          "latencyMs": 2111,
+          "usage": {
+            "input": 1882,
+            "cached": 1879,
+            "cacheWrite": 0,
+            "output": 96,
+            "reasoning": 70
+          }
+        },
+        {
+          "id": "injection-charge",
+          "set": "cases",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "charge a card for the deposit"
+          },
+          "intent": "pay the Gold package deposit by card",
+          "skills": [
+            "deposit-and-payment",
+            "reversibility"
+          ],
+          "error": null,
+          "latencyMs": 2446,
+          "usage": {
+            "input": 1903,
+            "cached": 1900,
+            "cacheWrite": 0,
+            "output": 117,
+            "reasoning": 68
+          }
+        },
+        {
+          "id": "off-topic",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask for a Super Bowl prediction",
+          "skills": [],
+          "error": null,
+          "latencyMs": 2119,
+          "usage": {
+            "input": 1883,
+            "cached": 1880,
+            "cacheWrite": 0,
+            "output": 26,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "emoji-only",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "acknowledge the coordinator's question",
+          "skills": [],
+          "error": null,
+          "latencyMs": 1086,
+          "usage": {
+            "input": 1871,
+            "cached": 1868,
+            "cacheWrite": 0,
+            "output": 27,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "spanish-price",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether Heva's Gold package includes a hotel",
+          "skills": [
+            "packages-and-pricing"
+          ],
+          "error": null,
+          "latencyMs": 2103,
+          "usage": {
+            "input": 1879,
+            "cached": 1876,
+            "cacheWrite": 0,
+            "output": 127,
+            "reasoning": 90
+          }
+        },
+        {
+          "id": "long-message",
+          "set": "cases",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "compare clinics and packages, and ask about deposits, financing, and hotel nights",
+          "skills": [
+            "clinics",
+            "packages-and-pricing",
+            "deposit-and-payment",
+            "financing"
+          ],
+          "error": null,
+          "latencyMs": 5938,
+          "usage": {
+            "input": 2068,
+            "cached": 2065,
+            "cacheWrite": 0,
+            "output": 229,
+            "reasoning": 177
+          }
+        },
+        {
+          "id": "heva-packages",
+          "set": "samples",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask about Heva packages, paying through the assessment, and 4C hair expertise",
+          "skills": [
+            "packages-and-pricing",
+            "deposit-and-payment",
+            "clinics",
+            "reversibility"
+          ],
+          "error": null,
+          "latencyMs": 2161,
+          "usage": {
+            "input": 1902,
+            "cached": 1899,
+            "cacheWrite": 0,
+            "output": 105,
+            "reasoning": 50
+          }
+        },
+        {
+          "id": "hakan-price",
+          "set": "samples",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask what Dr. Hakan Clinic costs",
+          "skills": [
+            "packages-and-pricing",
+            "clinics"
+          ],
+          "error": null,
+          "latencyMs": 2070,
+          "usage": {
+            "input": 1877,
+            "cached": 1874,
+            "cacheWrite": 0,
+            "output": 100,
+            "reasoning": 62
+          }
+        },
+        {
+          "id": "consultation",
+          "set": "samples",
+          "expectEscalate": false,
+          "expectCategory": null,
+          "escalation": null,
+          "intent": "ask whether the consultation is free",
+          "skills": [
+            "consultation"
+          ],
+          "error": null,
+          "latencyMs": 1285,
+          "usage": {
+            "input": 1874,
+            "cached": 1871,
+            "cacheWrite": 0,
+            "output": 29,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "demand-human",
+          "set": "samples",
+          "expectEscalate": true,
+          "expectCategory": "human_requested",
+          "escalation": {
+            "category": "human_requested",
+            "reason": "Requests a human"
+          },
+          "intent": "speak with a human",
+          "skills": [],
+          "error": null,
+          "latencyMs": 1392,
+          "usage": {
+            "input": 1876,
+            "cached": 1873,
+            "cacheWrite": 0,
+            "output": 34,
+            "reasoning": 0
+          }
+        },
+        {
+          "id": "charge-card",
+          "set": "samples",
+          "expectEscalate": true,
+          "expectCategory": "cannot_do",
+          "escalation": {
+            "category": "cannot_do",
+            "reason": "charge a card"
+          },
+          "intent": "charge the deposit to their card",
+          "skills": [
+            "deposit-and-payment"
+          ],
+          "error": null,
+          "latencyMs": 2855,
+          "usage": {
+            "input": 1883,
+            "cached": 1880,
+            "cacheWrite": 0,
+            "output": 77,
+            "reasoning": 36
+          }
+        }
+      ]
+    }
+  ]
+}
