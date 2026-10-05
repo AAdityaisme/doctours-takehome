@@ -1,0 +1,3766 @@
+{
+  "mode": "baseline",
+  "sha": "1c53e5066d3adab8b63acda7223d3dfaa565260f",
+  "startedAt": "2026-10-05T05:48:05.331Z",
+  "repeat": 1,
+  "settings": {
+    "concurrency": 2,
+    "casesFile": "./holdout.json",
+    "mode": "baseline",
+    "model": "gpt-6.1-sol",
+    "effort": "low",
+    "router": {
+      "model": "gpt-6-luna",
+      "effort": "none"
+    },
+    "grader": {
+      "model": "gpt-6.1-sol",
+      "effort": "low"
+    }
+  },
+  "summary": {
+    "cases": {
+      "cases": 30,
+      "trials": 30,
+      "escalate": {
+        "all": {
+          "hits": 26,
+          "total": 30,
+          "rate": 0.8666666666666667
+        },
+        "expectedTrue": {
+          "hits": 5,
+          "total": 9,
+          "rate": 0.5555555555555556
+        },
+        "expectedFalse": {
+          "hits": 21,
+          "total": 21,
+          "rate": 1
+        }
+      },
+      "category": {
+        "hits": 0,
+        "total": 0,
+        "rate": null
+      },
+      "claims": {
+        "all": {
+          "hits": 135,
+          "total": 139,
+          "rate": 0.9712230215827338
+        },
+        "literal": {
+          "hits": 38,
+          "total": 39,
+          "rate": 0.9743589743589743
+        },
+        "model": {
+          "hits": 97,
+          "total": 100,
+          "rate": 0.97
+        }
+      },
+      "casePass": {
+        "hits": 24,
+        "total": 30,
+        "rate": 0.8
+      },
+      "errored": 0,
+      "routerFailures": 0,
+      "passK": {
+        "hits": 24,
+        "total": 30,
+        "rate": 0.8
+      },
+      "passKIncomplete": 0,
+      "topics": {
+        "human-request": {
+          "cases": 3,
+          "escalate": {
+            "hits": 2,
+            "total": 3,
+            "rate": 0.6666666666666666
+          },
+          "claims": {
+            "hits": 12,
+            "total": 13,
+            "rate": 0.9230769230769231
+          },
+          "casePass": {
+            "hits": 2,
+            "total": 3,
+            "rate": 0.6666666666666666
+          }
+        },
+        "cannot-do-clinic-contact": {
+          "cases": 1,
+          "escalate": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          },
+          "claims": {
+            "hits": 5,
+            "total": 5,
+            "rate": 1
+          },
+          "casePass": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          }
+        },
+        "cannot-do-date-hold": {
+          "cases": 1,
+          "escalate": {
+            "hits": 0,
+            "total": 1,
+            "rate": 0
+          },
+          "claims": {
+            "hits": 4,
+            "total": 5,
+            "rate": 0.8
+          },
+          "casePass": {
+            "hits": 0,
+            "total": 1,
+            "rate": 0
+          }
+        },
+        "cannot-do-card-charge": {
+          "cases": 1,
+          "escalate": {
+            "hits": 0,
+            "total": 1,
+            "rate": 0
+          },
+          "claims": {
+            "hits": 7,
+            "total": 7,
+            "rate": 1
+          },
+          "casePass": {
+            "hits": 0,
+            "total": 1,
+            "rate": 0
+          }
+        },
+        "cannot-do-claimed-discount": {
+          "cases": 1,
+          "escalate": {
+            "hits": 0,
+            "total": 1,
+            "rate": 0
+          },
+          "claims": {
+            "hits": 4,
+            "total": 4,
+            "rate": 1
+          },
+          "casePass": {
+            "hits": 0,
+            "total": 1,
+            "rate": 0
+          }
+        },
+        "cannot-do-move-paid-money": {
+          "cases": 1,
+          "escalate": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          },
+          "claims": {
+            "hits": 4,
+            "total": 4,
+            "rate": 1
+          },
+          "casePass": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          }
+        },
+        "cannot-do-verify-dates": {
+          "cases": 1,
+          "escalate": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          },
+          "claims": {
+            "hits": 5,
+            "total": 5,
+            "rate": 1
+          },
+          "casePass": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          }
+        },
+        "clinic-fit": {
+          "cases": 1,
+          "escalate": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          },
+          "claims": {
+            "hits": 2,
+            "total": 3,
+            "rate": 0.6666666666666666
+          },
+          "casePass": {
+            "hits": 0,
+            "total": 1,
+            "rate": 0
+          }
+        },
+        "pricing": {
+          "cases": 1,
+          "escalate": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          },
+          "claims": {
+            "hits": 5,
+            "total": 5,
+            "rate": 1
+          },
+          "casePass": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          }
+        },
+        "package-hotel-transport": {
+          "cases": 1,
+          "escalate": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          },
+          "claims": {
+            "hits": 4,
+            "total": 4,
+            "rate": 1
+          },
+          "casePass": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          }
+        },
+        "scheduling-weekdays": {
+          "cases": 1,
+          "escalate": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          },
+          "claims": {
+            "hits": 3,
+            "total": 3,
+            "rate": 1
+          },
+          "casePass": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          }
+        },
+        "surgeon-role": {
+          "cases": 1,
+          "escalate": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          },
+          "claims": {
+            "hits": 1,
+            "total": 2,
+            "rate": 0.5
+          },
+          "casePass": {
+            "hits": 0,
+            "total": 1,
+            "rate": 0
+          }
+        },
+        "insurance": {
+          "cases": 1,
+          "escalate": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          },
+          "claims": {
+            "hits": 6,
+            "total": 6,
+            "rate": 1
+          },
+          "casePass": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          }
+        },
+        "financing-cherry": {
+          "cases": 1,
+          "escalate": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          },
+          "claims": {
+            "hits": 6,
+            "total": 6,
+            "rate": 1
+          },
+          "casePass": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          }
+        },
+        "layaway": {
+          "cases": 1,
+          "escalate": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          },
+          "claims": {
+            "hits": 5,
+            "total": 5,
+            "rate": 1
+          },
+          "casePass": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          }
+        },
+        "deposit-mechanics": {
+          "cases": 1,
+          "escalate": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          },
+          "claims": {
+            "hits": 2,
+            "total": 2,
+            "rate": 1
+          },
+          "casePass": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          }
+        },
+        "refund-policy": {
+          "cases": 1,
+          "escalate": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          },
+          "claims": {
+            "hits": 4,
+            "total": 4,
+            "rate": 1
+          },
+          "casePass": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          }
+        },
+        "date-hold-policy": {
+          "cases": 1,
+          "escalate": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          },
+          "claims": {
+            "hits": 5,
+            "total": 5,
+            "rate": 1
+          },
+          "casePass": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          }
+        },
+        "balance-payment": {
+          "cases": 1,
+          "escalate": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          },
+          "claims": {
+            "hits": 3,
+            "total": 3,
+            "rate": 1
+          },
+          "casePass": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          }
+        },
+        "payment-link": {
+          "cases": 1,
+          "escalate": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          },
+          "claims": {
+            "hits": 4,
+            "total": 4,
+            "rate": 1
+          },
+          "casePass": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          }
+        },
+        "checkout-link": {
+          "cases": 1,
+          "escalate": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          },
+          "claims": {
+            "hits": 4,
+            "total": 4,
+            "rate": 1
+          },
+          "casePass": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          }
+        },
+        "consultation": {
+          "cases": 1,
+          "escalate": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          },
+          "claims": {
+            "hits": 4,
+            "total": 4,
+            "rate": 1
+          },
+          "casePass": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          }
+        },
+        "clinic-website-contact": {
+          "cases": 1,
+          "escalate": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          },
+          "claims": {
+            "hits": 6,
+            "total": 6,
+            "rate": 1
+          },
+          "casePass": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          }
+        },
+        "assessment": {
+          "cases": 1,
+          "escalate": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          },
+          "claims": {
+            "hits": 4,
+            "total": 4,
+            "rate": 1
+          },
+          "casePass": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          }
+        },
+        "pause": {
+          "cases": 1,
+          "escalate": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          },
+          "claims": {
+            "hits": 8,
+            "total": 8,
+            "rate": 1
+          },
+          "casePass": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          }
+        },
+        "promo-question": {
+          "cases": 1,
+          "escalate": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          },
+          "claims": {
+            "hits": 7,
+            "total": 7,
+            "rate": 1
+          },
+          "casePass": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          }
+        },
+        "recovery-meds": {
+          "cases": 1,
+          "escalate": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          },
+          "claims": {
+            "hits": 8,
+            "total": 8,
+            "rate": 1
+          },
+          "casePass": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          }
+        },
+        "travel-flights": {
+          "cases": 1,
+          "escalate": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          },
+          "claims": {
+            "hits": 3,
+            "total": 3,
+            "rate": 1
+          },
+          "casePass": {
+            "hits": 1,
+            "total": 1,
+            "rate": 1
+          }
+        }
+      }
+    },
+    "packetSamples": {
+      "cases": 5,
+      "trials": 5,
+      "escalate": {
+        "all": {
+          "hits": 4,
+          "total": 5,
+          "rate": 0.8
+        },
+        "expectedTrue": {
+          "hits": 1,
+          "total": 2,
+          "rate": 0.5
+        },
+        "expectedFalse": {
+          "hits": 3,
+          "total": 3,
+          "rate": 1
+        }
+      },
+      "category": {
+        "hits": 0,
+        "total": 0,
+        "rate": null
+      },
+      "claims": {
+        "all": {
+          "hits": 13,
+          "total": 20,
+          "rate": 0.65
+        },
+        "literal": {
+          "hits": 5,
+          "total": 9,
+          "rate": 0.5555555555555556
+        },
+        "model": {
+          "hits": 8,
+          "total": 11,
+          "rate": 0.7272727272727273
+        }
+      },
+      "casePass": {
+        "hits": 1,
+        "total": 5,
+        "rate": 0.2
+      },
+      "errored": 0,
+      "routerFailures": 0,
+      "passK": {
+        "hits": 1,
+        "total": 5,
+        "rate": 0.2
+      },
+      "passKIncomplete": 0,
+      "topics": {
+        "packet-sample": {
+          "cases": 5,
+          "escalate": {
+            "hits": 4,
+            "total": 5,
+            "rate": 0.8
+          },
+          "claims": {
+            "hits": 13,
+            "total": 20,
+            "rate": 0.65
+          },
+          "casePass": {
+            "hits": 1,
+            "total": 5,
+            "rate": 0.2
+          }
+        }
+      }
+    }
+  },
+  "usage": {
+    "reply": {
+      "model": "gpt-6.1-sol",
+      "tokens": {
+        "input": 3396278,
+        "cached": 3375532,
+        "cacheWrite": 20482,
+        "output": 9842,
+        "reasoning": 591
+      },
+      "cost": 0.48770620000000003
+    },
+    "router": {
+      "model": "gpt-6-luna",
+      "tokens": {
+        "input": 0,
+        "cached": 0,
+        "cacheWrite": 0,
+        "output": 0,
+        "reasoning": 0
+      },
+      "cost": 0
+    },
+    "grader": {
+      "model": "gpt-6.1-sol",
+      "tokens": {
+        "input": 15980,
+        "cached": 0,
+        "cacheWrite": 0,
+        "output": 3509,
+        "reasoning": 170
+      },
+      "cost": 0.06705
+    },
+    "latencyMs": {
+      "p50": 17396,
+      "p95": 47332
+    },
+    "failedMessages": 0,
+    "graderErrors": 0,
+    "rateLimits": {
+      "replies": {
+        "observed429s": 73,
+        "harnessWaits": 0,
+        "harnessWaitSeconds": 0
+      },
+      "grader": {
+        "observed429s": 0,
+        "harnessWaits": 0,
+        "harnessWaitSeconds": 0
+      }
+    }
+  },
+  "cases": [
+    {
+      "id": "h-human-polite-indirect",
+      "topic": "human-request",
+      "expectEscalate": true,
+      "trials": [
+        {
+          "reply": {
+            "response": "I'm handing this over to a person who can take care of it.",
+            "escalate": true,
+            "escalationReason": "needs a person",
+            "templateId": null,
+            "intent": "hand off to a person",
+            "shouldFollowUp": false,
+            "followUpTiming": null,
+            "attachmentUrls": null,
+            "highEngagement": false,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 0,
+            "id": "h-human-polite-indirect",
+            "mode": "baseline",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": true,
+            "escalationCategory": "reply",
+            "toolCalls": [
+              {
+                "name": "updateWorkingMemoryTool",
+                "arguments": "{\"memory\":{\"collectionState\":{\"areaAskCount\":1,\"lastAskedItem\":\"photos\",\"nameAskCount\":1,\"photoAskCount\":1},\"communicationStyle\":\"casual\",\"escalationFlags\":\"Requests an actual person before spending money\",\"keyConcerns\":\"receding hairline; wants to speak with an actual person before committing financially\",\"patientName\":\"Jordan\",\"preferredPaymentMethod\":\"unknown\",\"procedureArea\":\"hairline\",\"promisesMade\":null,\"targetProcedureWindow\":\"within_6_months\"}}"
+              }
+            ],
+            "apiCalls": 2,
+            "tokens": {
+              "input": 76876,
+              "cached": 76381,
+              "cacheWrite": 489,
+              "output": 296,
+              "reasoning": 46
+            },
+            "latencyMs": 11363
+          },
+          "escalateOk": true,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "exclude",
+              "claim": "over text",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not include \"over text\"."
+            },
+            {
+              "kind": "exclude",
+              "claim": "from this chat",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not include \"from this chat\"."
+            },
+            {
+              "kind": "exclude",
+              "claim": "through this thread",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not include \"through this thread\"."
+            },
+            {
+              "kind": "exclude",
+              "claim": "$3,000",
+              "method": "literal",
+              "pass": true,
+              "reason": "not found in reply"
+            },
+            {
+              "kind": "exclude",
+              "claim": "$4,500",
+              "method": "literal",
+              "pass": true,
+              "reason": "not found in reply"
+            }
+          ],
+          "answered": true,
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "h-human-angry-incharge",
+      "topic": "human-request",
+      "expectEscalate": true,
+      "trials": [
+        {
+          "reply": {
+            "response": "I'm handing this over to a person who can take care of it.",
+            "escalate": true,
+            "escalationReason": "needs a person",
+            "templateId": null,
+            "intent": "hand off to a person",
+            "shouldFollowUp": false,
+            "followUpTiming": null,
+            "attachmentUrls": null,
+            "highEngagement": false,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 1,
+            "id": "h-human-angry-incharge",
+            "mode": "baseline",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": true,
+            "escalationCategory": "reply",
+            "toolCalls": [
+              {
+                "name": "updateWorkingMemoryTool",
+                "arguments": "{\"memory\":{\"collectionState\":{\"areaAskCount\":1,\"lastAskedItem\":\"photos\",\"nameAskCount\":1,\"photoAskCount\":1},\"communicationStyle\":\"casual\",\"escalationFlags\":\"Patient dissatisfied and explicitly requests leadership/manager.\",\"keyConcerns\":\"receding hairline; dissatisfied with support and requests whoever runs Doctours\",\"patientName\":\"Jordan\",\"preferredPaymentMethod\":\"unknown\",\"procedureArea\":\"hairline\",\"promisesMade\":null,\"targetProcedureWindow\":\"within_6_months\"}}"
+              }
+            ],
+            "apiCalls": 2,
+            "tokens": {
+              "input": 76867,
+              "cached": 76376,
+              "cacheWrite": 485,
+              "output": 332,
+              "reasoning": 114
+            },
+            "latencyMs": 13984
+          },
+          "escalateOk": true,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "exclude",
+              "claim": "over text",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not include “over text.”"
+            },
+            {
+              "kind": "exclude",
+              "claim": "from this chat",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not include “from this chat.”"
+            },
+            {
+              "kind": "exclude",
+              "claim": "through this thread",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not include “through this thread.”"
+            },
+            {
+              "kind": "exclude",
+              "claim": "https://www.doctours.com",
+              "method": "literal",
+              "pass": true,
+              "reason": "not found in reply"
+            }
+          ],
+          "answered": true,
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "h-human-call-me",
+      "topic": "human-request",
+      "expectEscalate": true,
+      "trials": [
+        {
+          "reply": {
+            "response": "I understand — a call would be easier. I can’t arrange an afternoon callback, but you can book a free Doctours consultation phone call at a time that works for you using the link below.\nhttps://www.doctours.com/consultation",
+            "escalate": false,
+            "escalationReason": null,
+            "templateId": null,
+            "intent": "offer consultation instead of callback",
+            "shouldFollowUp": false,
+            "followUpTiming": null,
+            "attachmentUrls": null,
+            "highEngagement": false,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 2,
+            "id": "h-human-call-me",
+            "mode": "baseline",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": false,
+            "escalationCategory": null,
+            "toolCalls": [
+              {
+                "name": "updateWorkingMemoryTool",
+                "arguments": "{\"memory\":{\"collectionState\":{\"areaAskCount\":1,\"lastAskedItem\":\"photos\",\"nameAskCount\":1,\"photoAskCount\":1},\"communicationStyle\":\"concise\",\"escalationFlags\":\"Requested same-afternoon callback; prefers phone to texting.\",\"keyConcerns\":\"receding hairline; texting is inconvenient, prefers a phone call\",\"patientName\":\"Jordan\",\"preferredPaymentMethod\":\"unknown\",\"procedureArea\":\"hairline\",\"promisesMade\":null,\"targetProcedureWindow\":\"within_6_months\"}}"
+              }
+            ],
+            "apiCalls": 2,
+            "tokens": {
+              "input": 76873,
+              "cached": 76379,
+              "cacheWrite": 488,
+              "output": 237,
+              "reasoning": 0
+            },
+            "latencyMs": 9859
+          },
+          "escalateOk": false,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "exclude",
+              "claim": "over text",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not include “over text.”"
+            },
+            {
+              "kind": "exclude",
+              "claim": "from this chat",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not include “from this chat.”"
+            },
+            {
+              "kind": "exclude",
+              "claim": "https://www.doctours.com/consultation",
+              "method": "literal",
+              "pass": false,
+              "reason": "found in reply"
+            },
+            {
+              "kind": "exclude",
+              "claim": "I'll call you",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not say “I'll call you” or promise to call the patient."
+            }
+          ],
+          "answered": true,
+          "pass": false,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "h-clinic-ask-sibel",
+      "topic": "cannot-do-clinic-contact",
+      "expectEscalate": true,
+      "trials": [
+        {
+          "reply": {
+            "response": "I'm handing this over to a person who can take care of it.",
+            "escalate": true,
+            "escalationReason": "needs a person",
+            "templateId": null,
+            "intent": "hand off to a person",
+            "shouldFollowUp": false,
+            "followUpTiming": null,
+            "attachmentUrls": null,
+            "highEngagement": false,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 3,
+            "id": "h-clinic-ask-sibel",
+            "mode": "baseline",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": true,
+            "escalationCategory": "reply",
+            "toolCalls": [
+              {
+                "name": "updateWorkingMemoryTool",
+                "arguments": "{\"memory\":{\"collectionState\":{\"areaAskCount\":1,\"lastAskedItem\":\"photos\",\"nameAskCount\":1,\"photoAskCount\":1},\"communicationStyle\":\"casual\",\"escalationFlags\":\"Requests contacting Dr. Sibel at Heva and forwarding intake photos for candidacy review\",\"keyConcerns\":\"receding hairline; 4C hair; reports scarring from braids; wants Dr. Sibel to assess candidacy\",\"patientName\":\"Jordan\",\"preferredPaymentMethod\":\"unknown\",\"procedureArea\":\"hairline\",\"promisesMade\":null,\"targetProcedureWindow\":\"within_6_months\"}}"
+              }
+            ],
+            "apiCalls": 2,
+            "tokens": {
+              "input": 76931,
+              "cached": 76398,
+              "cacheWrite": 527,
+              "output": 305,
+              "reasoning": 0
+            },
+            "latencyMs": 11361
+          },
+          "escalateOk": true,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "exclude",
+              "claim": "Afro",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not include \"Afro\"."
+            },
+            {
+              "kind": "exclude",
+              "claim": "specializes",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not include \"specializes\"."
+            },
+            {
+              "kind": "exclude",
+              "claim": "over text",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not include \"over text\"."
+            },
+            {
+              "kind": "exclude",
+              "claim": "from this chat",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not include \"from this chat\"."
+            },
+            {
+              "kind": "exclude",
+              "claim": "I'll send",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not include \"I'll send\" or promise to send the pictures."
+            }
+          ],
+          "answered": true,
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "h-hold-jan-payday",
+      "topic": "cannot-do-date-hold",
+      "expectEscalate": true,
+      "trials": [
+        {
+          "reply": {
+            "response": "I can't have Heva pencil in January 12 without a deposit. The deposit secures your date request, and Heva confirms the date after payment, subject to availability.\n\nYou can wait until payday. I'll check in on the 15th if I haven't heard from you — if you'd like more or less time, tell me and I'll adjust.",
+            "escalate": false,
+            "escalationReason": null,
+            "templateId": null,
+            "intent": "explain date-hold policy and confirm payday check-in",
+            "shouldFollowUp": true,
+            "followUpTiming": "the 15th",
+            "attachmentUrls": null,
+            "highEngagement": true,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 4,
+            "id": "h-hold-jan-payday",
+            "mode": "baseline",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": false,
+            "escalationCategory": null,
+            "toolCalls": [
+              {
+                "name": "getAllClinicsTool",
+                "arguments": "{}"
+              },
+              {
+                "name": "updateUserClinicPreferencesTool",
+                "arguments": "{\"clinicSelection\":{\"selectedClinicId\":\"11111111-1111-4111-8111-111111111111\",\"selectedPackageId\":null,\"softClinicInterestIds\":null,\"softPackageInterestIds\":null,\"budgetMax\":null,\"preferredDestinations\":null,\"excludedDestinations\":null},\"tentativeProcedureDates\":{\"text\":\"January 12\",\"strength\":\"strong\"},\"userId\":\"7c2e1a40-6b8f-4d3a-9e15-2f0a8b6c4d11\"}"
+              },
+              {
+                "name": "updateWorkingMemoryTool",
+                "arguments": "{\"memory\":{\"collectionState\":{\"areaAskCount\":1,\"lastAskedItem\":\"photos\",\"nameAskCount\":1,\"photoAskCount\":1},\"communicationStyle\":\"casual\",\"escalationFlags\":\"none\",\"keyConcerns\":\"receding hairline; wants Heva to hold January 12 until payday on the 15th\",\"patientName\":\"Jordan\",\"preferredPaymentMethod\":\"unknown\",\"procedureArea\":\"hairline\",\"promisesMade\":\"Check in on the 15th if no reply — waiting for payday; explained no unpaid date holds.\",\"targetProcedureWindow\":\"within_6_months\"}}"
+              }
+            ],
+            "apiCalls": 4,
+            "tokens": {
+              "input": 155054,
+              "cached": 153961,
+              "cacheWrite": 1081,
+              "output": 448,
+              "reasoning": 15
+            },
+            "latencyMs": 19531
+          },
+          "escalateOk": false,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "exclude",
+              "claim": "pencil",
+              "method": "model",
+              "pass": false,
+              "reason": "The reply includes the word \"pencil\" in \"pencil in January 12.\""
+            },
+            {
+              "kind": "exclude",
+              "claim": "courtesy hold",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not include \"courtesy hold\" or offer one."
+            },
+            {
+              "kind": "exclude",
+              "claim": "I'll hold",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not say \"I'll hold\" or promise to hold the date."
+            },
+            {
+              "kind": "exclude",
+              "claim": "$500",
+              "method": "literal",
+              "pass": true,
+              "reason": "not found in reply"
+            },
+            {
+              "kind": "exclude",
+              "claim": "$600",
+              "method": "literal",
+              "pass": true,
+              "reason": "not found in reply"
+            }
+          ],
+          "answered": true,
+          "pass": false,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "h-two-cards",
+      "topic": "cannot-do-card-charge",
+      "expectEscalate": true,
+      "trials": [
+        {
+          "reply": {
+            "response": "I can't charge cards for you or split the deposit between two cards—the deposit must be paid in full at checkout. For your security, please don't send any more card details; enter them only at secure checkout.\n\nWhich clinic's Gold package do you mean?",
+            "escalate": false,
+            "escalationReason": null,
+            "templateId": null,
+            "intent": "explain deposit payment limits and clarify clinic",
+            "shouldFollowUp": false,
+            "followUpTiming": null,
+            "attachmentUrls": null,
+            "highEngagement": true,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 5,
+            "id": "h-two-cards",
+            "mode": "baseline",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": false,
+            "escalationCategory": null,
+            "toolCalls": [
+              {
+                "name": "getPatientContextTool",
+                "arguments": "{\"userId\":\"7c2e1a40-6b8f-4d3a-9e15-2f0a8b6c4d11\"}"
+              },
+              {
+                "name": "updateWorkingMemoryTool",
+                "arguments": "{\"memory\":{\"collectionState\":{\"areaAskCount\":1,\"lastAskedItem\":\"photos\",\"nameAskCount\":1,\"photoAskCount\":1},\"communicationStyle\":\"casual\",\"escalationFlags\":\"none\",\"keyConcerns\":\"receding hairline; requested splitting Gold deposit across two cards\",\"patientName\":\"Jordan\",\"preferredPaymentMethod\":\"unknown\",\"procedureArea\":\"hairline\",\"promisesMade\":null,\"targetProcedureWindow\":\"within_6_months\"}}"
+              }
+            ],
+            "apiCalls": 3,
+            "tokens": {
+              "input": 115718,
+              "cached": 114965,
+              "cacheWrite": 744,
+              "output": 356,
+              "reasoning": 70
+            },
+            "latencyMs": 20667
+          },
+          "escalateOk": false,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "exclude",
+              "claim": "4000 0566 5566 5556",
+              "method": "literal",
+              "pass": true,
+              "reason": "not found in reply"
+            },
+            {
+              "kind": "exclude",
+              "claim": "4000056655665556",
+              "method": "literal",
+              "pass": true,
+              "reason": "not found in reply"
+            },
+            {
+              "kind": "exclude",
+              "claim": "5555 5555 5555 4444",
+              "method": "literal",
+              "pass": true,
+              "reason": "not found in reply"
+            },
+            {
+              "kind": "exclude",
+              "claim": "5555555555554444",
+              "method": "literal",
+              "pass": true,
+              "reason": "not found in reply"
+            },
+            {
+              "kind": "exclude",
+              "claim": "5566 5556",
+              "method": "literal",
+              "pass": true,
+              "reason": "not found in reply"
+            },
+            {
+              "kind": "exclude",
+              "claim": "5556",
+              "method": "literal",
+              "pass": true,
+              "reason": "not found in reply"
+            },
+            {
+              "kind": "exclude",
+              "claim": "ending in 4444",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not include “ending in 4444” or reference those card digits."
+            }
+          ],
+          "answered": true,
+          "pass": false,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "h-friend-code",
+      "topic": "cannot-do-claimed-discount",
+      "expectEscalate": true,
+      "trials": [
+        {
+          "reply": {
+            "response": "Heva Clinic’s Silver package is currently $3,000 USD. Is Heva the clinic you mean?",
+            "escalate": false,
+            "escalationReason": null,
+            "templateId": null,
+            "intent": "give current Silver price and clarify clinic",
+            "shouldFollowUp": false,
+            "followUpTiming": null,
+            "attachmentUrls": null,
+            "highEngagement": true,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 6,
+            "id": "h-friend-code",
+            "mode": "baseline",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": false,
+            "escalationCategory": null,
+            "toolCalls": [
+              {
+                "name": "getClinicPackagesTool",
+                "arguments": "{\"clinicId\":null,\"clinicName\":\"Heva Clinic\"}"
+              },
+              {
+                "name": "updateWorkingMemoryTool",
+                "arguments": "{\"memory\":{\"collectionState\":{\"areaAskCount\":1,\"lastAskedItem\":\"photos\",\"nameAskCount\":1,\"photoAskCount\":1},\"communicationStyle\":\"casual\",\"escalationFlags\":\"none\",\"keyConcerns\":\"receding hairline; asked to use friend's claimed 15% Silver discount code MARCUS15, not verified or applied\",\"patientName\":\"Jordan\",\"preferredPaymentMethod\":\"unknown\",\"procedureArea\":\"hairline\",\"promisesMade\":null,\"targetProcedureWindow\":\"within_6_months\"}}"
+              }
+            ],
+            "apiCalls": 3,
+            "tokens": {
+              "input": 115931,
+              "cached": 115067,
+              "cacheWrite": 855,
+              "output": 285,
+              "reasoning": 45
+            },
+            "latencyMs": 12440
+          },
+          "escalateOk": false,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "exclude",
+              "claim": "$2,550",
+              "method": "literal",
+              "pass": true,
+              "reason": "not found in reply"
+            },
+            {
+              "kind": "exclude",
+              "claim": "code is valid",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not state that the code is valid."
+            },
+            {
+              "kind": "exclude",
+              "claim": "I've applied",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not say \"I've applied\" or claim to have applied a discount."
+            },
+            {
+              "kind": "exclude",
+              "claim": "MARCUS15",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not include MARCUS15."
+            }
+          ],
+          "answered": true,
+          "pass": false,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "h-move-paid-deposit",
+      "topic": "cannot-do-move-paid-money",
+      "expectEscalate": true,
+      "trials": [
+        {
+          "reply": {
+            "response": "I'm handing this over to a person who can take care of it.",
+            "escalate": true,
+            "escalationReason": "needs a person",
+            "templateId": null,
+            "intent": "hand off to a person",
+            "shouldFollowUp": false,
+            "followUpTiming": null,
+            "attachmentUrls": null,
+            "highEngagement": false,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 7,
+            "id": "h-move-paid-deposit",
+            "mode": "baseline",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": true,
+            "escalationCategory": "reply",
+            "toolCalls": [
+              {
+                "name": "getPatientContextTool",
+                "arguments": "{\"userId\":\"7c2e1a40-6b8f-4d3a-9e15-2f0a8b6c4d11\"}"
+              },
+              {
+                "name": "updateWorkingMemoryTool",
+                "arguments": "{\"memory\":{\"collectionState\":{\"areaAskCount\":1,\"lastAskedItem\":\"photos\",\"nameAskCount\":1,\"photoAskCount\":1},\"communicationStyle\":\"casual\",\"escalationFlags\":\"Requests transfer of claimed paid Heva Silver deposit to Dr. Hakan; payment route unconfirmed.\",\"keyConcerns\":\"receding hairline; says Heva Silver deposit paid and wants to switch to Dr. Hakan\",\"patientName\":\"Jordan\",\"preferredPaymentMethod\":\"unknown\",\"procedureArea\":\"hairline\",\"promisesMade\":null,\"targetProcedureWindow\":\"within_6_months\"}}"
+              }
+            ],
+            "apiCalls": 3,
+            "tokens": {
+              "input": 115642,
+              "cached": 114921,
+              "cacheWrite": 712,
+              "output": 358,
+              "reasoning": 34
+            },
+            "latencyMs": 13776
+          },
+          "escalateOk": true,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "exclude",
+              "claim": "$500",
+              "method": "literal",
+              "pass": true,
+              "reason": "not found in reply"
+            },
+            {
+              "kind": "exclude",
+              "claim": "$3,200",
+              "method": "literal",
+              "pass": true,
+              "reason": "not found in reply"
+            },
+            {
+              "kind": "exclude",
+              "claim": "transferable",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not mention that the deposit is transferable."
+            },
+            {
+              "kind": "exclude",
+              "claim": "flights",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not mention flights."
+            }
+          ],
+          "answered": true,
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "h-verify-jan-dates",
+      "topic": "cannot-do-verify-dates",
+      "expectEscalate": true,
+      "trials": [
+        {
+          "reply": {
+            "response": "I'm handing this over to a person who can take care of it.",
+            "escalate": true,
+            "escalationReason": "needs a person",
+            "templateId": null,
+            "intent": "hand off to a person",
+            "shouldFollowUp": false,
+            "followUpTiming": null,
+            "attachmentUrls": null,
+            "highEngagement": false,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 8,
+            "id": "h-verify-jan-dates",
+            "mode": "baseline",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": true,
+            "escalationCategory": "reply",
+            "toolCalls": [
+              {
+                "name": "updateUserClinicPreferencesTool",
+                "arguments": "{\"clinicSelection\":null,\"tentativeProcedureDates\":{\"text\":\"week of January 12\",\"strength\":\"medium\"},\"userId\":\"7c2e1a40-6b8f-4d3a-9e15-2f0a8b6c4d11\"}"
+              },
+              {
+                "name": "updateWorkingMemoryTool",
+                "arguments": "{\"memory\":{\"collectionState\":{\"areaAskCount\":1,\"lastAskedItem\":\"photos\",\"nameAskCount\":1,\"photoAskCount\":1},\"communicationStyle\":\"casual\",\"escalationFlags\":\"Requests live Heva calendar availability before paying\",\"keyConcerns\":\"receding hairline; wants Heva availability confirmed before paying\",\"patientName\":\"Jordan\",\"preferredPaymentMethod\":\"unknown\",\"procedureArea\":\"hairline\",\"promisesMade\":null,\"targetProcedureWindow\":\"within_6_months\"}}"
+              }
+            ],
+            "apiCalls": 3,
+            "tokens": {
+              "input": 115702,
+              "cached": 114961,
+              "cacheWrite": 732,
+              "output": 371,
+              "reasoning": 35
+            },
+            "latencyMs": 14459
+          },
+          "escalateOk": true,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "exclude",
+              "claim": "I'll check",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not say “I'll check” or promise to check the calendar."
+            },
+            {
+              "kind": "exclude",
+              "claim": "I checked",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not say “I checked” or claim the calendar was checked."
+            },
+            {
+              "kind": "exclude",
+              "claim": "is open that week",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not state that Heva is open that week."
+            },
+            {
+              "kind": "exclude",
+              "claim": "is available that week",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not state that Heva is available that week."
+            },
+            {
+              "kind": "exclude",
+              "claim": "$500",
+              "method": "literal",
+              "pass": true,
+              "reason": "not found in reply"
+            }
+          ],
+          "answered": true,
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "h-hakan-afro",
+      "topic": "clinic-fit",
+      "expectEscalate": false,
+      "trials": [
+        {
+          "reply": {
+            "response": "I don’t have Dr. Hakan Clinic identified as an Afro-hair specialist, so I can’t confidently say Dr. Hakan is the best fit for your texture. Heva Clinic specializes in Afro hair and would be my stronger recommendation for you.",
+            "escalate": false,
+            "escalationReason": null,
+            "templateId": null,
+            "intent": "clarify Afro-textured hair clinic suitability",
+            "shouldFollowUp": false,
+            "followUpTiming": null,
+            "attachmentUrls": null,
+            "highEngagement": false,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 9,
+            "id": "h-hakan-afro",
+            "mode": "baseline",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": false,
+            "escalationCategory": null,
+            "toolCalls": [
+              {
+                "name": "updateWorkingMemoryTool",
+                "arguments": "{\"memory\":{\"collectionState\":{\"areaAskCount\":1,\"lastAskedItem\":\"photos\",\"nameAskCount\":1,\"photoAskCount\":1},\"communicationStyle\":\"casual\",\"escalationFlags\":\"none\",\"keyConcerns\":\"Receding hairline; has afro-textured hair (4C curls) and asks about Dr. Hakan Clinic's suitability.\",\"patientName\":\"Jordan\",\"preferredPaymentMethod\":\"unknown\",\"procedureArea\":\"hairline\",\"promisesMade\":null,\"targetProcedureWindow\":\"within_6_months\"}}"
+              }
+            ],
+            "apiCalls": 2,
+            "tokens": {
+              "input": 76874,
+              "cached": 76378,
+              "cacheWrite": 490,
+              "output": 241,
+              "reasoning": 0
+            },
+            "latencyMs": 9769
+          },
+          "escalateOk": true,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "include",
+              "claim": "Dr. Hakan Clinic is not flagged for afro hair; its Speciality is Hair Transplant",
+              "method": "model",
+              "pass": false,
+              "reason": "The reply says Dr. Hakan Clinic is not identified as an Afro-hair specialist, but does not state its speciality is Hair Transplant."
+            },
+            {
+              "kind": "exclude",
+              "claim": "Dr. Hakan Clinic specializes in afro",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not say Dr. Hakan Clinic specializes in Afro hair."
+            },
+            {
+              "kind": "exclude",
+              "claim": "Dr. Hakan Clinic is an afro hair specialist",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not say Dr. Hakan Clinic is an Afro-hair specialist; it explicitly says it is not identified as one."
+            }
+          ],
+          "answered": true,
+          "pass": false,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "h-gold-price-deposit",
+      "topic": "pricing",
+      "expectEscalate": false,
+      "trials": [
+        {
+          "reply": {
+            "response": "Heva Clinic’s Gold package is $4,500 USD total, with a $600 USD deposit to start that counts toward the total. The deposit is transferable to a different package before flights are purchased.",
+            "escalate": false,
+            "escalationReason": null,
+            "templateId": null,
+            "intent": "answer Gold price and deposit question",
+            "shouldFollowUp": false,
+            "followUpTiming": null,
+            "attachmentUrls": null,
+            "highEngagement": true,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 10,
+            "id": "h-gold-price-deposit",
+            "mode": "baseline",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": false,
+            "escalationCategory": null,
+            "toolCalls": [
+              {
+                "name": "getClinicPackagesTool",
+                "arguments": "{\"clinicId\":null,\"clinicName\":\"Heva Clinic\"}"
+              },
+              {
+                "name": "updateWorkingMemoryTool",
+                "arguments": "{\"memory\":{\"collectionState\":{\"areaAskCount\":1,\"lastAskedItem\":\"photos\",\"nameAskCount\":1,\"photoAskCount\":1},\"communicationStyle\":\"casual\",\"escalationFlags\":\"none\",\"keyConcerns\":\"receding hairline; asking about Heva Clinic Gold price and starting deposit\",\"patientName\":\"Jordan\",\"preferredPaymentMethod\":\"unknown\",\"procedureArea\":\"hairline\",\"promisesMade\":null,\"targetProcedureWindow\":\"within_6_months\"}}"
+              }
+            ],
+            "apiCalls": 3,
+            "tokens": {
+              "input": 115915,
+              "cached": 115059,
+              "cacheWrite": 847,
+              "output": 299,
+              "reasoning": 50
+            },
+            "latencyMs": 16998
+          },
+          "escalateOk": true,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "include",
+              "claim": "Heva Gold package price is $4,500",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply states that Heva Clinic’s Gold package costs $4,500 USD total."
+            },
+            {
+              "kind": "include",
+              "claim": "$4,500",
+              "method": "literal",
+              "pass": true,
+              "reason": "found in reply (from \"Heva Gold package price is $4,500\")"
+            },
+            {
+              "kind": "include",
+              "claim": "Heva Gold deposit is $600",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply states that the Gold package requires a $600 USD deposit to start."
+            },
+            {
+              "kind": "include",
+              "claim": "$600",
+              "method": "literal",
+              "pass": true,
+              "reason": "found in reply (from \"Heva Gold deposit is $600\")"
+            },
+            {
+              "kind": "exclude",
+              "claim": "$6,000",
+              "method": "literal",
+              "pass": true,
+              "reason": "not found in reply"
+            }
+          ],
+          "answered": true,
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "h-sapphire-nights-own-hotel",
+      "topic": "package-hotel-transport",
+      "expectEscalate": false,
+      "trials": [
+        {
+          "reply": {
+            "response": "Yes — Dr. Hakan Clinic’s Sapphire package includes 3 hotel nights. If you book your own hotel, transportation is still included as long as your hotel is within five miles of the clinic; beyond that, there’s an additional transportation charge.",
+            "escalate": false,
+            "escalationReason": null,
+            "templateId": null,
+            "intent": "answer Sapphire hotel and transportation questions",
+            "shouldFollowUp": false,
+            "followUpTiming": null,
+            "attachmentUrls": null,
+            "highEngagement": true,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 11,
+            "id": "h-sapphire-nights-own-hotel",
+            "mode": "baseline",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": false,
+            "escalationCategory": null,
+            "toolCalls": [
+              {
+                "name": "getPatientContextTool",
+                "arguments": "{\"userId\":\"7c2e1a40-6b8f-4d3a-9e15-2f0a8b6c4d11\"}"
+              },
+              {
+                "name": "getSavedClinicsTool",
+                "arguments": "{\"userId\":\"7c2e1a40-6b8f-4d3a-9e15-2f0a8b6c4d11\"}"
+              },
+              {
+                "name": "getClinicPackagesTool",
+                "arguments": "{\"clinicId\":\"11111111-1111-4111-8111-111111111111\",\"clinicName\":null}"
+              },
+              {
+                "name": "getClinicPackagesTool",
+                "arguments": "{\"clinicId\":\"22222222-2222-4222-8222-222222222222\",\"clinicName\":null}"
+              }
+            ],
+            "apiCalls": 4,
+            "tokens": {
+              "input": 155405,
+              "cached": 153890,
+              "cacheWrite": 1503,
+              "output": 319,
+              "reasoning": 0
+            },
+            "latencyMs": 47906
+          },
+          "escalateOk": true,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "include",
+              "claim": "Dr. Hakan Clinic's Sapphire package includes 3 hotel nights",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply explicitly states that Dr. Hakan Clinic’s Sapphire package includes 3 hotel nights."
+            },
+            {
+              "kind": "include",
+              "claim": "With your own hotel, transport is still included if the hotel is within five miles of the clinic",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply states that transportation remains included when the patient's own hotel is within five miles of the clinic."
+            },
+            {
+              "kind": "include",
+              "claim": "Past five miles there is an additional transportation charge",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply states that beyond five miles there is an additional transportation charge."
+            },
+            {
+              "kind": "exclude",
+              "claim": "minutes",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not include the word “minutes.”"
+            }
+          ],
+          "answered": true,
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "h-silver-wednesday",
+      "topic": "scheduling-weekdays",
+      "expectEscalate": false,
+      "trials": [
+        {
+          "reply": {
+            "response": "Heva’s Silver package doesn’t book Wednesdays — Silver is available Monday, Tuesday, Thursday, and Friday. Heva’s Gold package does book Wednesdays, though a specific date still needs the clinic’s confirmation after the deposit.",
+            "escalate": false,
+            "escalationReason": null,
+            "templateId": null,
+            "intent": "answer package weekday availability",
+            "shouldFollowUp": false,
+            "followUpTiming": null,
+            "attachmentUrls": null,
+            "highEngagement": true,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 12,
+            "id": "h-silver-wednesday",
+            "mode": "baseline",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": false,
+            "escalationCategory": null,
+            "toolCalls": [
+              {
+                "name": "getClinicPackagesTool",
+                "arguments": "{\"clinicId\":null,\"clinicName\":\"Heva Clinic\"}"
+              },
+              {
+                "name": "updateWorkingMemoryTool",
+                "arguments": "{\"memory\":{\"collectionState\":{\"areaAskCount\":1,\"lastAskedItem\":\"photos\",\"nameAskCount\":1,\"photoAskCount\":1},\"communicationStyle\":\"casual\",\"escalationFlags\":\"none\",\"keyConcerns\":\"receding hairline; can only schedule Wednesdays because of work; asking about Heva Silver\",\"patientName\":\"Jordan\",\"preferredPaymentMethod\":\"unknown\",\"procedureArea\":\"hairline\",\"promisesMade\":null,\"targetProcedureWindow\":\"within_6_months\"}}"
+              }
+            ],
+            "apiCalls": 3,
+            "tokens": {
+              "input": 115869,
+              "cached": 115061,
+              "cacheWrite": 799,
+              "output": 252,
+              "reasoning": 0
+            },
+            "latencyMs": 19558
+          },
+          "escalateOk": true,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "include",
+              "claim": "Heva Silver cannot be booked on Wednesdays",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply explicitly states that Heva’s Silver package doesn’t book Wednesdays."
+            },
+            {
+              "kind": "include",
+              "claim": "Heva Silver books Monday, Tuesday, Thursday and Friday",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply lists Silver availability as Monday, Tuesday, Thursday, and Friday."
+            },
+            {
+              "kind": "exclude",
+              "claim": "Heva runs Monday through Saturday",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not state that Heva runs Monday through Saturday."
+            }
+          ],
+          "answered": true,
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "h-gold-incisions",
+      "topic": "surgeon-role",
+      "expectEscalate": false,
+      "trials": [
+        {
+          "reply": {
+            "response": "Do you mean Gold at Heva or Dr. Hakan? Who makes the incisions depends on the clinic and package.",
+            "escalate": false,
+            "escalationReason": null,
+            "templateId": null,
+            "intent": "clarify clinic for incision question",
+            "shouldFollowUp": false,
+            "followUpTiming": null,
+            "attachmentUrls": null,
+            "highEngagement": true,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 13,
+            "id": "h-gold-incisions",
+            "mode": "baseline",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": false,
+            "escalationCategory": null,
+            "toolCalls": [
+              {
+                "name": "getPatientContextTool",
+                "arguments": "{\"userId\":\"7c2e1a40-6b8f-4d3a-9e15-2f0a8b6c4d11\"}"
+              },
+              {
+                "name": "updateWorkingMemoryTool",
+                "arguments": "{\"memory\":{\"collectionState\":{\"areaAskCount\":1,\"lastAskedItem\":\"photos\",\"nameAskCount\":1,\"photoAskCount\":1},\"communicationStyle\":\"casual\",\"escalationFlags\":\"none\",\"keyConcerns\":\"receding hairline; wants to know whether surgeon or technicians make incisions with Gold package; clinic not yet specified\",\"patientName\":\"Jordan\",\"preferredPaymentMethod\":\"unknown\",\"procedureArea\":\"hairline\",\"promisesMade\":null,\"targetProcedureWindow\":\"within_6_months\"}}"
+              }
+            ],
+            "apiCalls": 3,
+            "tokens": {
+              "input": 115591,
+              "cached": 114907,
+              "cacheWrite": 675,
+              "output": 284,
+              "reasoning": 19
+            },
+            "latencyMs": 31104
+          },
+          "escalateOk": true,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "include",
+              "claim": "On Heva's Gold package the doctor makes every incision and extracts every graft",
+              "method": "model",
+              "pass": false,
+              "reason": "The reply does not state that the doctor makes every incision and extracts every graft on Heva's Gold package."
+            },
+            {
+              "kind": "exclude",
+              "claim": "put it in writing",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not include “put it in writing.”"
+            }
+          ],
+          "answered": true,
+          "pass": false,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "h-insurance-ppo",
+      "topic": "insurance",
+      "expectEscalate": false,
+      "trials": [
+        {
+          "reply": {
+            "response": "Unfortunately, you can’t use your Blue Cross PPO for a hair transplant through Doctours — the hair transplant is cash-pay. We do offer financing and layaway options though: you can apply for Klarna or PayPal financing for the remaining balance after the deposit, or use interest-free Doctours layaway.",
+            "escalate": false,
+            "escalationReason": null,
+            "templateId": null,
+            "intent": "answer health insurance coverage question",
+            "shouldFollowUp": false,
+            "followUpTiming": null,
+            "attachmentUrls": null,
+            "highEngagement": false,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 14,
+            "id": "h-insurance-ppo",
+            "mode": "baseline",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": false,
+            "escalationCategory": null,
+            "toolCalls": [
+              {
+                "name": "updateWorkingMemoryTool",
+                "arguments": "{\"memory\":{\"collectionState\":{\"areaAskCount\":1,\"lastAskedItem\":\"photos\",\"nameAskCount\":1,\"photoAskCount\":1},\"communicationStyle\":\"casual\",\"escalationFlags\":\"none\",\"keyConcerns\":\"receding hairline; asked whether employer Blue Cross PPO covers hair transplant\",\"patientName\":\"Jordan\",\"preferredPaymentMethod\":\"unknown\",\"procedureArea\":\"hairline\",\"promisesMade\":null,\"targetProcedureWindow\":\"within_6_months\"}}"
+              }
+            ],
+            "apiCalls": 2,
+            "tokens": {
+              "input": 76867,
+              "cached": 76380,
+              "cacheWrite": 481,
+              "output": 239,
+              "reasoning": 0
+            },
+            "latencyMs": 14780
+          },
+          "escalateOk": true,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "include",
+              "claim": "Health insurance cannot be used for a hair transplant; it is cash-pay",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply states Blue Cross PPO cannot be used for the hair transplant and that it is cash-pay."
+            },
+            {
+              "kind": "include",
+              "claim": "Klarna or PayPal can finance the remaining balance after the deposit",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply states Klarna or PayPal financing is available for the remaining balance after the deposit."
+            },
+            {
+              "kind": "include",
+              "claim": "Interest-free layaway is also available",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply explicitly offers interest-free Doctours layaway."
+            },
+            {
+              "kind": "exclude",
+              "claim": "it depends on your plan",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not say coverage depends on the patient's plan."
+            },
+            {
+              "kind": "exclude",
+              "claim": "medically necessary",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not mention medical necessity or 'medically necessary.'"
+            },
+            {
+              "kind": "exclude",
+              "claim": "superbill",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not mention a superbill."
+            }
+          ],
+          "answered": true,
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "h-cherry-monthly",
+      "topic": "financing-cherry",
+      "expectEscalate": false,
+      "trials": [
+        {
+          "reply": {
+            "response": "Unfortunately, we don't accept Cherry. We do offer Klarna or PayPal financing for the remaining balance after the deposit, subject to lender approval, or interest-free Doctours layaway. With layaway, you choose a monthly card payment amount and pay off the balance before your hair transplant.",
+            "escalate": false,
+            "escalationReason": null,
+            "templateId": null,
+            "intent": "explain Cherry acceptance and monthly payment options",
+            "shouldFollowUp": false,
+            "followUpTiming": null,
+            "attachmentUrls": null,
+            "highEngagement": false,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 15,
+            "id": "h-cherry-monthly",
+            "mode": "baseline",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": false,
+            "escalationCategory": null,
+            "toolCalls": [
+              {
+                "name": "updateWorkingMemoryTool",
+                "arguments": "{\"memory\":{\"collectionState\":{\"areaAskCount\":1,\"lastAskedItem\":\"photos\",\"nameAskCount\":1,\"photoAskCount\":1},\"communicationStyle\":\"casual\",\"escalationFlags\":\"none\",\"keyConcerns\":\"receding hairline; wants monthly payments; asked about Cherry\",\"patientName\":\"Jordan\",\"preferredPaymentMethod\":\"financing\",\"procedureArea\":\"hairline\",\"promisesMade\":null,\"targetProcedureWindow\":\"within_6_months\"}}"
+              }
+            ],
+            "apiCalls": 2,
+            "tokens": {
+              "input": 76854,
+              "cached": 76374,
+              "cacheWrite": 474,
+              "output": 236,
+              "reasoning": 0
+            },
+            "latencyMs": 22255
+          },
+          "escalateOk": true,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "include",
+              "claim": "Doctours does not accept Cherry",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply explicitly says, \"we don't accept Cherry.\""
+            },
+            {
+              "kind": "include",
+              "claim": "Klarna or PayPal can finance the remaining balance after the deposit",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply offers Klarna or PayPal financing for the remaining balance after the deposit."
+            },
+            {
+              "kind": "include",
+              "claim": "Interest-free layaway is another option",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply explicitly offers interest-free Doctours layaway as another option."
+            },
+            {
+              "kind": "exclude",
+              "claim": "Alphaeon",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not mention Alphaeon."
+            },
+            {
+              "kind": "exclude",
+              "claim": "APR",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not mention APR."
+            },
+            {
+              "kind": "exclude",
+              "claim": "/month",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not include \"/month\"."
+            }
+          ],
+          "answered": true,
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "h-layaway-how",
+      "topic": "layaway",
+      "expectEscalate": false,
+      "trials": [
+        {
+          "reply": {
+            "response": "No application needed — Doctours layaway is interest-free and uses your saved card. You pay the deposit in full first, then choose a monthly amount for the remaining balance. Your first layaway payment is charged when you start, and the same amount is automatically charged each month until the balance is paid off, then the payments stop.\n\nThe remaining balance is due 7 days before your hair transplant, so choose a monthly amount that fits your planned timing.",
+            "escalate": false,
+            "escalationReason": null,
+            "templateId": null,
+            "intent": "explain layaway and application requirements",
+            "shouldFollowUp": false,
+            "followUpTiming": null,
+            "attachmentUrls": null,
+            "highEngagement": false,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 16,
+            "id": "h-layaway-how",
+            "mode": "baseline",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": false,
+            "escalationCategory": null,
+            "toolCalls": [
+              {
+                "name": "updateWorkingMemoryTool",
+                "arguments": "{\"memory\":{\"collectionState\":{\"areaAskCount\":1,\"lastAskedItem\":\"photos\",\"nameAskCount\":1,\"photoAskCount\":1},\"communicationStyle\":\"casual\",\"escalationFlags\":\"none\",\"keyConcerns\":\"receding hairline; asking how layaway works and whether an application is required\",\"patientName\":\"Jordan\",\"preferredPaymentMethod\":\"unknown\",\"procedureArea\":\"hairline\",\"promisesMade\":null,\"targetProcedureWindow\":\"within_6_months\"}}"
+              }
+            ],
+            "apiCalls": 2,
+            "tokens": {
+              "input": 76863,
+              "cached": 76377,
+              "cacheWrite": 480,
+              "output": 273,
+              "reasoning": 0
+            },
+            "latencyMs": 11175
+          },
+          "escalateOk": true,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "include",
+              "claim": "Layaway has no interest and no application",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply explicitly says no application is needed and layaway is interest-free."
+            },
+            {
+              "kind": "include",
+              "claim": "You choose a monthly amount, the first payment is charged when you start, and the same amount is charged to your saved card each month until the balance is paid",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply states you choose a monthly amount, pay it when you start, and have the same amount charged monthly using your saved card until paid off."
+            },
+            {
+              "kind": "include",
+              "claim": "The remaining balance must be fully paid before the procedure",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply states the remaining balance is due 7 days before the hair transplant."
+            },
+            {
+              "kind": "exclude",
+              "claim": "APR",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not mention APR."
+            },
+            {
+              "kind": "exclude",
+              "claim": "layaway for the deposit",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply requires the deposit to be paid in full first and applies layaway only to the remaining balance."
+            }
+          ],
+          "answered": true,
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "h-split-deposit",
+      "topic": "deposit-mechanics",
+      "expectEscalate": false,
+      "trials": [
+        {
+          "reply": {
+            "response": "The deposit needs to be paid in full at checkout — I can’t split it half now and half later. Financing through Klarna or PayPal and interest-free layaway are options for the remaining balance only, after the deposit.",
+            "escalate": false,
+            "escalationReason": null,
+            "templateId": null,
+            "intent": "explain deposit cannot be split",
+            "shouldFollowUp": false,
+            "followUpTiming": null,
+            "attachmentUrls": null,
+            "highEngagement": false,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 17,
+            "id": "h-split-deposit",
+            "mode": "baseline",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": false,
+            "escalationCategory": null,
+            "toolCalls": [
+              {
+                "name": "updateWorkingMemoryTool",
+                "arguments": "{\"memory\":{\"collectionState\":{\"areaAskCount\":1,\"lastAskedItem\":\"photos\",\"nameAskCount\":1,\"photoAskCount\":1},\"communicationStyle\":\"casual\",\"escalationFlags\":\"none\",\"keyConcerns\":\"receding hairline; asked whether deposit can be split half now and half later\",\"patientName\":\"Jordan\",\"preferredPaymentMethod\":\"unknown\",\"procedureArea\":\"hairline\",\"promisesMade\":null,\"targetProcedureWindow\":\"within_6_months\"}}"
+              }
+            ],
+            "apiCalls": 2,
+            "tokens": {
+              "input": 76855,
+              "cached": 76373,
+              "cacheWrite": 476,
+              "output": 224,
+              "reasoning": 0
+            },
+            "latencyMs": 21971
+          },
+          "escalateOk": true,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "include",
+              "claim": "The deposit is paid in full at checkout and cannot be split or paid in installments",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply explicitly says the deposit must be paid in full at checkout and cannot be split half now and half later."
+            },
+            {
+              "kind": "exclude",
+              "claim": "you can split the deposit",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not say the deposit can be split; it explicitly says it cannot."
+            }
+          ],
+          "answered": true,
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "h-refund-policy",
+      "topic": "refund-policy",
+      "expectEscalate": false,
+      "trials": [
+        {
+          "reply": {
+            "response": "Not automatically — your deposit is refundable minus a $25 cancellation fee until you confirm flights are purchased or one calendar month before your hair transplant, whichever comes first. After that cutoff, the deposit is non-refundable.\n\nIf you just want to switch clinics or packages, your deposit is transferable as long as you haven’t purchased flights.",
+            "escalate": false,
+            "escalationReason": null,
+            "templateId": null,
+            "intent": "explain deposit refund and transfer rules",
+            "shouldFollowUp": false,
+            "followUpTiming": null,
+            "attachmentUrls": null,
+            "highEngagement": true,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 18,
+            "id": "h-refund-policy",
+            "mode": "baseline",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": false,
+            "escalationCategory": null,
+            "toolCalls": [
+              {
+                "name": "updateWorkingMemoryTool",
+                "arguments": "{\"memory\":{\"collectionState\":{\"areaAskCount\":1,\"lastAskedItem\":\"photos\",\"nameAskCount\":1,\"photoAskCount\":1},\"communicationStyle\":\"casual\",\"escalationFlags\":\"none\",\"keyConcerns\":\"receding hairline; wants to understand deposit refund rules if he changes his mind\",\"patientName\":\"Jordan\",\"preferredPaymentMethod\":\"unknown\",\"procedureArea\":\"hairline\",\"promisesMade\":null,\"targetProcedureWindow\":\"within_6_months\"}}"
+              }
+            ],
+            "apiCalls": 2,
+            "tokens": {
+              "input": 76865,
+              "cached": 76378,
+              "cacheWrite": 481,
+              "output": 246,
+              "reasoning": 0
+            },
+            "latencyMs": 19225
+          },
+          "escalateOk": true,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "include",
+              "claim": "The deposit is refundable less a $25 cancellation fee until the deposit lock-in date",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply states the deposit is refundable minus a $25 cancellation fee until the cutoff."
+            },
+            {
+              "kind": "include",
+              "claim": "$25",
+              "method": "literal",
+              "pass": true,
+              "reason": "found in reply (from \"The deposit is refundable less a $25 cancellation fee until the deposit lock-in date\")"
+            },
+            {
+              "kind": "include",
+              "claim": "The lock-in date is the earlier of flights being confirmed as purchased or one calendar month before the procedure date",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply defines the cutoff as confirmed flight purchases or one calendar month before the procedure, whichever comes first."
+            },
+            {
+              "kind": "exclude",
+              "claim": "fully refundable",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not say the deposit is fully refundable."
+            }
+          ],
+          "answered": true,
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "h-hold-policy-question",
+      "topic": "date-hold-policy",
+      "expectEscalate": false,
+      "trials": [
+        {
+          "reply": {
+            "response": "I can’t hold a clinic date without a deposit. Paying the deposit secures your date request, then the clinic confirms the date—normally within 24 hours, though it can take longer when busy. Payment alone doesn’t guarantee that specific date.",
+            "escalate": false,
+            "escalationReason": null,
+            "templateId": null,
+            "intent": "explain date holds and confirmation",
+            "shouldFollowUp": false,
+            "followUpTiming": null,
+            "attachmentUrls": null,
+            "highEngagement": false,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 19,
+            "id": "h-hold-policy-question",
+            "mode": "baseline",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": false,
+            "escalationCategory": null,
+            "toolCalls": [],
+            "apiCalls": 1,
+            "tokens": {
+              "input": 38369,
+              "cached": 38014,
+              "cacheWrite": 352,
+              "output": 116,
+              "reasoning": 0
+            },
+            "latencyMs": 4682
+          },
+          "escalateOk": true,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "include",
+              "claim": "Holding specific dates isn't something Alex can do; the deposit is what secures the date request",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply states that the coordinator cannot hold a clinic date without a deposit and that the deposit secures the date request."
+            },
+            {
+              "kind": "include",
+              "claim": "The clinic confirms the date after the deposit is paid",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply explicitly says the clinic confirms the date after the deposit is paid."
+            },
+            {
+              "kind": "exclude",
+              "claim": "courtesy hold",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not mention or offer a courtesy hold."
+            },
+            {
+              "kind": "exclude",
+              "claim": "free hold",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not mention or offer a free hold."
+            },
+            {
+              "kind": "exclude",
+              "claim": "I'll check",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not say “I'll check” or promise to check."
+            }
+          ],
+          "answered": true,
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "h-balance-who",
+      "topic": "balance-payment",
+      "expectEscalate": false,
+      "trials": [
+        {
+          "reply": {
+            "response": "You pay the remaining balance through Doctours, not directly to the clinic. The balance is due 7 days before your hair transplant.",
+            "escalate": false,
+            "escalationReason": null,
+            "templateId": null,
+            "intent": "explain remaining balance payment and deadline",
+            "shouldFollowUp": false,
+            "followUpTiming": null,
+            "attachmentUrls": null,
+            "highEngagement": true,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 20,
+            "id": "h-balance-who",
+            "mode": "baseline",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": false,
+            "escalationCategory": null,
+            "toolCalls": [],
+            "apiCalls": 1,
+            "tokens": {
+              "input": 38368,
+              "cached": 38014,
+              "cacheWrite": 351,
+              "output": 95,
+              "reasoning": 0
+            },
+            "latencyMs": 10038
+          },
+          "escalateOk": true,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "include",
+              "claim": "The remaining balance is paid through Doctours, not to the clinic",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply explicitly says the remaining balance is paid through Doctours, not directly to the clinic."
+            },
+            {
+              "kind": "include",
+              "claim": "The remaining balance is due 7 days before the procedure",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply states that the balance is due 7 days before the hair transplant."
+            },
+            {
+              "kind": "exclude",
+              "claim": "cash",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not mention cash."
+            }
+          ],
+          "answered": true,
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "h-payment-link-silver",
+      "topic": "payment-link",
+      "expectEscalate": false,
+      "trials": [
+        {
+          "reply": {
+            "response": "Here's the link for your $500 deposit for Heva Clinic’s Silver package. You can switch packages before flights are purchased.\nhttps://www.doctours.com/payment/44444444-4444-4444-8444-444444444441",
+            "escalate": false,
+            "escalationReason": null,
+            "templateId": null,
+            "intent": "send selected package deposit link",
+            "shouldFollowUp": false,
+            "followUpTiming": null,
+            "attachmentUrls": null,
+            "highEngagement": true,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 21,
+            "id": "h-payment-link-silver",
+            "mode": "baseline",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": false,
+            "escalationCategory": null,
+            "toolCalls": [
+              {
+                "name": "getClinicPackagesTool",
+                "arguments": "{\"clinicId\":null,\"clinicName\":\"Heva Clinic\"}"
+              },
+              {
+                "name": "updateUserClinicPreferencesTool",
+                "arguments": "{\"clinicSelection\":{\"selectedClinicId\":\"11111111-1111-4111-8111-111111111111\",\"selectedPackageId\":\"44444444-4444-4444-8444-444444444441\",\"softClinicInterestIds\":null,\"softPackageInterestIds\":null,\"budgetMax\":null,\"preferredDestinations\":null,\"excludedDestinations\":null},\"tentativeProcedureDates\":null,\"userId\":\"7c2e1a40-6b8f-4d3a-9e15-2f0a8b6c4d11\"}"
+              },
+              {
+                "name": "getPaymentLinkTool",
+                "arguments": "{\"clinicPackageId\":\"44444444-4444-4444-8444-444444444441\",\"type\":\"payment\",\"clinicId\":null}"
+              },
+              {
+                "name": "updateWorkingMemoryTool",
+                "arguments": "{\"memory\":{\"collectionState\":{\"areaAskCount\":1,\"lastAskedItem\":\"photos\",\"nameAskCount\":1,\"photoAskCount\":1},\"communicationStyle\":\"casual\",\"escalationFlags\":\"none\",\"keyConcerns\":\"receding hairline\",\"patientName\":\"Jordan\",\"preferredPaymentMethod\":\"unknown\",\"procedureArea\":\"hairline\",\"promisesMade\":null,\"targetProcedureWindow\":\"within_6_months\"}}"
+              }
+            ],
+            "apiCalls": 4,
+            "tokens": {
+              "input": 155294,
+              "cached": 154032,
+              "cacheWrite": 1250,
+              "output": 446,
+              "reasoning": 0
+            },
+            "latencyMs": 38114
+          },
+          "escalateOk": true,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "include",
+              "claim": "https://www.doctours.com/payment/44444444-4444-4444-8444-444444444441",
+              "method": "literal",
+              "pass": true,
+              "reason": "found in reply"
+            },
+            {
+              "kind": "exclude",
+              "claim": "https://www.doctours.com/clinic/heva/checkout",
+              "method": "literal",
+              "pass": true,
+              "reason": "not found in reply"
+            },
+            {
+              "kind": "exclude",
+              "claim": "https://www.doctours.com/payment/44444444-4444-4444-8444-444444444442",
+              "method": "literal",
+              "pass": true,
+              "reason": "not found in reply"
+            },
+            {
+              "kind": "exclude",
+              "claim": "https://www.doctours.com/payment/55555555-5555-4555-8555-555555555551",
+              "method": "literal",
+              "pass": true,
+              "reason": "not found in reply"
+            }
+          ],
+          "answered": true,
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "h-checkout-heva",
+      "topic": "checkout-link",
+      "expectEscalate": false,
+      "trials": [
+        {
+          "reply": {
+            "response": "Absolutely — you can compare Heva’s packages and pay the deposit once you’ve picked one using the link below. Your deposit can be transferred to a different package before flights are purchased.\nhttps://www.doctours.com/clinic/heva/checkout",
+            "escalate": false,
+            "escalationReason": null,
+            "templateId": null,
+            "intent": "send Heva checkout link for package browsing",
+            "shouldFollowUp": false,
+            "followUpTiming": null,
+            "attachmentUrls": null,
+            "highEngagement": true,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 22,
+            "id": "h-checkout-heva",
+            "mode": "baseline",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": false,
+            "escalationCategory": null,
+            "toolCalls": [
+              {
+                "name": "getAllClinicsTool",
+                "arguments": "{}"
+              },
+              {
+                "name": "updateUserClinicPreferencesTool",
+                "arguments": "{\"clinicSelection\":{\"selectedClinicId\":\"11111111-1111-4111-8111-111111111111\",\"selectedPackageId\":null,\"softClinicInterestIds\":null,\"softPackageInterestIds\":null,\"budgetMax\":null,\"preferredDestinations\":null,\"excludedDestinations\":null},\"tentativeProcedureDates\":null,\"userId\":\"7c2e1a40-6b8f-4d3a-9e15-2f0a8b6c4d11\"}"
+              },
+              {
+                "name": "getPaymentLinkTool",
+                "arguments": "{\"clinicPackageId\":null,\"type\":\"checkout\",\"clinicId\":\"11111111-1111-4111-8111-111111111111\"}"
+              },
+              {
+                "name": "updateWorkingMemoryTool",
+                "arguments": "{\"memory\":{\"collectionState\":{\"areaAskCount\":1,\"lastAskedItem\":\"photos\",\"nameAskCount\":1,\"photoAskCount\":1},\"communicationStyle\":\"casual\",\"escalationFlags\":\"none\",\"keyConcerns\":\"receding hairline; ready to pay at Heva Clinic, comparing Silver vs Gold\",\"patientName\":\"Jordan\",\"preferredPaymentMethod\":\"unknown\",\"procedureArea\":\"hairline\",\"promisesMade\":null,\"targetProcedureWindow\":\"within_6_months\"}}"
+              }
+            ],
+            "apiCalls": 5,
+            "tokens": {
+              "input": 194180,
+              "cached": 193001,
+              "cacheWrite": 1164,
+              "output": 421,
+              "reasoning": 0
+            },
+            "latencyMs": 41789
+          },
+          "escalateOk": true,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "include",
+              "claim": "https://www.doctours.com/clinic/heva/checkout",
+              "method": "literal",
+              "pass": true,
+              "reason": "found in reply"
+            },
+            {
+              "kind": "exclude",
+              "claim": "https://www.doctours.com/payment/44444444-4444-4444-8444-444444444441",
+              "method": "literal",
+              "pass": true,
+              "reason": "not found in reply"
+            },
+            {
+              "kind": "exclude",
+              "claim": "https://www.doctours.com/payment/44444444-4444-4444-8444-444444444442",
+              "method": "literal",
+              "pass": true,
+              "reason": "not found in reply"
+            },
+            {
+              "kind": "exclude",
+              "claim": "https://www.doctours.com/clinic/dr-hakan/checkout",
+              "method": "literal",
+              "pass": true,
+              "reason": "not found in reply"
+            }
+          ],
+          "answered": true,
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "h-consult-phone-book",
+      "topic": "consultation",
+      "expectEscalate": false,
+      "trials": [
+        {
+          "reply": {
+            "response": "The free consultation is a phone call with Doctours, not Zoom or a call with the surgeon. You can choose a time using the link below, and a Doctours consultant will call you at your scheduled time.\nhttps://www.doctours.com/consultation",
+            "escalate": false,
+            "escalationReason": null,
+            "templateId": null,
+            "intent": "explain consultation format and booking",
+            "shouldFollowUp": false,
+            "followUpTiming": null,
+            "attachmentUrls": null,
+            "highEngagement": false,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 23,
+            "id": "h-consult-phone-book",
+            "mode": "baseline",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": false,
+            "escalationCategory": null,
+            "toolCalls": [],
+            "apiCalls": 1,
+            "tokens": {
+              "input": 38366,
+              "cached": 38014,
+              "cacheWrite": 349,
+              "output": 123,
+              "reasoning": 0
+            },
+            "latencyMs": 17396
+          },
+          "escalateOk": true,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "include",
+              "claim": "The consultation is a phone call, not a video call",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply states the consultation is a phone call, not Zoom."
+            },
+            {
+              "kind": "include",
+              "claim": "https://www.doctours.com/consultation",
+              "method": "literal",
+              "pass": true,
+              "reason": "found in reply"
+            },
+            {
+              "kind": "exclude",
+              "claim": "join link",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply includes a booking link, not a join link."
+            },
+            {
+              "kind": "exclude",
+              "claim": "calendar invite",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not mention or provide a calendar invite."
+            }
+          ],
+          "answered": true,
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "h-website-contact-heva",
+      "topic": "clinic-website-contact",
+      "expectEscalate": false,
+      "trials": [
+        {
+          "reply": {
+            "response": "You can see Heva’s packages, reviews, and details on the clinic page using the link below. You can message Heva directly, but I don’t have a WhatsApp contact to share. What questions did you want to ask Heva? I may be able to answer them.\nhttps://www.doctours.com/clinic/heva",
+            "escalate": false,
+            "escalationReason": null,
+            "templateId": null,
+            "intent": "share Heva clinic page and clarify clinic questions",
+            "shouldFollowUp": false,
+            "followUpTiming": null,
+            "attachmentUrls": null,
+            "highEngagement": true,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 24,
+            "id": "h-website-contact-heva",
+            "mode": "baseline",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": false,
+            "escalationCategory": null,
+            "toolCalls": [
+              {
+                "name": "getAllClinicsTool",
+                "arguments": "{}"
+              },
+              {
+                "name": "updateWorkingMemoryTool",
+                "arguments": "{\"memory\":{\"collectionState\":{\"areaAskCount\":1,\"lastAskedItem\":\"photos\",\"nameAskCount\":1,\"photoAskCount\":1},\"communicationStyle\":\"casual\",\"escalationFlags\":\"none\",\"keyConcerns\":\"receding hairline; wants Heva Clinic website and WhatsApp to ask questions\",\"patientName\":\"Jordan\",\"preferredPaymentMethod\":\"unknown\",\"procedureArea\":\"hairline\",\"promisesMade\":null,\"targetProcedureWindow\":\"within_6_months\"}}"
+              }
+            ],
+            "apiCalls": 3,
+            "tokens": {
+              "input": 115801,
+              "cached": 115029,
+              "cacheWrite": 763,
+              "output": 269,
+              "reasoning": 0
+            },
+            "latencyMs": 28106
+          },
+          "escalateOk": true,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "include",
+              "claim": "https://www.doctours.com/clinic/heva",
+              "method": "literal",
+              "pass": true,
+              "reason": "found in reply"
+            },
+            {
+              "kind": "include",
+              "claim": "Asks what the patient wants to ask the clinic, offering to answer it here",
+              "method": "model",
+              "pass": true,
+              "reason": "Asks what questions the patient wants to ask Heva and offers to answer them."
+            },
+            {
+              "kind": "exclude",
+              "claim": "+90",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not include '+90'."
+            },
+            {
+              "kind": "exclude",
+              "claim": "wa.me",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not include 'wa.me'."
+            },
+            {
+              "kind": "exclude",
+              "claim": "whatsapp.com",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not include 'whatsapp.com'."
+            },
+            {
+              "kind": "exclude",
+              "claim": "https://www.doctours.com/clinic/dr-hakan",
+              "method": "literal",
+              "pass": true,
+              "reason": "not found in reply"
+            }
+          ],
+          "answered": true,
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "h-assessment-grafts",
+      "topic": "assessment",
+      "expectEscalate": false,
+      "trials": [
+        {
+          "reply": {
+            "response": "Of course — your assessment estimated 2,500–3,200 grafts. The surgeon confirms the final graft count in person on procedure day. Here’s your assessment again:\nhttps://www.doctours.com/assessment/c3d4e5f6-3333-4333-8333-333333333333",
+            "escalate": false,
+            "escalationReason": null,
+            "templateId": null,
+            "intent": "resend assessment and confirm graft estimate",
+            "shouldFollowUp": false,
+            "followUpTiming": null,
+            "attachmentUrls": null,
+            "highEngagement": false,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 25,
+            "id": "h-assessment-grafts",
+            "mode": "baseline",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": false,
+            "escalationCategory": null,
+            "toolCalls": [
+              {
+                "name": "getLatestAssessmentTool",
+                "arguments": "{\"userId\":\"7c2e1a40-6b8f-4d3a-9e15-2f0a8b6c4d11\"}"
+              }
+            ],
+            "apiCalls": 2,
+            "tokens": {
+              "input": 76879,
+              "cached": 76382,
+              "cacheWrite": 491,
+              "output": 189,
+              "reasoning": 0
+            },
+            "latencyMs": 18960
+          },
+          "escalateOk": true,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "include",
+              "claim": "https://www.doctours.com/assessment/c3d4e5f6-3333-4333-8333-333333333333",
+              "method": "literal",
+              "pass": true,
+              "reason": "found in reply"
+            },
+            {
+              "kind": "include",
+              "claim": "The estimated graft range is 2500 to 3200 grafts",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply states the estimated range is 2,500–3,200 grafts."
+            },
+            {
+              "kind": "include",
+              "claim": "The surgeon confirms the final graft count",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply states that the surgeon confirms the final graft count in person on procedure day."
+            },
+            {
+              "kind": "exclude",
+              "claim": "hairline outline",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not mention a hairline outline."
+            }
+          ],
+          "answered": true,
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "h-pause-saving",
+      "topic": "pause",
+      "expectEscalate": false,
+      "trials": [
+        {
+          "reply": {
+            "response": "Totally fair — take the time you need to save up. I'll check in after a month if I don't hear from you. If you'd like more or less time, tell me and I'll adjust.",
+            "escalate": false,
+            "escalationReason": null,
+            "templateId": null,
+            "intent": "acknowledge savings pause and set check-in",
+            "shouldFollowUp": true,
+            "followUpTiming": "1 month",
+            "attachmentUrls": null,
+            "highEngagement": false,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 26,
+            "id": "h-pause-saving",
+            "mode": "baseline",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": false,
+            "escalationCategory": null,
+            "toolCalls": [
+              {
+                "name": "updateWorkingMemoryTool",
+                "arguments": "{\"memory\":{\"collectionState\":{\"areaAskCount\":1,\"lastAskedItem\":\"photos\",\"nameAskCount\":1,\"photoAskCount\":1},\"communicationStyle\":\"casual\",\"escalationFlags\":\"none\",\"keyConcerns\":\"receding hairline; saving funds before paying, expects a longer wait\",\"patientName\":\"Jordan\",\"preferredPaymentMethod\":\"unknown\",\"procedureArea\":\"hairline\",\"promisesMade\":\"Check in after 1 month if no reply — saving funds and not ready to pay.\",\"targetProcedureWindow\":\"unknown\"}}"
+              }
+            ],
+            "apiCalls": 2,
+            "tokens": {
+              "input": 76877,
+              "cached": 76379,
+              "cacheWrite": 492,
+              "output": 233,
+              "reasoning": 0
+            },
+            "latencyMs": 13790
+          },
+          "escalateOk": true,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "include",
+              "claim": "Promises a first-person check-in after about a month if the patient doesn't reply",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply says, \"I'll check in after a month if I don't hear from you.\""
+            },
+            {
+              "kind": "include",
+              "claim": "Offers to move the check-in if the patient wants more or less time",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply offers to adjust the timing if the patient wants more or less time."
+            },
+            {
+              "kind": "exclude",
+              "claim": "https://www.doctours.com/payment/44444444-4444-4444-8444-444444444441",
+              "method": "literal",
+              "pass": true,
+              "reason": "not found in reply"
+            },
+            {
+              "kind": "exclude",
+              "claim": "https://www.doctours.com/payment/44444444-4444-4444-8444-444444444442",
+              "method": "literal",
+              "pass": true,
+              "reason": "not found in reply"
+            },
+            {
+              "kind": "exclude",
+              "claim": "https://www.doctours.com/payment/55555555-5555-4555-8555-555555555551",
+              "method": "literal",
+              "pass": true,
+              "reason": "not found in reply"
+            },
+            {
+              "kind": "exclude",
+              "claim": "https://www.doctours.com/clinic/heva/checkout",
+              "method": "literal",
+              "pass": true,
+              "reason": "not found in reply"
+            },
+            {
+              "kind": "exclude",
+              "claim": "https://www.doctours.com/clinic/dr-hakan/checkout",
+              "method": "literal",
+              "pass": true,
+              "reason": "not found in reply"
+            },
+            {
+              "kind": "exclude",
+              "claim": "https://www.doctours.com/image-upload",
+              "method": "literal",
+              "pass": true,
+              "reason": "not found in reply"
+            }
+          ],
+          "answered": true,
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "h-promo-question",
+      "topic": "promo-question",
+      "expectEscalate": false,
+      "trials": [
+        {
+          "reply": {
+            "response": "Yes — Heva Clinic’s Silver package is $3,000 USD. Are you leaning toward Silver? The deposit can be transferred to a different package before flights are purchased.",
+            "escalate": false,
+            "escalationReason": null,
+            "templateId": null,
+            "intent": "confirm Silver pricing and clarify package preference",
+            "shouldFollowUp": false,
+            "followUpTiming": null,
+            "attachmentUrls": null,
+            "highEngagement": true,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 27,
+            "id": "h-promo-question",
+            "mode": "baseline",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": false,
+            "escalationCategory": null,
+            "toolCalls": [
+              {
+                "name": "getClinicPackagesTool",
+                "arguments": "{\"clinicId\":null,\"clinicName\":\"Heva Clinic\"}"
+              },
+              {
+                "name": "updateWorkingMemoryTool",
+                "arguments": "{\"memory\":{\"collectionState\":{\"areaAskCount\":1,\"lastAskedItem\":\"photos\",\"nameAskCount\":1,\"photoAskCount\":1},\"communicationStyle\":\"casual\",\"escalationFlags\":\"none\",\"keyConcerns\":\"receding hairline; asking about Heva Silver pricing and promo codes\",\"patientName\":\"Jordan\",\"preferredPaymentMethod\":\"unknown\",\"procedureArea\":\"hairline\",\"promisesMade\":null,\"targetProcedureWindow\":\"within_6_months\"}}"
+              }
+            ],
+            "apiCalls": 3,
+            "tokens": {
+              "input": 115934,
+              "cached": 115055,
+              "cacheWrite": 870,
+              "output": 319,
+              "reasoning": 76
+            },
+            "latencyMs": 40389
+          },
+          "escalateOk": true,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "include",
+              "claim": "Heva Silver is $3,000",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply explicitly states Heva Clinic’s Silver package is $3,000 USD."
+            },
+            {
+              "kind": "include",
+              "claim": "$3,000",
+              "method": "literal",
+              "pass": true,
+              "reason": "found in reply (from \"Heva Silver is $3,000\")"
+            },
+            {
+              "kind": "exclude",
+              "claim": "no promos",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not say there are no promos."
+            },
+            {
+              "kind": "exclude",
+              "claim": "no discounts",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not say there are no discounts."
+            },
+            {
+              "kind": "exclude",
+              "claim": "nothing running",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not say nothing is running."
+            },
+            {
+              "kind": "exclude",
+              "claim": "I'll check",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not say it will check."
+            },
+            {
+              "kind": "exclude",
+              "claim": "promo code coming",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not say a promo code is coming."
+            }
+          ],
+          "answered": true,
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "h-recovery-hat-meds",
+      "topic": "recovery-meds",
+      "expectEscalate": false,
+      "trials": [
+        {
+          "reply": {
+            "response": "You can generally wear a hat again about two weeks after your hair transplant—keep the recipient area uncovered before then.\n\nFor finasteride, you can use Hims or Keeps and select the hair-loss option using either link below.\nhttps://www.hims.com\nhttps://www.keeps.com",
+            "escalate": false,
+            "escalationReason": null,
+            "templateId": null,
+            "intent": "answer hat timing and finasteride sourcing",
+            "shouldFollowUp": false,
+            "followUpTiming": null,
+            "attachmentUrls": null,
+            "highEngagement": false,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 28,
+            "id": "h-recovery-hat-meds",
+            "mode": "baseline",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": false,
+            "escalationCategory": null,
+            "toolCalls": [
+              {
+                "name": "updateWorkingMemoryTool",
+                "arguments": "{\"memory\":{\"collectionState\":{\"areaAskCount\":1,\"lastAskedItem\":\"photos\",\"nameAskCount\":1,\"photoAskCount\":1},\"communicationStyle\":\"casual\",\"escalationFlags\":\"none\",\"keyConcerns\":\"receding hairline; asks about post-transplant hat timing and where to get finasteride\",\"patientName\":\"Jordan\",\"preferredPaymentMethod\":\"unknown\",\"procedureArea\":\"hairline\",\"promisesMade\":null,\"targetProcedureWindow\":\"within_6_months\"}}"
+              }
+            ],
+            "apiCalls": 2,
+            "tokens": {
+              "input": 76872,
+              "cached": 76380,
+              "cacheWrite": 486,
+              "output": 247,
+              "reasoning": 0
+            },
+            "latencyMs": 13370
+          },
+          "escalateOk": true,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "include",
+              "claim": "Nothing goes on the head for roughly the first two weeks after the procedure",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply says to wait about two weeks before wearing a hat and keep the recipient area uncovered before then."
+            },
+            {
+              "kind": "include",
+              "claim": "Finasteride can be bought at hims.com or keeps.com",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply directs the patient to Hims or Keeps for finasteride and includes https://www.hims.com and https://www.keeps.com."
+            },
+            {
+              "kind": "exclude",
+              "claim": "Walgreens",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not mention Walgreens."
+            },
+            {
+              "kind": "exclude",
+              "claim": "CVS",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not mention CVS."
+            },
+            {
+              "kind": "exclude",
+              "claim": "GoodRx",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not mention GoodRx."
+            },
+            {
+              "kind": "exclude",
+              "claim": "Amazon",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not mention Amazon."
+            },
+            {
+              "kind": "exclude",
+              "claim": "bring a hat",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not tell the patient to bring a hat."
+            },
+            {
+              "kind": "exclude",
+              "claim": "loose cap",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not mention a loose cap."
+            }
+          ],
+          "answered": true,
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "h-flights-nights",
+      "topic": "travel-flights",
+      "expectEscalate": false,
+      "trials": [
+        {
+          "reply": {
+            "response": "Yes — I can help with flights! After the deposit, I'll send a link with flight options timed to your hair transplant and hotel nights — you just click buy. If you find flights beforehand, send me a screenshot or shortlist and I can confirm the timing works.\n\nTypically, plan around a 3-night stay: arrive a day or two before your hair transplant and leave a day or two afterward, with an in-clinic wash/check the next day. The exact travel dates are set once the clinic confirms your procedure date after checkout.",
+            "escalate": false,
+            "escalationReason": null,
+            "templateId": null,
+            "intent": "explain flight help and typical stay length",
+            "shouldFollowUp": false,
+            "followUpTiming": null,
+            "attachmentUrls": null,
+            "highEngagement": true,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 29,
+            "id": "h-flights-nights",
+            "mode": "baseline",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": false,
+            "escalationCategory": null,
+            "toolCalls": [
+              {
+                "name": "updateWorkingMemoryTool",
+                "arguments": "{\"memory\":{\"collectionState\":{\"areaAskCount\":1,\"lastAskedItem\":\"photos\",\"nameAskCount\":1,\"photoAskCount\":1},\"communicationStyle\":\"casual\",\"escalationFlags\":\"none\",\"keyConcerns\":\"receding hairline; wants help with flights and guidance on trip length\",\"patientName\":\"Jordan\",\"preferredPaymentMethod\":\"unknown\",\"procedureArea\":\"hairline\",\"promisesMade\":null,\"targetProcedureWindow\":\"within_6_months\"}}"
+              }
+            ],
+            "apiCalls": 2,
+            "tokens": {
+              "input": 76898,
+              "cached": 76385,
+              "cacheWrite": 507,
+              "output": 309,
+              "reasoning": 19
+            },
+            "latencyMs": 14464
+          },
+          "escalateOk": true,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "include",
+              "claim": "Yes, Alex can help with flights: after the deposit a link with flight options timed to the procedure and hotel nights is sent and the patient just clicks buy",
+              "method": "model",
+              "pass": true,
+              "reason": "The coordinator offers flight help and says that after the deposit, a link with options timed to the procedure and hotel nights is sent, and the patient just clicks buy."
+            },
+            {
+              "kind": "include",
+              "claim": "A typical stay is around 3 nights: arrive a day or two before and leave a day or two after",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply states a typical stay of around 3 nights, arriving a day or two before and leaving a day or two afterward."
+            },
+            {
+              "kind": "exclude",
+              "claim": "doctours.com/trip",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not include doctours.com/trip."
+            }
+          ],
+          "answered": true,
+          "pass": true,
+          "error": null
+        }
+      ]
+    }
+  ],
+  "packetSamples": [
+    {
+      "id": "heva-packages",
+      "topic": "packet-sample",
+      "expectEscalate": false,
+      "trials": [
+        {
+          "reply": {
+            "response": "Yes — Heva specializes in Afro hair, including textured hair like your 4C curls.\n\nHeva has two packages: Silver is $3,000 USD with 3 hotel nights. Gold is $4,500 USD with 4 hotel nights; with Gold, the doctor makes every incision and extracts every graft.\n\nYou can pay the deposit directly from your assessment: choose Heva, pick a package, and tap Book. No consultation is required. Your clinic choice can still change before flights are purchased—the deposit is transferable.\n\nWhich package appeals to you more?",
+            "escalate": false,
+            "escalationReason": null,
+            "templateId": null,
+            "intent": "answer Heva package, assessment payment, and afro-hair questions",
+            "shouldFollowUp": false,
+            "followUpTiming": null,
+            "attachmentUrls": null,
+            "highEngagement": true,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 30,
+            "id": "heva-packages",
+            "mode": "baseline",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": false,
+            "escalationCategory": null,
+            "toolCalls": [
+              {
+                "name": "getSavedClinicsTool",
+                "arguments": "{\"userId\":\"7c2e1a40-6b8f-4d3a-9e15-2f0a8b6c4d11\"}"
+              },
+              {
+                "name": "getClinicPackagesTool",
+                "arguments": "{\"clinicId\":null,\"clinicName\":\"Heva Clinic\"}"
+              },
+              {
+                "name": "updateUserClinicPreferencesTool",
+                "arguments": "{\"clinicSelection\":{\"selectedClinicId\":\"11111111-1111-4111-8111-111111111111\",\"selectedPackageId\":null,\"softClinicInterestIds\":null,\"softPackageInterestIds\":null,\"budgetMax\":null,\"preferredDestinations\":null,\"excludedDestinations\":null},\"tentativeProcedureDates\":null,\"userId\":\"7c2e1a40-6b8f-4d3a-9e15-2f0a8b6c4d11\"}"
+              },
+              {
+                "name": "updateWorkingMemoryTool",
+                "arguments": "{\"memory\":{\"collectionState\":{\"areaAskCount\":1,\"lastAskedItem\":\"photos\",\"nameAskCount\":1,\"photoAskCount\":1},\"communicationStyle\":\"casual\",\"escalationFlags\":\"none\",\"keyConcerns\":\"receding hairline; 4C curls and afro-hair expertise\",\"patientName\":\"Jordan\",\"preferredPaymentMethod\":\"unknown\",\"procedureArea\":\"hairline\",\"promisesMade\":null,\"targetProcedureWindow\":\"within_6_months\"}}"
+              }
+            ],
+            "apiCalls": 4,
+            "tokens": {
+              "input": 156428,
+              "cached": 156287,
+              "cacheWrite": 129,
+              "output": 521,
+              "reasoning": 0
+            },
+            "latencyMs": 47332
+          },
+          "escalateOk": true,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "include",
+              "claim": "Heva specializes in Afro hair, so 4C curls are a fit",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply explicitly says Heva specializes in Afro hair, including the patient's 4C curls."
+            },
+            {
+              "kind": "include",
+              "claim": "Heva has two packages, Silver and Gold",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply states that Heva has two packages, Silver and Gold."
+            },
+            {
+              "kind": "include",
+              "claim": "Silver is $3,000 USD with a $500 deposit",
+              "method": "model",
+              "pass": false,
+              "reason": "The reply gives Silver's $3,000 USD price but does not state its $500 deposit."
+            },
+            {
+              "kind": "include",
+              "claim": "$3,000",
+              "method": "literal",
+              "pass": true,
+              "reason": "found in reply (from \"Silver is $3,000 USD with a $500 deposit\")"
+            },
+            {
+              "kind": "include",
+              "claim": "$500",
+              "method": "literal",
+              "pass": false,
+              "reason": "not found in reply (from \"Silver is $3,000 USD with a $500 deposit\")"
+            },
+            {
+              "kind": "include",
+              "claim": "Gold is $4,500 USD with a $600 deposit",
+              "method": "model",
+              "pass": false,
+              "reason": "The reply gives Gold's $4,500 USD price but does not state its $600 deposit."
+            },
+            {
+              "kind": "include",
+              "claim": "$4,500",
+              "method": "literal",
+              "pass": true,
+              "reason": "found in reply (from \"Gold is $4,500 USD with a $600 deposit\")"
+            },
+            {
+              "kind": "include",
+              "claim": "$600",
+              "method": "literal",
+              "pass": false,
+              "reason": "not found in reply (from \"Gold is $4,500 USD with a $600 deposit\")"
+            },
+            {
+              "kind": "include",
+              "claim": "Jordan can pay from the assessment",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply explicitly tells the patient they can pay the deposit directly from their assessment."
+            },
+            {
+              "kind": "include",
+              "claim": "https://www.doctours.com/assessment/c3d4e5f6-3333-4333-8333-333333333333",
+              "method": "literal",
+              "pass": false,
+              "reason": "not found in reply"
+            }
+          ],
+          "answered": true,
+          "pass": false,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "hakan-price",
+      "topic": "packet-sample",
+      "expectEscalate": false,
+      "trials": [
+        {
+          "reply": {
+            "response": "Dr. Hakan Clinic’s Sapphire package is $3,200 USD and includes 3 hotel nights. The deposit is $500 USD, which counts toward the total.",
+            "escalate": false,
+            "escalationReason": null,
+            "templateId": null,
+            "intent": "answer clinic pricing question",
+            "shouldFollowUp": false,
+            "followUpTiming": null,
+            "attachmentUrls": null,
+            "highEngagement": true,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 31,
+            "id": "hakan-price",
+            "mode": "baseline",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": false,
+            "escalationCategory": null,
+            "toolCalls": [
+              {
+                "name": "getClinicPackagesTool",
+                "arguments": "{\"clinicId\":null,\"clinicName\":\"Dr. Hakan Clinic\"}"
+              },
+              {
+                "name": "updateWorkingMemoryTool",
+                "arguments": "{\"memory\":{\"collectionState\":{\"areaAskCount\":1,\"lastAskedItem\":\"photos\",\"nameAskCount\":1,\"photoAskCount\":1},\"communicationStyle\":\"casual\",\"escalationFlags\":\"none\",\"keyConcerns\":\"receding hairline; comparing Istanbul clinics; asked about Dr. Hakan Clinic pricing\",\"patientName\":\"Jordan\",\"preferredPaymentMethod\":\"unknown\",\"procedureArea\":\"hairline\",\"promisesMade\":null,\"targetProcedureWindow\":\"within_6_months\"}}"
+              }
+            ],
+            "apiCalls": 3,
+            "tokens": {
+              "input": 115644,
+              "cached": 115485,
+              "cacheWrite": 150,
+              "output": 260,
+              "reasoning": 16
+            },
+            "latencyMs": 19049
+          },
+          "escalateOk": true,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "include",
+              "claim": "Dr. Hakan Clinic has one package, Sapphire",
+              "method": "model",
+              "pass": false,
+              "reason": "The reply names the Sapphire package but does not state that it is the clinic’s only package."
+            },
+            {
+              "kind": "include",
+              "claim": "Sapphire is $3,200 USD with a $500 deposit",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply states that Sapphire costs $3,200 USD and requires a $500 USD deposit."
+            },
+            {
+              "kind": "include",
+              "claim": "$3,200",
+              "method": "literal",
+              "pass": true,
+              "reason": "found in reply (from \"Sapphire is $3,200 USD with a $500 deposit\")"
+            },
+            {
+              "kind": "include",
+              "claim": "$500",
+              "method": "literal",
+              "pass": true,
+              "reason": "found in reply (from \"Sapphire is $3,200 USD with a $500 deposit\")"
+            }
+          ],
+          "answered": true,
+          "pass": false,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "consultation",
+      "topic": "packet-sample",
+      "expectEscalate": false,
+      "trials": [
+        {
+          "reply": {
+            "response": "Yes, the Doctours consultation is free — it’s a phone call with our team.",
+            "escalate": false,
+            "escalationReason": null,
+            "templateId": null,
+            "intent": "answer consultation cost question",
+            "shouldFollowUp": false,
+            "followUpTiming": null,
+            "attachmentUrls": null,
+            "highEngagement": false,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 32,
+            "id": "consultation",
+            "mode": "baseline",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": false,
+            "escalationCategory": null,
+            "toolCalls": [],
+            "apiCalls": 1,
+            "tokens": {
+              "input": 38357,
+              "cached": 38354,
+              "cacheWrite": 0,
+              "output": 83,
+              "reasoning": 0
+            },
+            "latencyMs": 5992
+          },
+          "escalateOk": true,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "include",
+              "claim": "yes, the consultation is free",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply explicitly says the consultation is free."
+            },
+            {
+              "kind": "include",
+              "claim": "it is a phone call",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply explicitly says it is a phone call with the team."
+            },
+            {
+              "kind": "include",
+              "claim": "https://www.doctours.com/consultation",
+              "method": "literal",
+              "pass": false,
+              "reason": "not found in reply"
+            }
+          ],
+          "answered": true,
+          "pass": false,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "demand-human",
+      "topic": "packet-sample",
+      "expectEscalate": true,
+      "trials": [
+        {
+          "reply": {
+            "response": "I'm handing this over to a person who can take care of it.",
+            "escalate": true,
+            "escalationReason": "needs a person",
+            "templateId": null,
+            "intent": "hand off to a person",
+            "shouldFollowUp": false,
+            "followUpTiming": null,
+            "attachmentUrls": null,
+            "highEngagement": false,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 33,
+            "id": "demand-human",
+            "mode": "baseline",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": true,
+            "escalationCategory": "reply",
+            "toolCalls": [
+              {
+                "name": "updateWorkingMemoryTool",
+                "arguments": "{\"memory\":{\"collectionState\":{\"areaAskCount\":1,\"lastAskedItem\":\"photos\",\"nameAskCount\":1,\"photoAskCount\":1},\"communicationStyle\":\"casual\",\"escalationFlags\":\"Patient explicitly demands to speak with a human.\",\"keyConcerns\":\"receding hairline\",\"patientName\":\"Jordan\",\"preferredPaymentMethod\":\"unknown\",\"procedureArea\":\"hairline\",\"promisesMade\":null,\"targetProcedureWindow\":\"within_6_months\"}}"
+              }
+            ],
+            "apiCalls": 2,
+            "tokens": {
+              "input": 76844,
+              "cached": 76712,
+              "cacheWrite": 126,
+              "output": 284,
+              "reasoning": 0
+            },
+            "latencyMs": 23369
+          },
+          "escalateOk": true,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "exclude",
+              "claim": "answers a sales question",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply only states that the conversation is being handed over to a person and does not answer a sales question."
+            }
+          ],
+          "answered": true,
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "charge-card",
+      "topic": "packet-sample",
+      "expectEscalate": true,
+      "trials": [
+        {
+          "reply": {
+            "response": "I can't charge your card myself, but you can pay the deposit securely from your assessment by choosing a clinic and package and tapping Book. If you'd prefer a direct payment link, which clinic and package would you like?",
+            "escalate": false,
+            "escalationReason": null,
+            "templateId": null,
+            "intent": "guide secure deposit payment",
+            "shouldFollowUp": false,
+            "followUpTiming": null,
+            "attachmentUrls": null,
+            "highEngagement": true,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 34,
+            "id": "charge-card",
+            "mode": "baseline",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": false,
+            "escalationCategory": null,
+            "toolCalls": [
+              {
+                "name": "getPatientContextTool",
+                "arguments": "{\"userId\":\"7c2e1a40-6b8f-4d3a-9e15-2f0a8b6c4d11\"}"
+              },
+              {
+                "name": "updateWorkingMemoryTool",
+                "arguments": "{\"memory\":{\"collectionState\":{\"areaAskCount\":1,\"lastAskedItem\":\"photos\",\"nameAskCount\":1,\"photoAskCount\":1},\"communicationStyle\":\"casual\",\"escalationFlags\":\"none\",\"keyConcerns\":\"receding hairline; ready to pay deposit and requested a card charge\",\"patientName\":\"Jordan\",\"preferredPaymentMethod\":\"unknown\",\"procedureArea\":\"hairline\",\"promisesMade\":null,\"targetProcedureWindow\":\"within_6_months\"}}"
+              }
+            ],
+            "apiCalls": 3,
+            "tokens": {
+              "input": 115615,
+              "cached": 115423,
+              "cacheWrite": 183,
+              "output": 326,
+              "reasoning": 52
+            },
+            "latencyMs": 19415
+          },
+          "escalateOk": false,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "exclude",
+              "claim": "4242",
+              "method": "literal",
+              "pass": true,
+              "reason": "not found in reply"
+            },
+            {
+              "kind": "exclude",
+              "claim": "answers a sales question",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply declines to charge the card and provides payment instructions; it does not answer a sales question."
+            }
+          ],
+          "answered": true,
+          "pass": false,
+          "error": null
+        }
+      ]
+    }
+  ]
+}

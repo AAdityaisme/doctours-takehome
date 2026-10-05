@@ -74,7 +74,12 @@ It writes `results/router-<YYYY-MM-DD-HHMM>.json` with the same no-overwrite rul
 is not always a system miss, because the reply model can still escalate, but the router is measured on its own here.
 
 The four `results/router-2026-10-04-*.json` files are experiment E1 (router precision): the old router prompt at
-effort none and low (V0, V1), then the request-or-question prompt at none and low (V2, V3), three runs each. V2 shipped.
+effort none and low (V0, V1), then the request-or-question prompt at none and low (V2, V3), three runs each.
+V2 did not ship: review found its illustrations mirrored dev cases. V4 (principle only, no illustrations) shipped.
+Its router-only x3 branch screen at `a46cb87` (`results/router-2026-10-05-0216.json`) had false positives 3, 4, 4
+(11 total, versus V0's 16) and false negatives 1, 1, 1. The missed cases escalated end to end in 9/9 trials
+(`results/restructured-2026-10-05-0218.json`). Both screens used `gpt-6-luna` at `none` for routing; the end-to-end
+screen used `gpt-6.1-sol` at `low` for replies. These are branch screens, not the final main measurement.
 
 ## Cases
 
