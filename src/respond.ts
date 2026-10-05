@@ -1,3 +1,4 @@
+import { nonRetryableApiError } from "./api-errors.ts";
 import type { ReasoningEffort } from "openai/resources/shared";
 import type {
   Response,
@@ -91,7 +92,7 @@ const escalatedMessage = (response: Response): unknown => {
 /**
  * One patient message through the Responses API: call tools until the model answers, then parse its
  * strict-schema `Reply` and post-process it. Stable content (tools, schema, system prompt) comes first so
- * the batch shares a cached prefix. Any failure is rethrown as a `TurnError` carrying the work done so far.
+ * the batch shares a cached prefix. Configuration errors propagate; other failures become a `TurnError` carrying the work done so far.
  * Restructured mode passes its developer messages as items, a fixed `tools` list with the per-message `allowed` names
  * (`tool_choice: allowed_tools`, so the tools prefix stays cache-stable) and a `cacheKey`. Its `loader` is an extra
  * tool whose output is instructions: the tools it returns are allowed from the next round on, and its text never
@@ -198,6 +199,7 @@ export async function respond(options: {
     }
     throw new Error(`no reply after ${MAX_ROUNDS} tool rounds`);
   } catch (error) {
+    if (nonRetryableApiError(error)) throw error;
     throw new TurnError(error, progress);
   }
 }

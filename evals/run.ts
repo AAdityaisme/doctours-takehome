@@ -2,6 +2,7 @@ import { execFileSync } from "node:child_process";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { parseArgs } from "node:util";
 import OpenAI from "openai";
+import { nonRetryableApiError } from "../src/api-errors.ts";
 import { MODES, replyAll, type Mode } from "../src/cli.ts";
 import type { Reply } from "../src/reply.ts";
 import type { Client, Usage } from "../src/respond.ts";
@@ -114,6 +115,7 @@ async function runOnce(cases: Case[], settings: Settings) {
       }
       return graded.verdicts;
     } catch (error) {
+      if (nonRetryableApiError(error)) throw error;
       graderErrors++;
       console.error(`grader failed on ${c.id}: ${error instanceof Error ? error.message : String(error)}`);
       return null;

@@ -1,3 +1,4 @@
+import { nonRetryableApiError } from "./api-errors.ts";
 import type { ReasoningEffort } from "openai/resources/shared";
 import { ROUTER_SYSTEM, SKILLS } from "./prompts.ts";
 import { userMessage } from "./prompt.ts";
@@ -40,8 +41,8 @@ export interface Routed {
 
 /**
  * SPEC step 1: one strict-JSON call that names the intent, the skills this message needs and whether a person
- * must take over. No tools. Never throws: a failure comes back as `route: null` with its error and any usage the
- * API already billed, so the caller can still reply and trace it.
+ * must take over. No tools. Configuration errors throw; other failures return `route: null`
+ * with the error and any billed usage, so the caller can still reply and trace it.
  */
 export async function route(client: Client, text: string, options: { model: string; effort: string }): Promise<Routed> {
   const started = performance.now();
@@ -80,6 +81,7 @@ export async function route(client: Client, text: string, options: { model: stri
       null,
     );
   } catch (error) {
+    if (nonRetryableApiError(error)) throw error;
     return done(null, error instanceof Error ? error.message : String(error));
   }
 }

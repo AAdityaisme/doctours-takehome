@@ -1,3 +1,4 @@
+import OpenAI from "openai";
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import type { Response, ResponseCreateParamsNonStreaming } from "openai/resources/responses/responses";
@@ -63,4 +64,11 @@ test("router eval: sends each case through route() and scores FP, FN, category a
   assert.equal(s.usage.input, 5000);
   // 5 billed calls (the two failures threw before any usage) x (200 uncached x $0.10 + 800 cached x $0.01 + 20 output x $0.50) per 1M tokens
   assert.equal(s.cost?.toFixed(6), (5 * (200 * 0.1 + 800 * 0.01 + 20 * 0.5) / 1e6).toFixed(6));
+});
+
+test("router eval stops on configuration errors instead of scoring them", async () => {
+  const error = new OpenAI.AuthenticationError(401, { message: "bad key" }, undefined, new Headers());
+  await assert.rejects(routeCases([caseOf("x", "hello", false)], {
+    client: { responses: { create: async () => { throw error; } } }, model: "router", effort: "none", concurrency: 1,
+  }), (caught) => caught === error);
 });

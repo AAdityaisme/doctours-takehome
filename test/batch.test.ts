@@ -1,3 +1,4 @@
+import OpenAI from "openai";
 import assert from "node:assert/strict";
 import { execFileSync, spawnSync } from "node:child_process";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
@@ -222,5 +223,66 @@ test("the CLI client retries 8 times, CONCURRENCY caps messages in flight, and a
     const result = run({ CONCURRENCY: bad });
     assert.equal(result.status, 1);
     assert.match(result.stderr, /CONCURRENCY must be a positive integer/);
+  }
+});
+
+for (const status of [400, 401, 403, 404, 429, 500]) {
+  for (const stage of ["router", "reply"]) {
+    test(`${status} from ${stage}: configuration errors stop the batch; transient errors hand off`, async () => {
+      const error = OpenAI.APIError.generate(status, { error: { message: "test API failure" } }, undefined, new Headers());
+      let calls = 0;
+      const client = fake(async (body) => {
+        calls++;
+        if (stage === "reply" && body.text?.format?.type === "json_schema" && body.text.format.name === "Route") {
+          return { ...final({}), output_text: JSON.stringify({ intent: "x", skills: [], escalation: null }) };
+        }
+        throw error;
+      });
+      const items = [{ text: "first" }, { text: "second" }];
+      const settings: BatchOptions = { ...options(client), mode: "restructured", router: { model: "router", effort: "none" }, concurrency: 1 };
+      if (status < 429) {
+        await assert.rejects(replyAll(items, settings), (caught) => caught === error);
+        assert.equal(calls, stage === "router" ? 1 : 2);
+      } else {
+        const replies = await replyAll(items, settings);
+        assert.deepEqual(replies.map((r) => r.escalationReason), ["system error", "system error"]);
+        assert.equal(calls, 4);
+      }
+    });
+  }
+}
+
+test("a throwing trace sink preserves replies in order, including model and failure handoffs", async (t) => {
+  const client = fake(async (body) => {
+    const text = patientText(body);
+    if (text === "fail") throw new Error("temporary failure");
+    return final({ response: text, escalate: text === "human" });
+  });
+  const items = ["hello", "human", "fail", "bye"].map((text) => ({ text }));
+  const expected = await replyAll(items, options(client));
+  const errors: string[] = [];
+  t.mock.method(console, "error", (...args: unknown[]) => errors.push(args.join(" ")));
+  const actual = await replyAll(items, options(client, () => { throw new Error("disk full"); }));
+  assert.deepEqual(actual, expected);
+  assert.equal(errors.filter((e) => e.includes("trace write failed: disk full")).length, 1);
+});
+
+test("CLI API configuration errors exit nonzero with one stderr line and empty stdout", () => {
+  const cli = fileURLToPath(new URL("../src/cli.ts", import.meta.url));
+  for (const status of [400, 401, 403, 404]) {
+    const stub = `
+      import OpenAI from ${JSON.stringify(import.meta.resolve("openai"))};
+      import { Responses } from ${JSON.stringify(import.meta.resolve("openai/resources/responses/responses"))};
+      Responses.prototype.create = async function () {
+        throw OpenAI.APIError.generate(${status}, { error: { message: "bad configuration" } }, undefined, new Headers());
+      };`;
+    const result = spawnSync(process.execPath, ["--import", `data:text/javascript,${encodeURIComponent(stub)}`, cli], {
+      input: '[{"text":"hello"},{"text":"bye"}]', encoding: "utf8",
+      env: { ...process.env, OPENAI_API_KEY: "dummy", CONCURRENCY: "1" },
+    });
+    assert.equal(result.status, 1);
+    assert.equal(result.stdout, "");
+    assert.equal(result.stderr.trim().split("\n").length, 1);
+    assert.match(result.stderr, new RegExp(`OpenAI ${status}:.*bad configuration.*ROUTER_MODEL / REPLY_MODEL`));
   }
 });
