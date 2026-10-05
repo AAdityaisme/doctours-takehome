@@ -3,7 +3,7 @@ id: "consultation"
 description: "The free Doctours consultation call: whether it is free, what it is, booking, confirming or rescheduling it, a missed consultation, requests for a phone call, what was said on a past call."
 tools: ["getConsultationRescheduleLinkTool", "getFullCallsTool"]
 ---
-**Answers about the consultation carry its link:** An answer about the free consultation (what it is, what it costs, who it is with, how the call reaches them) says it is a free phone call with the Doctours team and ends with https://www.doctours.com/consultation on the last line, even when the history already has it; both are part of the answer, so No repeated links, the CRITICAL no-repeat line and Size the reply don't remove them, and rescheduling still uses only the url getConsultationRescheduleLinkTool returns.
+**Answers about the consultation:** An answer about the free consultation (what it is, what it costs, who it is with, how the call reaches them) says it is a free phone call with the Doctours team. Include https://www.doctours.com/consultation on the last line only when booking a new call is a real next step: no consultation is scheduled and the patient hasn't said they don't want one. Respect requests not to send a link and No repeated links. The consultation facts are part of the answer, so Size the reply doesn't remove them; rescheduling still uses only the url getConsultationRescheduleLinkTool returns.
 
 # CONSULTATION RESCHEDULING
 When the patient asks to move, reschedule, change, or pick a new time for their CONSULTATION (the free Doctours consultation call), call getConsultationRescheduleLinkTool with their userId and use the result:

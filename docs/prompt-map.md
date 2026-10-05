@@ -12,8 +12,8 @@ recorded deletion. Text was moved, not rewritten: the only changed lines are lis
 | What | Size |
 |------|------|
 | Original prompt, L764-1554 | 164,678 chars, ~41,169 tokens |
-| `core.md` alone | 38,890 chars, ~9,722 tokens |
-| Core + largest stage (`PRE_CLINICAL_SENT`) + two largest skills (`financing`, `packages-and-pricing`) | 79,110 chars, ~19,777 tokens |
+| `core.md` alone | 39,050 chars, ~9,762 tokens |
+| Core + largest stage (`PRE_CLINICAL_SENT`) + two largest skills (`financing`, `packages-and-pricing`) | 79,270 chars, ~19,817 tokens |
 
 Sizes count the files as written, before `{{NAME}}` placeholders are filled and without front matter. Filling adds
 the same per-patient values (transcript, summary, memory) to both the original and the split version.
@@ -52,7 +52,7 @@ skill's tools (`tool_choice: allowed_tools`); every definition is sent on every 
 | `discounts-and-quotes` | Discounts, promo codes, coupons, a price seen in an ad or screenshot, or a price a clinic quoted the patient directly. | `getClinicPackagesTool` | 1038-1042, 1322, 1523-1529 | 2,596 |
 | `deposit-and-payment` | Paying and booking: how or where to pay, the deposit and what it secures, a payment or checkout link, ready to book a chosen clinic or package, refund/transfer/price-lock terms, when the balance is due, cash, a deposit already paid to a clinic. | `getPaymentLinkTool`, `getClinicPackagesTool`, `getAllClinicsTool`, `updateUserClinicPreferencesTool` | 939, 1026-1029, 1030-1037, 1308-1321, 1419, 1439, 1441, 1444, 1446-1449, 1465-1466 | 11,160 |
 | `financing` | Ways to pay beyond paying in full: financing, Klarna, PayPal, monthly payments, instalments, payment plans, layaway, health insurance, Medicare/Medicaid, HSA/FSA, CareCredit, Cherry. | none | 809-820, 821-841, 842-861, 940-944, 1440, 1442-1443, 1445, 1450-1451 | 14,656 |
-| `consultation` | The free Doctours consultation call: whether it is free, what it is, booking, confirming or rescheduling it, a missed consultation, requests for a phone call, what was said on a past call. | `getConsultationRescheduleLinkTool`, `getFullCallsTool` | 946, 1362-1368, 1406-1408, 1420-1421, 1453-1455, 1467-1470 | 3,994 |
+| `consultation` | The free Doctours consultation call: whether it is free, what it is, booking, confirming or rescheduling it, a missed consultation, requests for a phone call, what was said on a past call. | `getConsultationRescheduleLinkTool`, `getFullCallsTool` | 946, 1362-1368, 1406-1408, 1420-1421, 1453-1455, 1467-1470 | 4,087 |
 | `scheduling` | Procedure dates: which days a clinic or package operates, availability, holding or locking a date, busy season, when the patient plans to go (a month, season or date range), how the date gets confirmed. | `getClinicPackagesTool`, `updateUserClinicPreferencesTool` | 945, 1415, 1436-1438, 1457-1460 | 3,208 |
 | `travel` | Travel: flights and help finding them, which airport to fly into, airport transfers, drive times, when to arrive and how long to stay, passports and why we need one. | `getClinicPackagesTool` | 934-935, 948-949, 951-953, 978, 1397-1405, 1427-1429 | 7,363 |
 | `reversibility` | A clinic, package, date, add-on or deposit choice is being made or sent, or the patient hesitates over one ('what if I change my mind', 'is this final', 'not sure which'). | none | 1134-1169 | 5,534 |
@@ -135,7 +135,7 @@ skill's tools (`tool_choice: allowed_tools`); every definition is sent on every 
 | 983-988 | PACKAGE & CLINIC FACTS: examples (inclusion, cross-package, currency) | skill `packages-and-pricing` |  |
 | 989-990 | PACKAGE & CLINIC FACTS: example (hair type) | skill `clinics` |  |
 | 991-993 | GUIDELINES | core |  |
-| 994 | GUIDELINES: Size the reply | core (rewritten) | REWRITTEN (E4): the consultation example now keeps its booking link, see Edits. |
+| 994 | GUIDELINES: Size the reply | core (rewritten) | REWRITTEN (E4): the consultation example keeps its booking link only when booking a new call is a real next step, subject to No repeated links; see Edits. |
 | 995-1007 | GUIDELINES | core | Head-covering (L999) and assessment-turnaround (L1000) stay core: they can surface in any travel, photo or recovery reply. |
 | 1008-1015 | SPECIFICITY | core |  |
 | 1016-1018 | DATA COLLECTION | skill `intake` |  |
@@ -229,7 +229,7 @@ The prompt names six tools the packet never defines. Every reference is removed 
 | 970 | Same tool removed; 'both return' becomes 'it returns'. | call the packages tool for your stage (getClinicPackagesTool pre-deposit; getBookingPackageDetailsTool for booked patients): both return prices together with the clinic's currency | call the packages tool (getClinicPackagesTool): it returns prices together with the clinic's currency |
 | 971 | 'both packages tools' meant getClinicPackagesTool + the nonexistent getBookingPackageDetailsTool. | both packages tools return an **aiContext** string | getClinicPackagesTool returns an **aiContext** string |
 | 973 | 'packages tools' (plural) implied the nonexistent booked-tier tool. | packages tools return **standardHotels** | the packages tool returns **standardHotels** |
-| 994 | E4: "nothing else" on the consultation example contradicted the graded consultation link (L759); see Rule conflicts. | gets the answer in one-to-three lines and nothing else — | gets the answer in one-to-three lines and nothing else (for the consultation, that answer includes its booking link) — |
+| 994 | E4: "nothing else" on the consultation example contradicted the graded consultation link (L759) when booking a new call is a real next step; see Rule conflicts. | gets the answer in one-to-three lines and nothing else — | gets the answer in one-to-three lines and nothing else (for the consultation, that answer includes its booking link only when booking a new call is a real next step: no consultation is scheduled and the patient hasn't said they don't want one; No repeated links still applies) — |
 
 ### Deleted lines
 
@@ -262,7 +262,7 @@ not output fields, and went to `deposit-and-payment`.
   name the section a rule came from.
 - The ESCALATION section in core (new; the packet asks for it).
 - `prompts/router.md` (new).
-- Two completeness rules (E4), new text:
+- Four completeness rules (E4), new text:
   - Core, CONVERSATION AWARENESS, after No repeated links (L883): "A page you point to comes with its link".
     A reply that points the patient to their assessment, the consultation booking page or a payment/checkout page
     includes that page's URL from its source. Asking how to use one of those pages, or whether they can, counts as
@@ -272,9 +272,11 @@ not output fields, and went to `deposit-and-payment`.
   - Stage `PRE_CLINICAL_SENT`, after it: "A clinic's price covers all its packages". Asked what a clinic costs (not
     one named package), the reply gives every package `getClinicPackagesTool` returns for it, and says so when there
     is only one.
-  - Skill `consultation`, before CONSULTATION RESCHEDULING: "Answers about the consultation carry its link". An
-    answer about the free consultation says it is a free phone call with the Doctours team (L1453-1455) and ends
-    with the booking link (L1467), even when the history has it. Rescheduling still uses the tool's url (L1362-1368).
+  - Skill `consultation`, before CONSULTATION RESCHEDULING: "Answers about the consultation". An answer says it is
+    a free phone call with the Doctours team (L1453-1455). The booking link (L1467) goes on the last line only when
+    booking a new call is a real next step: no consultation is scheduled and the patient hasn't said they don't
+    want one. Requests not to send a link and No repeated links still apply. Rescheduling still uses the tool's
+    url (L1362-1368).
   - All say the added fact is part of the answer, so L994's one-to-three-line size and no-CTA rule still hold.
 
 ## Rule conflicts with a recorded winner
@@ -293,9 +295,11 @@ not output fields, and went to `deposit-and-payment`.
 - **Brevity and no repeated links vs the graded facts** (L994 "nothing else", L883 and L1549 no repeated URL, against
   the grading note L759, which requires the deposits, the assessment link and the consultation link): L759 wins,
   narrowly (packet defect 10). A reply that points to the assessment, the consultation booking page or a payment page
-  carries its link; a quoted price carries its deposit; an answer about the consultation carries its booking link
-  even if already sent. L994 is rewritten to agree (see Edits). Everywhere else L883, L994 and L1549 stand: a policy
-  answer with no page to open carries no link.
+  carries its link under L883's request exception; a quoted price carries its deposit. An answer about the
+  consultation says it is a free phone call with the Doctours team, with its booking link only when booking a new
+  call is a real next step: no consultation is scheduled and the patient hasn't said they don't want one. Requests
+  not to send a link and L883/L1549 still apply to consultation links. L994 is rewritten to agree (see Edits).
+  Everywhere else L883, L994 and L1549 stand: a policy answer with no page to open carries no link.
 
 ## Conflicts left as found (recorded, not resolved)
 - L902 ends "then give interim browse guidance"; L1428 says the flight-help line is the answer, "no need to name

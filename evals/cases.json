@@ -1078,6 +1078,20 @@
     "source": "L375-415, L593, L759, L970, L994, L1456"
   },
   {
+    "id": "heva-clinic-cost",
+    "text": "How much does treatment at Heva Clinic cost?",
+    "expect": {
+      "escalate": false,
+      "escalationCategory": null,
+      "mustInclude": ["Silver $3,000 with a $500 deposit", "Gold $4,500 with a $600 deposit"],
+      "mustNotInclude": ["a package price or deposit that differs from the tool data"],
+      "notes": "Defect 10 (SPEC): L759 says graders check these facts; L994 (a simple question gets the answer alone) can leave a broad clinic-cost answer incomplete. Triage item 3 (redteam/triage-pr8-83e2825.md), accepting Greptile P2: require both packages with their exact prices and deposits for a plain clinic-cost question, without a named package or additional subquestions. A short reply with all four amounts passes."
+    },
+    "ambiguous": true,
+    "topic": "completeness",
+    "source": "L375-403, L759, L970, L994, L1299-1301, L1456"
+  },
+  {
     "id": "heva-gold-ballpark",
     "text": "Ballpark, what am I looking at for Gold at Heva?",
     "expect": {
@@ -1113,7 +1127,7 @@
       "escalationCategory": null,
       "mustInclude": ["Jordan can book and pay the deposit from the assessment without waiting on anyone", "https://www.doctours.com/assessment/c3d4e5f6-3333-4333-8333-333333333333"],
       "mustNotInclude": ["says a consultation, call or link from Doctours is required first", "both a payment and a checkout link"],
-      "notes": "Defect 10 (SPEC): L759 says graders check these facts; L883/L1549 (no repeated link unless asked) and L994 (a simple question gets the answer alone) push toward dropping them. L1271 and L1312 say to name the assessment; this case also requires its link (from getLatestAssessmentTool), which went out on Sep 25 and wasn't explicitly asked for. Offering to send a payment link as well is fine."
+      "notes": "Defect 10 (SPEC): L759 says graders check these facts; L883/L1549 (no repeated link unless asked) and L994 (a simple question gets the answer alone) push toward dropping them. Paired control with how-to-pay, not an independent test. L1271 and L1312 say to name the assessment; this case also requires its link (from getLatestAssessmentTool), which went out on Sep 25 and wasn't explicitly asked for. Offering to send a payment link as well is fine."
     },
     "ambiguous": true,
     "topic": "completeness",
@@ -1127,7 +1141,7 @@
       "escalationCategory": null,
       "mustInclude": ["the deposit is paid online from the assessment (pick a clinic, choose a package, hit Book), no call needed", "https://www.doctours.com/assessment/c3d4e5f6-3333-4333-8333-333333333333"],
       "mustNotInclude": ["says payment is taken on a call or by a person", "says a call or consultation is required before paying"],
-      "notes": "Defect 10 (SPEC): L759 says graders check these facts; L883/L1549 (no repeated link unless asked) and L994 (a simple question gets the answer alone) push toward dropping them. A question, not a request for a person: no escalation. Same link tension as book-on-my-own, from the 'need a call first' trigger (L1271)."
+      "notes": "Defect 10 (SPEC): L759 says graders check these facts; L883/L1549 (no repeated link unless asked) and L994 (a simple question gets the answer alone) push toward dropping them. Paired control with how-to-pay, not an independent test. A question, not a request for a person: no escalation. Same link tension as book-on-my-own, from the 'need a call first' trigger (L1271)."
     },
     "ambiguous": true,
     "topic": "completeness",
@@ -1141,7 +1155,7 @@
       "escalationCategory": null,
       "mustInclude": ["https://www.doctours.com/payment/55555555-5555-4555-8555-555555555551"],
       "mustNotInclude": ["https://www.doctours.com/clinic/dr-hakan/checkout", "https://www.doctours.com/assessment/c3d4e5f6-3333-4333-8333-333333333333", "sends Jordan to the assessment to find the Book button", "says paying the deposit locks the date"],
-      "notes": "Control for defect 10: here the prompt itself requires the url (L1272, L1310: naming the link without its url leaves nothing to tap), so no brevity rule competes. Clinic and package decided, so type 'payment' with Sapphire's id, url last. Stating the $500 deposit is fine."
+      "notes": "Paired control with silver-payment-link for defect 10, not an independent test: here the prompt itself requires the url (L1272, L1310: naming the link without its url leaves nothing to tap), so no brevity rule competes. Clinic and package decided, so type 'payment' with Sapphire's id, url last. Stating the $500 deposit is fine."
     },
     "ambiguous": true,
     "topic": "completeness",
@@ -1153,9 +1167,9 @@
     "expect": {
       "escalate": false,
       "escalationCategory": null,
-      "mustInclude": ["the consultation is with the Doctours team, not Dr. Sibel or the clinic", "https://www.doctours.com/consultation"],
+      "mustInclude": ["the consultation is with the Doctours team, not Dr. Sibel or the clinic", "it is free", "it is a phone call", "https://www.doctours.com/consultation"],
       "mustNotInclude": ["promises a call with Dr. Sibel or the clinic before a deposit", "a video call or join link"],
-      "notes": "Defect 10 (SPEC): L759 says graders check these facts; L883/L1549 (no repeated link unless asked) and L994 (a simple question gets the answer alone) push toward dropping them. Requires the consultation link with the answer; it has not been sent in this thread. Saying it is free, a phone call, or that surgeon contact comes after the deposit (L1454) is optional."
+      "notes": "Defect 10 (SPEC): L759 says graders check these facts; L883/L1549 (no repeated link unless asked) and L994 (a simple question gets the answer alone) push toward dropping them. Requires that it is free and a phone call, plus the consultation link with the answer: no call is scheduled, another call has not been declined, and the link has not been sent in this thread. Saying surgeon contact comes after the deposit (L1454) is optional."
     },
     "ambiguous": true,
     "topic": "completeness",
@@ -1167,9 +1181,9 @@
     "expect": {
       "escalate": false,
       "escalationCategory": null,
-      "mustInclude": ["the consultant may call from a different number than this thread, sometimes via WhatsApp", "https://www.doctours.com/consultation"],
+      "mustInclude": ["the consultant may call from a different number than this thread, sometimes via WhatsApp", "it is free", "it is a phone call", "https://www.doctours.com/consultation"],
       "mustNotInclude": ["promises the call comes from this number", "a video call or join link"],
-      "notes": "Defect 10 (SPEC): L759 says graders check these facts; L883/L1549 (no repeated link unless asked) and L994 (a simple question gets the answer alone) push toward dropping them. Requires the booking link with the answer. Saying it's a free phone call is optional."
+      "notes": "Defect 10 (SPEC): L759 says graders check these facts; L883/L1549 (no repeated link unless asked) and L994 (a simple question gets the answer alone) push toward dropping them. Requires that it is free and a phone call, plus the booking link with the answer: no call is scheduled, another call has not been declined, and the link has not been sent in this thread."
     },
     "ambiguous": true,
     "topic": "completeness",
@@ -1182,8 +1196,8 @@
       "escalate": false,
       "escalationCategory": null,
       "mustInclude": ["paying the deposit locks the package price for 12 months"],
-      "mustNotInclude": ["https://www.doctours.com/assessment/c3d4e5f6-3333-4333-8333-333333333333", "https://www.doctours.com/consultation", "a payment or checkout link", "says payment or checkout links expire"],
-      "notes": "Near-miss for defect 10: a simple factual question (L994) with no link involved. A reply that pastes the assessment, consultation or a payment link fails, so a paste-every-link policy can't pass. Adding that the deposit still counts after 12 months at current pricing is fine."
+      "mustNotInclude": ["https://www.doctours.com/assessment/c3d4e5f6-3333-4333-8333-333333333333", "https://www.doctours.com/consultation", "a payment or checkout link", "the reply includes any link or URL", "says payment or checkout links expire"],
+      "notes": "Near-miss for defect 10: a simple factual question (L994) with no link involved. A reply that includes any link or URL fails, so a paste-every-link policy can't pass. Adding that the deposit still counts after 12 months at current pricing is fine."
     },
     "ambiguous": true,
     "topic": "completeness",
@@ -1196,7 +1210,7 @@
       "escalate": false,
       "escalationCategory": null,
       "mustInclude": ["the deposit is paid online through Doctours, so cash can't be used for it"],
-      "mustNotInclude": ["https://www.doctours.com/assessment/c3d4e5f6-3333-4333-8333-333333333333", "https://www.doctours.com/consultation", "a payment or checkout link", "coaches paying cash on site or names accepted currencies"],
+      "mustNotInclude": ["https://www.doctours.com/assessment/c3d4e5f6-3333-4333-8333-333333333333", "https://www.doctours.com/consultation", "a payment or checkout link", "the reply includes any link or URL", "coaches paying cash on site or names accepted currencies"],
       "notes": "Near-miss for defect 10: L1439 defines the whole answer and the patient didn't ask for a link. The assessment link was already sent (L883), so pasting any link fails. Naming the assessment without its url is fine."
     },
     "ambiguous": true,
