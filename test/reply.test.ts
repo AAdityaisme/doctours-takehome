@@ -119,3 +119,20 @@ test("an escalated reply is replaced by the handoff sentence and nothing else sh
   assert.equal(out.followUpTiming, null);
   assert.equal(out.workingMemoryUpdates, null);
 });
+
+test("payment and checkout URLs require an exact tool result this turn; public pages stay allowed", () => {
+  const payment = "https://www.doctours.com/payment/gold";
+  const checkout = "https://www.doctours.com/clinic/heva/checkout";
+  for (const url of [payment, checkout, `${payment}?changed=1`]) {
+    const out = postProcess(reply({ response: `Pay here: ${url}`, shouldFollowUp: true }), new Set());
+    assert.equal(out.escalationReason, "system error");
+    assert.equal(out.response, HANDOFFS.system_error.sentence);
+    assert.equal(out.shouldFollowUp, false);
+    assert.equal(postProcess(reply({ response: url }), new Set([url])).escalate, false);
+  }
+  // A returned clinic checkout does not authorize a different package's payment link.
+  assert.equal(postProcess(reply({ response: payment }), new Set([checkout])).escalate, true);
+  for (const url of ["https://www.doctours.com/consultation", "https://www.doctours.com/clinic/heva", "https://www.doctours.com/assessment/abc"]) {
+    assert.equal(postProcess(reply({ response: url }), new Set()).escalate, false);
+  }
+});

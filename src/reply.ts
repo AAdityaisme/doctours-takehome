@@ -191,6 +191,16 @@ export function postProcess(raw: unknown, toolUrls: ReadonlySet<string>): Reply 
     assertReply(escalated);
     return escalated;
   }
+  const untrustedPayment = findUrls(raw.response).some((url) => {
+    const parsed = new URL(url);
+    // getPaymentLink returns /payment/<package> or /clinic/<slug>/checkout; promo's paymentUrl
+    // is currently null. Check these routes, including modified query strings, by exact tool URL.
+    const financial = parsed.hostname === "www.doctours.com" &&
+      (/^\/payment(?:\/|$)/i.test(parsed.pathname) || /^\/clinic\/[^/]+\/checkout(?:\/|$)/i.test(parsed.pathname));
+    return financial && !toolUrls.has(url);
+  });
+  // system_error describes a failed output check, rather than a patient's request for a person.
+  if (untrustedPayment) return toEscalation("system_error");
   const attachments = [...new Set(raw.attachmentUrls ?? [])].filter((url) => toolUrls.has(url)).slice(0, 3);
   const reply: Reply = {
     ...raw,
