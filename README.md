@@ -22,6 +22,8 @@ This system handed off every message that needed a person in the final runs.
 | Fully correct | 1 of 5 | 5 of 5 in every run |
 | **Cost per message on dev** | $0.0149 | $0.0079 |
 
+The packet says the current system has no human handoff. The original prompt assumes upstream routing and sends creator inquiries to a partnerships email, but gives no rule for setting `escalate: true`, so its handoff numbers show what the model does without that rule.
+
 I wrote the 87 dev cases and their expected answers; the 30-case holdout was written by a separate agent before tuning; a model grader (`gpt-6.1-sol`, the same model and low effort as the replies) checks the prose facts, with literal facts checked in code.
 
 The gain on unseen cases is correct handoffs; facts and checks held about level.
@@ -32,7 +34,7 @@ Latency is not a fair comparison: the original prompt's runs hit rate limits.
 
 <details><summary>Full results, latency, cost method, and result files</summary>
 
-The overview rounds the fully correct percentages; the exact values are below. These runs came from merged main at `1c53e5066d3adab8b63acda7223d3dfaa565260f`. Both modes use `gpt-6.1-sol` at `low` for replies; this system also uses `gpt-6-luna` at `none` for routing. The blind holdout was written by a separate agent before tuning, with its SHA-256 recorded before any experiment. It ran once at the end as a final test session: original prompt (1 run), this system (3 runs).
+The overview rounds the fully correct percentages; the exact values are below. These runs came from merged main at `1c53e5066d3adab8b63acda7223d3dfaa565260f`. Both modes use `gpt-6.1-sol` at `low` for replies; this system also uses `gpt-6-luna` at `none` for routing. The blind holdout was written by a separate agent before tuning; its SHA-256 was recorded in my experiment log, outside this repo, on 2026-10-04 before any tuning run. The file was first committed, unchanged, with the `--cases-file` option that runs it in PR #9, before the final runs; `git log -- evals/holdout.json` shows one commit. It ran once at the end as a final test session: original prompt (1 run), this system (3 runs).
 
 | Measure | Dev: original prompt (1 run) | Dev: this system (3 runs) | Unseen: original prompt (1 run) | Unseen: this system (3 runs) |
 |---|---|---|---|---|
