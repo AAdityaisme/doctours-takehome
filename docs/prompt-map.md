@@ -258,7 +258,9 @@ not output fields, and went to `deposit-and-payment`.
 - Headings of the form `# From <ORIGINAL SECTION>` above fragments moved out of a larger section, so a trace can
   name the section a rule came from.
 - The ESCALATION section in core (new; the packet asks for it).
-- `prompts/router.md` (new).
+- `prompts/router.md` (new). Its request-vs-question principle (experiment E1) says `cannot_do` needs a request to act;
+  a question about whether, how, what we need or who they are texting goes to the reply. It has no examples or
+  illustrations: they were removed after review because they had been written while looking at dev failures.
 
 ## Rule conflicts with a recorded winner
 - **The seven "routed to a person" rules** (L913, L955, L980, L1039, L1317, L1407, L1436) describe an upstream

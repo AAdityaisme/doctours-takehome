@@ -24,10 +24,11 @@ import {
   type Verdicts,
 } from "./score.ts";
 
-const load = (name: string): Case[] => JSON.parse(readFileSync(new URL(name, import.meta.url), "utf8"));
+/** Loads a case file from `evals/`. */
+export const load = (name: string): Case[] => JSON.parse(readFileSync(new URL(name, import.meta.url), "utf8"));
 
 /** Runs `task` over `items`, `limit` at a time, keeping input order. */
-async function pool<T, R>(items: T[], limit: number, task: (item: T, index: number) => Promise<R>): Promise<R[]> {
+export async function pool<T, R>(items: T[], limit: number, task: (item: T, index: number) => Promise<R>): Promise<R[]> {
   const out: R[] = new Array(items.length);
   let next = 0;
   const worker = async () => {
@@ -45,7 +46,7 @@ async function pool<T, R>(items: T[], limit: number, task: (item: T, index: numb
  * waits, so a saturated minute delays a message instead of failing it into a system-error escalation. The waits are
  * counted because they land inside the measured latency. Quota errors still throw.
  */
-function patientClient(openai: OpenAI, waits: { count: number; ms: number }): Client {
+export function patientClient(openai: OpenAI, waits: { count: number; ms: number }): Client {
   return {
     responses: {
       create: async (body) => {
@@ -140,12 +141,13 @@ export function writeResults(dir: URL, base: string, body: string): URL {
   throw collision; // 99 names taken: refuse rather than overwrite.
 }
 
-const fail = (message: string): never => {
+/** Prints `message` and exits 1 (CLI argument errors). */
+export const fail = (message: string): never => {
   console.error(message);
   process.exit(1);
 };
 
-const money = (value: number | null) => (value === null ? "n/a" : `$${value.toFixed(2)}`);
+export const money = (value: number | null) => (value === null ? "n/a" : `$${value.toFixed(2)}`);
 
 if (import.meta.main) {
   const { values } = parseArgs({
