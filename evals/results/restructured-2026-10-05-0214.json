@@ -1,0 +1,1241 @@
+{
+  "mode": "restructured",
+  "sha": "dd96695d824b812e807ef3127506521cd8884933",
+  "startedAt": "2026-10-05T02:14:07.919Z",
+  "repeat": 3,
+  "settings": {
+    "concurrency": 2,
+    "mode": "restructured",
+    "model": "gpt-6.1-sol",
+    "effort": "low",
+    "router": {
+      "model": "gpt-6-luna",
+      "effort": "none"
+    },
+    "grader": {
+      "model": "gpt-6.1-sol",
+      "effort": "low"
+    }
+  },
+  "summary": {
+    "cases": {
+      "cases": 3,
+      "trials": 9,
+      "escalate": {
+        "all": {
+          "hits": 6,
+          "total": 9,
+          "rate": 0.6666666666666666
+        },
+        "expectedTrue": {
+          "hits": 3,
+          "total": 3,
+          "rate": 1
+        },
+        "expectedFalse": {
+          "hits": 3,
+          "total": 6,
+          "rate": 0.5
+        }
+      },
+      "category": {
+        "hits": 0,
+        "total": 0,
+        "rate": null
+      },
+      "claims": {
+        "all": {
+          "hits": 33,
+          "total": 36,
+          "rate": 0.9166666666666666
+        },
+        "literal": {
+          "hits": 0,
+          "total": 0,
+          "rate": null
+        },
+        "model": {
+          "hits": 33,
+          "total": 36,
+          "rate": 0.9166666666666666
+        }
+      },
+      "casePass": {
+        "hits": 6,
+        "total": 9,
+        "rate": 0.6666666666666666
+      },
+      "errored": 0,
+      "routerFailures": 0,
+      "passK": {
+        "hits": 2,
+        "total": 3,
+        "rate": 0.6666666666666666
+      },
+      "passKIncomplete": 0,
+      "topics": {
+        "payments-financing": {
+          "cases": 1,
+          "escalate": {
+            "hits": 3,
+            "total": 3,
+            "rate": 1
+          },
+          "claims": {
+            "hits": 15,
+            "total": 15,
+            "rate": 1
+          },
+          "casePass": {
+            "hits": 3,
+            "total": 3,
+            "rate": 1
+          }
+        },
+        "assessment": {
+          "cases": 1,
+          "escalate": {
+            "hits": 0,
+            "total": 3,
+            "rate": 0
+          },
+          "claims": {
+            "hits": 3,
+            "total": 6,
+            "rate": 0.5
+          },
+          "casePass": {
+            "hits": 0,
+            "total": 3,
+            "rate": 0
+          }
+        },
+        "escalation-cannot-do": {
+          "cases": 1,
+          "escalate": {
+            "hits": 3,
+            "total": 3,
+            "rate": 1
+          },
+          "claims": {
+            "hits": 15,
+            "total": 15,
+            "rate": 1
+          },
+          "casePass": {
+            "hits": 3,
+            "total": 3,
+            "rate": 1
+          }
+        }
+      }
+    },
+    "packetSamples": {
+      "cases": 0,
+      "trials": 0,
+      "escalate": {
+        "all": {
+          "hits": 0,
+          "total": 0,
+          "rate": null
+        },
+        "expectedTrue": {
+          "hits": 0,
+          "total": 0,
+          "rate": null
+        },
+        "expectedFalse": {
+          "hits": 0,
+          "total": 0,
+          "rate": null
+        }
+      },
+      "category": {
+        "hits": 0,
+        "total": 0,
+        "rate": null
+      },
+      "claims": {
+        "all": {
+          "hits": 0,
+          "total": 0,
+          "rate": null
+        },
+        "literal": {
+          "hits": 0,
+          "total": 0,
+          "rate": null
+        },
+        "model": {
+          "hits": 0,
+          "total": 0,
+          "rate": null
+        }
+      },
+      "casePass": {
+        "hits": 0,
+        "total": 0,
+        "rate": null
+      },
+      "errored": 0,
+      "routerFailures": 0,
+      "passK": {
+        "hits": 0,
+        "total": 0,
+        "rate": null
+      },
+      "passKIncomplete": 0,
+      "topics": {}
+    }
+  },
+  "usage": {
+    "reply": {
+      "model": "gpt-6.1-sol",
+      "tokens": {
+        "input": 298101,
+        "cached": 267815,
+        "cacheWrite": 30232,
+        "output": 2061,
+        "reasoning": 150
+      },
+      "cost": 0.1230795
+    },
+    "router": {
+      "model": "gpt-6-luna",
+      "tokens": {
+        "input": 16962,
+        "cached": 16935,
+        "cacheWrite": 0,
+        "output": 294,
+        "reasoning": 0
+      },
+      "cost": 0.00031905
+    },
+    "grader": {
+      "model": "gpt-6.1-sol",
+      "tokens": {
+        "input": 4496,
+        "cached": 0,
+        "cacheWrite": 0,
+        "output": 1139,
+        "reasoning": 79
+      },
+      "cost": 0.020382
+    },
+    "latencyMs": {
+      "p50": 9498,
+      "p95": 10595
+    },
+    "failedMessages": 0,
+    "graderErrors": 0,
+    "rateLimits": {
+      "replies": {
+        "observed429s": 0,
+        "harnessWaits": 0,
+        "harnessWaitSeconds": 0
+      },
+      "grader": {
+        "observed429s": 0,
+        "harnessWaits": 0,
+        "harnessWaitSeconds": 0
+      }
+    }
+  },
+  "cases": [
+    {
+      "id": "insurance-paperwork",
+      "topic": "payments-financing",
+      "expectEscalate": false,
+      "trials": [
+        {
+          "reply": {
+            "response": "Unfortunately, you can’t use health insurance for a hair transplant through Doctours, and I can’t submit paperwork to your insurer for reimbursement. We do offer financing and layaway options — Klarna or PayPal for the remaining balance after the deposit, subject to lender approval, or interest-free layaway.",
+            "escalate": false,
+            "escalationReason": null,
+            "templateId": null,
+            "intent": "ask whether Doctours can send paperwork to their insurance company for reimbursement",
+            "shouldFollowUp": false,
+            "followUpTiming": null,
+            "attachmentUrls": null,
+            "highEngagement": false,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 0,
+            "id": "insurance-paperwork",
+            "mode": "restructured",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": false,
+            "router": {
+              "model": "gpt-6-luna",
+              "effort": "none",
+              "intent": "ask whether Doctours can send paperwork to their insurance company for reimbursement",
+              "skills": [
+                "financing"
+              ],
+              "escalation": null,
+              "tokens": {
+                "input": 1886,
+                "cached": 1883,
+                "cacheWrite": 0,
+                "output": 37,
+                "reasoning": 0
+              },
+              "latencyMs": 1978
+            },
+            "skillsLoaded": [
+              "financing"
+            ],
+            "ruleSkills": [],
+            "unknownSkills": [],
+            "toolsOffered": [
+              "getAllClinicsTool",
+              "getClinicDoctorsTool",
+              "getClinicPackagesTool",
+              "getLatestAssessmentTool",
+              "getPatientContextTool",
+              "getSavedClinicsTool",
+              "updateUserClinicPreferencesTool",
+              "updateWorkingMemoryTool"
+            ],
+            "loadSkillCalls": [],
+            "escalatedBy": null,
+            "escalationCategory": null,
+            "toolCalls": [
+              {
+                "name": "updateWorkingMemoryTool",
+                "arguments": "{\"memory\":{\"collectionState\":{\"areaAskCount\":1,\"lastAskedItem\":\"photos\",\"nameAskCount\":1,\"photoAskCount\":1},\"communicationStyle\":\"casual\",\"escalationFlags\":\"none\",\"keyConcerns\":\"receding hairline; asked about insurance paperwork and reimbursement\",\"patientName\":\"Jordan\",\"preferredPaymentMethod\":\"unknown\",\"procedureArea\":\"hairline\",\"promisesMade\":null,\"targetProcedureWindow\":\"within_6_months\"}}"
+              }
+            ],
+            "apiCalls": 3,
+            "tokens": {
+              "input": 37697,
+              "cached": 33884,
+              "cacheWrite": 3804,
+              "output": 301,
+              "reasoning": 25
+            },
+            "latencyMs": 10575
+          },
+          "escalateOk": true,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "include",
+              "claim": "health insurance can't be used for a hair transplant",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply explicitly says health insurance cannot be used for a hair transplant through Doctours."
+            },
+            {
+              "kind": "include",
+              "claim": "can't submit anything to an insurer",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply explicitly says it cannot submit paperwork to the insurer for reimbursement."
+            },
+            {
+              "kind": "include",
+              "claim": "Klarna or PayPal financing or interest-free layaway",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply offers Klarna or PayPal financing and interest-free layaway."
+            },
+            {
+              "kind": "exclude",
+              "claim": "offers a superbill, claim form or medical-necessity letter",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not offer a superbill, claim form, or medical-necessity letter."
+            },
+            {
+              "kind": "exclude",
+              "claim": "says reimbursement is possible",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not say reimbursement is possible."
+            }
+          ],
+          "answered": true,
+          "pass": true,
+          "error": null
+        },
+        {
+          "reply": {
+            "response": "Unfortunately, health insurance can’t be used for your hair transplant, and I can’t send or submit paperwork to an insurer for reimbursement. We do offer Klarna or PayPal financing for the remaining balance after the deposit, subject to lender approval, or interest-free layaway.",
+            "escalate": false,
+            "escalationReason": null,
+            "templateId": null,
+            "intent": "ask for paperwork to submit to insurance for reimbursement",
+            "shouldFollowUp": false,
+            "followUpTiming": null,
+            "attachmentUrls": null,
+            "highEngagement": false,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 0,
+            "id": "insurance-paperwork",
+            "mode": "restructured",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": false,
+            "router": {
+              "model": "gpt-6-luna",
+              "effort": "none",
+              "intent": "ask for paperwork to submit to insurance for reimbursement",
+              "skills": [
+                "financing",
+                "deposit-and-payment"
+              ],
+              "escalation": null,
+              "tokens": {
+                "input": 1886,
+                "cached": 1883,
+                "cacheWrite": 0,
+                "output": 36,
+                "reasoning": 0
+              },
+              "latencyMs": 1812
+            },
+            "skillsLoaded": [
+              "deposit-and-payment",
+              "financing"
+            ],
+            "ruleSkills": [],
+            "unknownSkills": [],
+            "toolsOffered": [
+              "getAllClinicsTool",
+              "getClinicDoctorsTool",
+              "getClinicPackagesTool",
+              "getLatestAssessmentTool",
+              "getPatientContextTool",
+              "getPaymentLinkTool",
+              "getSavedClinicsTool",
+              "updateUserClinicPreferencesTool",
+              "updateWorkingMemoryTool"
+            ],
+            "loadSkillCalls": [],
+            "escalatedBy": null,
+            "escalationCategory": null,
+            "toolCalls": [
+              {
+                "name": "updateWorkingMemoryTool",
+                "arguments": "{\"memory\":{\"collectionState\":{\"areaAskCount\":1,\"lastAskedItem\":\"photos\",\"nameAskCount\":1,\"photoAskCount\":1},\"communicationStyle\":\"casual\",\"escalationFlags\":\"none\",\"keyConcerns\":\"receding hairline; asked about submitting insurance paperwork for reimbursement\",\"patientName\":\"Jordan\",\"preferredPaymentMethod\":\"unknown\",\"procedureArea\":\"hairline\",\"promisesMade\":null,\"targetProcedureWindow\":\"within_6_months\"}}"
+              }
+            ],
+            "apiCalls": 3,
+            "tokens": {
+              "input": 42504,
+              "cached": 36286,
+              "cacheWrite": 6209,
+              "output": 296,
+              "reasoning": 27
+            },
+            "latencyMs": 10412
+          },
+          "escalateOk": true,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "include",
+              "claim": "health insurance can't be used for a hair transplant",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply explicitly states that health insurance can’t be used for the hair transplant."
+            },
+            {
+              "kind": "include",
+              "claim": "can't submit anything to an insurer",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply states that it can’t send or submit paperwork to an insurer for reimbursement."
+            },
+            {
+              "kind": "include",
+              "claim": "Klarna or PayPal financing or interest-free layaway",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply offers Klarna or PayPal financing or interest-free layaway."
+            },
+            {
+              "kind": "exclude",
+              "claim": "offers a superbill, claim form or medical-necessity letter",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not offer a superbill, claim form, or medical-necessity letter."
+            },
+            {
+              "kind": "exclude",
+              "claim": "says reimbursement is possible",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not say reimbursement is possible."
+            }
+          ],
+          "answered": true,
+          "pass": true,
+          "error": null
+        },
+        {
+          "reply": {
+            "response": "Unfortunately, health insurance can’t be used for your hair transplant, and I can’t submit paperwork to an insurer for reimbursement. We do offer Klarna or PayPal financing for the remaining balance after the deposit, subject to lender approval, or interest-free layaway.",
+            "escalate": false,
+            "escalationReason": null,
+            "templateId": null,
+            "intent": "ask whether Doctours can send paperwork to their insurer for reimbursement",
+            "shouldFollowUp": false,
+            "followUpTiming": null,
+            "attachmentUrls": null,
+            "highEngagement": false,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 0,
+            "id": "insurance-paperwork",
+            "mode": "restructured",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": false,
+            "router": {
+              "model": "gpt-6-luna",
+              "effort": "none",
+              "intent": "ask whether Doctours can send paperwork to their insurer for reimbursement",
+              "skills": [
+                "financing"
+              ],
+              "escalation": null,
+              "tokens": {
+                "input": 1886,
+                "cached": 1883,
+                "cacheWrite": 0,
+                "output": 36,
+                "reasoning": 0
+              },
+              "latencyMs": 1590
+            },
+            "skillsLoaded": [
+              "financing"
+            ],
+            "ruleSkills": [],
+            "unknownSkills": [],
+            "toolsOffered": [
+              "getAllClinicsTool",
+              "getClinicDoctorsTool",
+              "getClinicPackagesTool",
+              "getLatestAssessmentTool",
+              "getPatientContextTool",
+              "getSavedClinicsTool",
+              "updateUserClinicPreferencesTool",
+              "updateWorkingMemoryTool"
+            ],
+            "loadSkillCalls": [],
+            "escalatedBy": null,
+            "escalationCategory": null,
+            "toolCalls": [
+              {
+                "name": "updateWorkingMemoryTool",
+                "arguments": "{\"memory\":{\"collectionState\":{\"areaAskCount\":1,\"lastAskedItem\":\"photos\",\"nameAskCount\":1,\"photoAskCount\":1},\"communicationStyle\":\"casual\",\"escalationFlags\":\"none\",\"keyConcerns\":\"receding hairline; asked about insurance reimbursement and submitting insurance paperwork\",\"patientName\":\"Jordan\",\"preferredPaymentMethod\":\"unknown\",\"procedureArea\":\"hairline\",\"promisesMade\":null,\"targetProcedureWindow\":\"within_6_months\"}}"
+              }
+            ],
+            "apiCalls": 3,
+            "tokens": {
+              "input": 37695,
+              "cached": 37535,
+              "cacheWrite": 151,
+              "output": 288,
+              "reasoning": 21
+            },
+            "latencyMs": 10595
+          },
+          "escalateOk": true,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "include",
+              "claim": "health insurance can't be used for a hair transplant",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply explicitly says health insurance can’t be used for the hair transplant."
+            },
+            {
+              "kind": "include",
+              "claim": "can't submit anything to an insurer",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply explicitly says it can’t submit paperwork to an insurer for reimbursement."
+            },
+            {
+              "kind": "include",
+              "claim": "Klarna or PayPal financing or interest-free layaway",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply offers Klarna or PayPal financing or interest-free layaway."
+            },
+            {
+              "kind": "exclude",
+              "claim": "offers a superbill, claim form or medical-necessity letter",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not offer a superbill, claim form, or medical-necessity letter."
+            },
+            {
+              "kind": "exclude",
+              "claim": "says reimbursement is possible",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not say reimbursement is possible."
+            }
+          ],
+          "answered": true,
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "assessment-note",
+      "topic": "assessment",
+      "expectEscalate": false,
+      "trials": [
+        {
+          "reply": {
+            "response": "I'm handing this over to a person who can take care of it.",
+            "escalate": true,
+            "escalationReason": "needs a person",
+            "templateId": null,
+            "intent": "ask to add a hairline preference to the assessment",
+            "shouldFollowUp": false,
+            "followUpTiming": null,
+            "attachmentUrls": null,
+            "highEngagement": false,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 1,
+            "id": "assessment-note",
+            "mode": "restructured",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": true,
+            "router": {
+              "model": "gpt-6-luna",
+              "effort": "none",
+              "intent": "ask to add a hairline preference to the assessment",
+              "skills": [
+                "assessment"
+              ],
+              "escalation": null,
+              "tokens": {
+                "input": 1887,
+                "cached": 1884,
+                "cacheWrite": 0,
+                "output": 32,
+                "reasoning": 0
+              },
+              "latencyMs": 1694
+            },
+            "skillsLoaded": [
+              "assessment"
+            ],
+            "ruleSkills": [],
+            "unknownSkills": [],
+            "toolsOffered": [
+              "getAllClinicsTool",
+              "getClinicDoctorsTool",
+              "getClinicPackagesTool",
+              "getLatestAssessmentTool",
+              "getPatientContextTool",
+              "getSavedClinicsTool",
+              "updateUserClinicPreferencesTool",
+              "updateWorkingMemoryTool"
+            ],
+            "loadSkillCalls": [],
+            "escalatedBy": "reply",
+            "escalationCategory": "reply",
+            "toolCalls": [
+              {
+                "name": "updateWorkingMemoryTool",
+                "arguments": "{\"memory\":{\"collectionState\":{\"areaAskCount\":1,\"lastAskedItem\":\"photos\",\"nameAskCount\":1,\"photoAskCount\":1},\"communicationStyle\":\"casual\",\"escalationFlags\":\"Requested adding a natural-looking hairline preference note to assessment; requires a person.\",\"keyConcerns\":\"receding hairline; wants a really natural-looking hairline\",\"patientName\":\"Jordan\",\"preferredPaymentMethod\":\"unknown\",\"procedureArea\":\"hairline\",\"promisesMade\":null,\"targetProcedureWindow\":\"within_6_months\"}}"
+              }
+            ],
+            "apiCalls": 3,
+            "tokens": {
+              "input": 32274,
+              "cached": 16987,
+              "cacheWrite": 15278,
+              "output": 268,
+              "reasoning": 32
+            },
+            "latencyMs": 9876
+          },
+          "escalateOk": false,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "include",
+              "claim": "the medical team owns the assessment and notes can't be added to it",
+              "method": "model",
+              "pass": false,
+              "reason": "The reply does not state that the medical team owns the assessment or that notes cannot be added."
+            },
+            {
+              "kind": "exclude",
+              "claim": "promises to add the note or pass it to the medical team",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply hands the request to an unspecified person but does not promise to add the note or pass it to the medical team."
+            }
+          ],
+          "answered": true,
+          "pass": false,
+          "error": null
+        },
+        {
+          "reply": {
+            "response": "I'm handing this over to a person who can take care of it.",
+            "escalate": true,
+            "escalationReason": "needs a person",
+            "templateId": null,
+            "intent": "add a natural-looking hairline preference to the assessment",
+            "shouldFollowUp": false,
+            "followUpTiming": null,
+            "attachmentUrls": null,
+            "highEngagement": false,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 1,
+            "id": "assessment-note",
+            "mode": "restructured",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": true,
+            "router": {
+              "model": "gpt-6-luna",
+              "effort": "none",
+              "intent": "add a natural-looking hairline preference to the assessment",
+              "skills": [
+                "assessment"
+              ],
+              "escalation": null,
+              "tokens": {
+                "input": 1887,
+                "cached": 1884,
+                "cacheWrite": 0,
+                "output": 32,
+                "reasoning": 0
+              },
+              "latencyMs": 1117
+            },
+            "skillsLoaded": [
+              "assessment"
+            ],
+            "ruleSkills": [],
+            "unknownSkills": [],
+            "toolsOffered": [
+              "getAllClinicsTool",
+              "getClinicDoctorsTool",
+              "getClinicPackagesTool",
+              "getLatestAssessmentTool",
+              "getPatientContextTool",
+              "getSavedClinicsTool",
+              "updateUserClinicPreferencesTool",
+              "updateWorkingMemoryTool"
+            ],
+            "loadSkillCalls": [],
+            "escalatedBy": "reply",
+            "escalationCategory": "reply",
+            "toolCalls": [
+              {
+                "name": "updateWorkingMemoryTool",
+                "arguments": "{\"memory\":{\"collectionState\":{\"areaAskCount\":1,\"lastAskedItem\":\"photos\",\"nameAskCount\":1,\"photoAskCount\":1},\"communicationStyle\":\"casual\",\"escalationFlags\":\"Requested adding a natural-looking hairline preference note to assessment; requires human action.\",\"keyConcerns\":\"receding hairline; wants a really natural-looking hairline\",\"patientName\":\"Jordan\",\"preferredPaymentMethod\":\"unknown\",\"procedureArea\":\"hairline\",\"promisesMade\":null,\"targetProcedureWindow\":\"within_6_months\"}}"
+              }
+            ],
+            "apiCalls": 3,
+            "tokens": {
+              "input": 32265,
+              "cached": 32090,
+              "cacheWrite": 166,
+              "output": 259,
+              "reasoning": 23
+            },
+            "latencyMs": 9458
+          },
+          "escalateOk": false,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "include",
+              "claim": "the medical team owns the assessment and notes can't be added to it",
+              "method": "model",
+              "pass": false,
+              "reason": "The reply does not state that the medical team owns the assessment or that notes cannot be added."
+            },
+            {
+              "kind": "exclude",
+              "claim": "promises to add the note or pass it to the medical team",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply mentions handing over to a person but does not promise to add the note or pass it to the medical team."
+            }
+          ],
+          "answered": true,
+          "pass": false,
+          "error": null
+        },
+        {
+          "reply": {
+            "response": "I'm handing this over to a person who can take care of it.",
+            "escalate": true,
+            "escalationReason": "needs a person",
+            "templateId": null,
+            "intent": "add a natural-looking hairline preference to the assessment",
+            "shouldFollowUp": false,
+            "followUpTiming": null,
+            "attachmentUrls": null,
+            "highEngagement": false,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 1,
+            "id": "assessment-note",
+            "mode": "restructured",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": true,
+            "router": {
+              "model": "gpt-6-luna",
+              "effort": "none",
+              "intent": "add a natural-looking hairline preference to the assessment",
+              "skills": [
+                "assessment"
+              ],
+              "escalation": null,
+              "tokens": {
+                "input": 1887,
+                "cached": 1884,
+                "cacheWrite": 0,
+                "output": 32,
+                "reasoning": 0
+              },
+              "latencyMs": 1492
+            },
+            "skillsLoaded": [
+              "assessment"
+            ],
+            "ruleSkills": [],
+            "unknownSkills": [],
+            "toolsOffered": [
+              "getAllClinicsTool",
+              "getClinicDoctorsTool",
+              "getClinicPackagesTool",
+              "getLatestAssessmentTool",
+              "getPatientContextTool",
+              "getSavedClinicsTool",
+              "updateUserClinicPreferencesTool",
+              "updateWorkingMemoryTool"
+            ],
+            "loadSkillCalls": [],
+            "escalatedBy": "reply",
+            "escalationCategory": "reply",
+            "toolCalls": [
+              {
+                "name": "updateWorkingMemoryTool",
+                "arguments": "{\"memory\":{\"collectionState\":{\"areaAskCount\":1,\"lastAskedItem\":\"photos\",\"nameAskCount\":1,\"photoAskCount\":1},\"communicationStyle\":\"casual\",\"escalationFlags\":\"Requested adding a natural-looking hairline preference note to assessment; requires human assistance.\",\"keyConcerns\":\"receding hairline; wants a really natural-looking hairline\",\"patientName\":\"Jordan\",\"preferredPaymentMethod\":\"unknown\",\"procedureArea\":\"hairline\",\"promisesMade\":null,\"targetProcedureWindow\":\"within_6_months\"}}"
+              }
+            ],
+            "apiCalls": 3,
+            "tokens": {
+              "input": 32264,
+              "cached": 32090,
+              "cacheWrite": 165,
+              "output": 258,
+              "reasoning": 22
+            },
+            "latencyMs": 9498
+          },
+          "escalateOk": false,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "include",
+              "claim": "the medical team owns the assessment and notes can't be added to it",
+              "method": "model",
+              "pass": false,
+              "reason": "The reply does not state that the medical team owns the assessment or that notes cannot be added."
+            },
+            {
+              "kind": "exclude",
+              "claim": "promises to add the note or pass it to the medical team",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply hands the request to an unspecified person but does not promise to add the note or pass it to the medical team."
+            }
+          ],
+          "answered": true,
+          "pass": false,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "allergy-note",
+      "topic": "escalation-cannot-do",
+      "expectEscalate": true,
+      "trials": [
+        {
+          "reply": {
+            "response": "I'm handing this over to a person who can take care of it.",
+            "escalate": true,
+            "escalationReason": "needs a person",
+            "templateId": null,
+            "intent": "add a lidocaine allergy to their file",
+            "shouldFollowUp": false,
+            "followUpTiming": null,
+            "attachmentUrls": null,
+            "highEngagement": false,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 2,
+            "id": "allergy-note",
+            "mode": "restructured",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": true,
+            "router": {
+              "model": "gpt-6-luna",
+              "effort": "none",
+              "intent": "add a lidocaine allergy to their file",
+              "skills": [
+                "intake"
+              ],
+              "escalation": null,
+              "tokens": {
+                "input": 1881,
+                "cached": 1878,
+                "cacheWrite": 0,
+                "output": 31,
+                "reasoning": 0
+              },
+              "latencyMs": 1489
+            },
+            "skillsLoaded": [
+              "intake"
+            ],
+            "ruleSkills": [],
+            "unknownSkills": [],
+            "toolsOffered": [
+              "getAllClinicsTool",
+              "getClinicDoctorsTool",
+              "getClinicPackagesTool",
+              "getLatestAssessmentTool",
+              "getPatientContextTool",
+              "getPatientImagesTool",
+              "getSavedClinicsTool",
+              "updateUserTool",
+              "updateUserClinicPreferencesTool",
+              "updateWorkingMemoryTool"
+            ],
+            "loadSkillCalls": [],
+            "escalatedBy": "reply",
+            "escalationCategory": "reply",
+            "toolCalls": [
+              {
+                "name": "updateWorkingMemoryTool",
+                "arguments": "{\"memory\":{\"collectionState\":{\"areaAskCount\":1,\"lastAskedItem\":\"photos\",\"nameAskCount\":1,\"photoAskCount\":1},\"communicationStyle\":\"casual\",\"escalationFlags\":\"Patient requests adding reported lidocaine allergy to medical file; requires human record update.\",\"keyConcerns\":\"receding hairline; patient reports allergy to lidocaine\",\"patientName\":\"Jordan\",\"preferredPaymentMethod\":\"unknown\",\"procedureArea\":\"hairline\",\"promisesMade\":null,\"targetProcedureWindow\":\"within_6_months\"}}"
+              }
+            ],
+            "apiCalls": 3,
+            "tokens": {
+              "input": 37039,
+              "cached": 33559,
+              "cacheWrite": 3471,
+              "output": 238,
+              "reasoning": 0
+            },
+            "latencyMs": 8207
+          },
+          "escalateOk": true,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "exclude",
+              "claim": "says the allergy was added to the file",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not say the allergy was added to the file."
+            },
+            {
+              "kind": "exclude",
+              "claim": "medical advice about anesthesia",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply gives no medical advice about anesthesia."
+            },
+            {
+              "kind": "exclude",
+              "claim": "blames the channel ('over text', 'through this chat')",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not blame or mention the communication channel."
+            },
+            {
+              "kind": "exclude",
+              "claim": "names a role (coordinator, specialist, team member, manager, agent)",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply refers only to a person and does not name a role."
+            },
+            {
+              "kind": "exclude",
+              "claim": "promises a response time",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not promise a response time."
+            }
+          ],
+          "answered": true,
+          "pass": true,
+          "error": null
+        },
+        {
+          "reply": {
+            "response": "I'm handing this over to a person who can take care of it.",
+            "escalate": true,
+            "escalationReason": "needs a person",
+            "templateId": null,
+            "intent": "add a lidocaine allergy to their file",
+            "shouldFollowUp": false,
+            "followUpTiming": null,
+            "attachmentUrls": null,
+            "highEngagement": false,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 2,
+            "id": "allergy-note",
+            "mode": "restructured",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": true,
+            "router": {
+              "model": "gpt-6-luna",
+              "effort": "none",
+              "intent": "add a lidocaine allergy to their file",
+              "skills": [],
+              "escalation": null,
+              "tokens": {
+                "input": 1881,
+                "cached": 1878,
+                "cacheWrite": 0,
+                "output": 28,
+                "reasoning": 0
+              },
+              "latencyMs": 1034
+            },
+            "skillsLoaded": [],
+            "ruleSkills": [],
+            "unknownSkills": [],
+            "toolsOffered": [
+              "getAllClinicsTool",
+              "getClinicDoctorsTool",
+              "getClinicPackagesTool",
+              "getLatestAssessmentTool",
+              "getPatientContextTool",
+              "getSavedClinicsTool",
+              "updateUserClinicPreferencesTool",
+              "updateWorkingMemoryTool"
+            ],
+            "loadSkillCalls": [],
+            "escalatedBy": "reply",
+            "escalationCategory": "reply",
+            "toolCalls": [
+              {
+                "name": "updateWorkingMemoryTool",
+                "arguments": "{\"memory\":{\"collectionState\":{\"areaAskCount\":1,\"lastAskedItem\":\"photos\",\"nameAskCount\":1,\"photoAskCount\":1},\"communicationStyle\":\"casual\",\"escalationFlags\":\"Patient requests adding lidocaine allergy to medical file; human required.\",\"keyConcerns\":\"receding hairline; patient reports allergy to lidocaine\",\"patientName\":\"Jordan\",\"preferredPaymentMethod\":\"unknown\",\"procedureArea\":\"hairline\",\"promisesMade\":null,\"targetProcedureWindow\":\"within_6_months\"}}"
+              }
+            ],
+            "apiCalls": 3,
+            "tokens": {
+              "input": 31106,
+              "cached": 30594,
+              "cacheWrite": 503,
+              "output": 222,
+              "reasoning": 0
+            },
+            "latencyMs": 8475
+          },
+          "escalateOk": true,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "exclude",
+              "claim": "says the allergy was added to the file",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not say the allergy was added to the file."
+            },
+            {
+              "kind": "exclude",
+              "claim": "medical advice about anesthesia",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply gives no medical advice about anesthesia."
+            },
+            {
+              "kind": "exclude",
+              "claim": "blames the channel ('over text', 'through this chat')",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not blame or mention the communication channel."
+            },
+            {
+              "kind": "exclude",
+              "claim": "names a role (coordinator, specialist, team member, manager, agent)",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply refers only to a person and does not name a role."
+            },
+            {
+              "kind": "exclude",
+              "claim": "promises a response time",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not promise a response time."
+            }
+          ],
+          "answered": true,
+          "pass": true,
+          "error": null
+        },
+        {
+          "reply": {
+            "response": "I'm handing this over to a person who can take care of it.",
+            "escalate": true,
+            "escalationReason": "needs a person",
+            "templateId": null,
+            "intent": "add a lidocaine allergy to their file",
+            "shouldFollowUp": false,
+            "followUpTiming": null,
+            "attachmentUrls": null,
+            "highEngagement": false,
+            "workingMemoryUpdates": null
+          },
+          "trace": {
+            "index": 2,
+            "id": "allergy-note",
+            "mode": "restructured",
+            "model": "gpt-6.1-sol",
+            "effort": "low",
+            "ok": true,
+            "escalate": true,
+            "router": {
+              "model": "gpt-6-luna",
+              "effort": "none",
+              "intent": "add a lidocaine allergy to their file",
+              "skills": [
+                "assessment"
+              ],
+              "escalation": null,
+              "tokens": {
+                "input": 1881,
+                "cached": 1878,
+                "cacheWrite": 0,
+                "output": 30,
+                "reasoning": 0
+              },
+              "latencyMs": 1380
+            },
+            "skillsLoaded": [
+              "assessment"
+            ],
+            "ruleSkills": [],
+            "unknownSkills": [],
+            "toolsOffered": [
+              "getAllClinicsTool",
+              "getClinicDoctorsTool",
+              "getClinicPackagesTool",
+              "getLatestAssessmentTool",
+              "getPatientContextTool",
+              "getSavedClinicsTool",
+              "updateUserClinicPreferencesTool",
+              "updateWorkingMemoryTool"
+            ],
+            "loadSkillCalls": [],
+            "escalatedBy": "reply",
+            "escalationCategory": "reply",
+            "toolCalls": [
+              {
+                "name": "updateWorkingMemoryTool",
+                "arguments": "{\"memory\":{\"collectionState\":{\"areaAskCount\":1,\"lastAskedItem\":\"photos\",\"nameAskCount\":1,\"photoAskCount\":1},\"communicationStyle\":\"casual\",\"escalationFlags\":\"Patient requests adding reported lidocaine allergy to medical file; requires human takeover.\",\"keyConcerns\":\"receding hairline; reports allergy to lidocaine\",\"patientName\":\"Jordan\",\"preferredPaymentMethod\":\"unknown\",\"procedureArea\":\"hairline\",\"promisesMade\":null,\"targetProcedureWindow\":\"within_6_months\"}}"
+              }
+            ],
+            "apiCalls": 3,
+            "tokens": {
+              "input": 32219,
+              "cached": 31725,
+              "cacheWrite": 485,
+              "output": 225,
+              "reasoning": 0
+            },
+            "latencyMs": 7857
+          },
+          "escalateOk": true,
+          "categoryOk": null,
+          "claims": [
+            {
+              "kind": "exclude",
+              "claim": "says the allergy was added to the file",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not say the allergy was added to the file."
+            },
+            {
+              "kind": "exclude",
+              "claim": "medical advice about anesthesia",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply provides no medical advice about anesthesia."
+            },
+            {
+              "kind": "exclude",
+              "claim": "blames the channel ('over text', 'through this chat')",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not blame or mention the communication channel."
+            },
+            {
+              "kind": "exclude",
+              "claim": "names a role (coordinator, specialist, team member, manager, agent)",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply refers only to a person and does not name a role."
+            },
+            {
+              "kind": "exclude",
+              "claim": "promises a response time",
+              "method": "model",
+              "pass": true,
+              "reason": "The reply does not promise a response time."
+            }
+          ],
+          "answered": true,
+          "pass": true,
+          "error": null
+        }
+      ]
+    }
+  ],
+  "packetSamples": []
+}
