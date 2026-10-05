@@ -12,8 +12,8 @@ recorded deletion. Text was moved, not rewritten: the only changed lines are lis
 | What | Size |
 |------|------|
 | Original prompt, L764-1554 | 164,678 chars, ~41,169 tokens |
-| `core.md` alone | 38,151 chars, ~9,537 tokens |
-| Core + largest stage (`PRE_CLINICAL_SENT`) + two largest skills (`financing`, `packages-and-pricing`) | 77,856 chars, ~19,464 tokens |
+| `core.md` alone | 39,066 chars, ~9,767 tokens |
+| Core + largest stage (`PRE_CLINICAL_SENT`) + two largest skills (`financing`, `packages-and-pricing`) | 78,771 chars, ~19,693 tokens |
 
 Sizes count the files as written, before `{{NAME}}` placeholders are filled and without front matter. Filling adds
 the same per-patient values (transcript, summary, memory) to both the original and the split version.
@@ -117,7 +117,7 @@ skill's tools (`tool_choice: allowed_tools`); every definition is sent on every 
 | 948-949 | BPG examples: airport drive time, preferred landing | skill `travel` |  |
 | 950 | BPG example: first-party trip link | deleted | DELETED: shows a reply sending a /trip/ link, which only the nonexistent getTripRecommendationsTool produces; pre-deposit replies never send a trip link (L902). |
 | 951-953 | BPG examples: tied airports, transfer coverage | skill `travel` |  |
-| 954-959 | CREATOR / PARTNERSHIP BUSINESS | skill `creator-partnerships` | L955 'routed to a human': creator/partnership business escalates; the Molly reply stays for when the router misses. |
+| 954-959 | CREATOR / PARTNERSHIP BUSINESS | skill `creator-partnerships` | L955 'routed to a human': creator/partnership business escalates; the Molly fallback reply answers a question on that topic, while a missed request still escalates under core ESCALATION's later-rule precedence. |
 | 960-962 | PACKAGE & CLINIC FACTS (header, intro) | core | Core keeps the grounding principle that protects any reply that mentions a price. |
 | 963 | PACKAGE & CLINIC FACTS: Grounding | core (rewritten) | REWRITTEN: getBookingPackageDetailsTool removed, see Edits. |
 | 964 | PACKAGE & CLINIC FACTS: hair type / afro is a clinic flag | skill `clinics` | Clinic capability, not a package fact. |
@@ -275,6 +275,14 @@ not output fields, and went to `deposit-and-payment`.
 - **Asking for the coordinator by name** is not a request for a person: the model is that coordinator (L1512).
 - **VOICE bans handoff wording** (L877, and L769 bans channel-blaming): kept as is. Code writes the escalation
   sentence, so the model never writes handoff wording and the rule still holds for every word it does write.
+- **A prescribed reply vs ESCALATION rule 2** (E2). A reply written for that specific kind of request
+  (a CORRECT example, or a line naming the request and saying what to say) wins: this covers assessment notes
+  (L918) and insurance paperwork (L836). A request met only by a general limit on the assistant's capability
+  (sending emails, contacting a hotel or other third party, coordinating a booking, L899-901) escalates when a
+  person on the team could do it. Rule 2's listed actions and the "routed to a person" requests still escalate.
+  A patient asking to add or update an allergy, medication or medical condition on their record escalates; a
+  medical fact mentioned while asking something else and the assistant's own working-memory storage are not
+  record-update requests, so the question is answered.
 
 ## Conflicts left as found (recorded, not resolved)
 - L902 ends "then give interim browse guidance"; L1428 says the flight-help line is the answer, "no need to name
