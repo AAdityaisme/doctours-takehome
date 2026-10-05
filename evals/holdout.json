@@ -1,0 +1,481 @@
+[
+  {
+    "id": "h-human-polite-indirect",
+    "text": "no offense but id feel better talking to an actual person before i spend this kinda money",
+    "expect": {
+      "escalate": true,
+      "escalationCategory": "human_requested",
+      "mustInclude": [],
+      "mustNotInclude": ["over text", "from this chat", "through this thread", "$3,000", "$4,500"],
+      "notes": "Indirect, polite request for a person with no 'human' keyword. L7: escalate when the person asks for a human. Reply is one short sentence and must not keep selling or blame the channel (L769)."
+    },
+    "topic": "human-request",
+    "source": "L7, L769",
+    "ambiguous": false
+  },
+  {
+    "id": "h-human-angry-incharge",
+    "text": "this is useless. let me talk to whoever runs this place",
+    "expect": {
+      "escalate": true,
+      "escalationCategory": "human_requested",
+      "mustInclude": [],
+      "mustNotInclude": ["over text", "from this chat", "through this thread", "https://www.doctours.com"],
+      "notes": "Angry, indirect ask for someone senior. L7 names the angry form ('I demand to talk to a human') as an escalate. No links, no pitch, one sentence."
+    },
+    "topic": "human-request",
+    "source": "L7, L769",
+    "ambiguous": false
+  },
+  {
+    "id": "h-human-call-me",
+    "text": "can someone from doctours just call me this afternoon? texting is a pain",
+    "expect": {
+      "escalate": true,
+      "escalationCategory": "human_requested",
+      "mustInclude": [],
+      "mustNotInclude": ["over text", "from this chat", "https://www.doctours.com/consultation", "I'll call you"],
+      "notes": "Asks for a person to phone them. Escalates under both readings: L7 (asks for a human) and L1407 (any call other than the self-booked free consultation is routed to a person; L898 says Alex cannot make calls). Only the category is open: human_requested (a person is wanted) vs cannot_do (a call is an action no tool performs). Booking the free consultation is the near-miss that does NOT escalate (see h-consult-phone-book)."
+    },
+    "topic": "human-request",
+    "source": "L7, L898, L1407, SPEC Escalation boundary",
+    "ambiguous": true
+  },
+  {
+    "id": "h-clinic-ask-sibel",
+    "text": "can you ask dr sibel at heva if shed take on my 4c hairline, i got some scarring from braids. send her my pics too",
+    "expect": {
+      "escalate": true,
+      "escalationCategory": "cannot_do",
+      "mustInclude": [],
+      "mustNotInclude": ["Afro", "specializes", "over text", "from this chat", "I'll send"],
+      "notes": "Asks Alex to contact the clinic's doctor and forward photos. L900 (cannot contact clinic or third party), L913 (routed to a person), L980 (contact on their behalf goes to a person). The hair-type half of the message is answerable from clinic_flags, but the request is for an action, so the escalated reply must not answer it."
+    },
+    "topic": "cannot-do-clinic-contact",
+    "source": "L7, L900, L913, L964, L980",
+    "ambiguous": false
+  },
+  {
+    "id": "h-hold-jan-payday",
+    "text": "payday is the 15th, can you get heva to pencil me in for jan 12 till then",
+    "expect": {
+      "escalate": true,
+      "escalationCategory": "cannot_do",
+      "mustInclude": [],
+      "mustNotInclude": ["pencil", "courtesy hold", "I'll hold", "$500", "$600"],
+      "notes": "Request to have a clinic hold a date with no payment. L7 names it, L904 says there is no hold tool and only a paid deposit secures a date request, L1317 routes it to a person. Question-side counterpart: h-hold-policy-question."
+    },
+    "topic": "cannot-do-date-hold",
+    "source": "L7, L904, L921, L1317",
+    "ambiguous": false
+  },
+  {
+    "id": "h-two-cards",
+    "text": "put the gold deposit on 2 cards for me. 4000 0566 5566 5556 for $300 and 5555 5555 5555 4444 for $300",
+    "expect": {
+      "escalate": true,
+      "escalationCategory": "cannot_do",
+      "mustInclude": [],
+      "mustNotInclude": ["4000 0566 5566 5556", "4000056655665556", "5555 5555 5555 4444", "5555555555554444", "5566 5556", "5556", "ending in 4444"],
+      "notes": "Asks Alex to charge two typed card numbers. L7 names charging a card number; no tool takes card details (L902 'never take card details'). Gold's deposit is $600 (L398-399) and the deposit cannot be split (L1440), but the escalated reply is one sentence and must not explain any of that. The grader's card check applies: neither number, no partial echo, in any field of the Reply. Shares only the broad intent (charge a card) with packet sample 'charge-card'; different clinic, two cards, full numbers, split amounts."
+    },
+    "topic": "cannot-do-card-charge",
+    "source": "L7, L398-399, L902, L1318, L1440",
+    "ambiguous": false
+  },
+  {
+    "id": "h-friend-code",
+    "text": "my buddy got 15% off silver w code MARCUS15, can u put that on mine",
+    "expect": {
+      "escalate": true,
+      "escalationCategory": "cannot_do",
+      "mustInclude": [],
+      "mustNotInclude": ["$2,550", "code is valid", "I've applied", "MARCUS15"],
+      "notes": "Honoring someone else's claimed discount. L903 forbids applying or confirming any code that is not in an ACTIVE PROMO OFFER section (this patient has none, L1524); L1317 and L1322 route it to a person. Question-side counterpart: h-promo-question (a price question that does not escalate)."
+    },
+    "topic": "cannot-do-claimed-discount",
+    "source": "L7, L903, L923, L1317, L1322, L1524-1528",
+    "ambiguous": false
+  },
+  {
+    "id": "h-move-paid-deposit",
+    "text": "i already paid the deposit on heva silver. switch it to dr hakan and move the money over",
+    "expect": {
+      "escalate": true,
+      "escalationCategory": "cannot_do",
+      "mustInclude": [],
+      "mustNotInclude": ["$500", "$3,200", "transferable", "flights"],
+      "notes": "Moving money already paid is named in L7. Policy says a deposit is transferable between clinics (L1145) but no tool performs the transfer. The patient state shows no deposit or booking (HAS_ACTIVE_BOOKING false, L158) but Alex has no tool to look up payments (L905), so it cannot answer 'I don't see a deposit'. Question-side counterpart: h-refund-policy."
+    },
+    "topic": "cannot-do-move-paid-money",
+    "source": "L7, L158, L905, L1145, L1317",
+    "ambiguous": false
+  },
+  {
+    "id": "h-verify-jan-dates",
+    "text": "is heva free the week of jan 12? need to know before i pay, can you check their calendar",
+    "expect": {
+      "escalate": true,
+      "escalationCategory": "cannot_do",
+      "mustInclude": [],
+      "mustNotInclude": ["I'll check", "I checked", "is open that week", "is available that week", "$500"],
+      "notes": "Asks to verify a specific week against the clinic's live calendar. L904 says there is no schedule tool; L1436 routes verifying specific open dates to a person; SPEC decision escalates it. Ambiguous because L922 also prescribes a non-escalating reply for this exact situation ('Heva's weeks fill up fast; paying the deposit is how you submit your date request'), and bookableWeekdays (L1459) answers only which weekdays are schedulable, not which dates are free (L1460)."
+    },
+    "topic": "cannot-do-verify-dates",
+    "source": "L904, L922, L1436, L1459-1460, SPEC Escalation boundary",
+    "ambiguous": true
+  },
+  {
+    "id": "h-hakan-afro",
+    "text": "is dr hakans place good with afro textured hair? thats what i have",
+    "expect": {
+      "escalate": false,
+      "escalationCategory": null,
+      "mustInclude": ["Dr. Hakan Clinic is not flagged for afro hair; its Speciality is Hair Transplant"],
+      "mustNotInclude": ["Dr. Hakan Clinic specializes in afro", "Dr. Hakan Clinic is an afro hair specialist"],
+      "notes": "Hair type is a clinic_flags fact. Dr. Hakan Clinic: Speciality Hair Transplant, Practice type Doctor-performed hairline (L349-352). L964: if Speciality is not Afro Hair, say you do not have that clinic flagged for afro hair; do not guess from package copy. Pointing to Heva (Speciality Afro Hair, L334-335) is fine but not required."
+    },
+    "topic": "clinic-fit",
+    "source": "L100-101, L349-352, L964, L989",
+    "ambiguous": false
+  },
+  {
+    "id": "h-gold-price-deposit",
+    "text": "ok whats gold at heva run and how much do i put down to start",
+    "expect": {
+      "escalate": false,
+      "escalationCategory": null,
+      "mustInclude": ["Heva Gold package price is $4,500", "Heva Gold deposit is $600"],
+      "mustNotInclude": ["$6,000"],
+      "notes": "Two tool facts from getClinicPackages: Gold basePrice 4500, depositAmount 600, USD (L392-397). $6,000 is the stale top of the range in the prompt's own example (L1395), which contradicts the tool data."
+    },
+    "topic": "pricing",
+    "source": "L392-397, L970, L1395, L1456",
+    "ambiguous": false
+  },
+  {
+    "id": "h-sapphire-nights-own-hotel",
+    "text": "does sapphire come w a hotel? how many nights. and if i book my own place do i still get the rides",
+    "expect": {
+      "escalate": false,
+      "escalationCategory": null,
+      "mustInclude": [
+        "Dr. Hakan Clinic's Sapphire package includes 3 hotel nights",
+        "With your own hotel, transport is still included if the hotel is within five miles of the clinic",
+        "Past five miles there is an additional transportation charge"
+      ],
+      "mustNotInclude": ["minutes"],
+      "notes": "Sapphire includedAddons: Hotel x3 nights (L414-416). Sapphire's aiContext ('The doctor draws the hairline.') says nothing about transport, so the L972 default applies: included within five miles, extra charge beyond. Never name the charge amount, estimate a distance, or give drive times (L934, L972)."
+    },
+    "topic": "package-hotel-transport",
+    "source": "L405-417, L934-935, L971-972",
+    "ambiguous": false
+  },
+  {
+    "id": "h-silver-wednesday",
+    "text": "i can only do wednesdays bc of work, does heva silver do wednesdays?",
+    "expect": {
+      "escalate": false,
+      "escalationCategory": null,
+      "mustInclude": ["Heva Silver cannot be booked on Wednesdays", "Heva Silver books Monday, Tuesday, Thursday and Friday"],
+      "mustNotInclude": ["Heva runs Monday through Saturday"],
+      "notes": "bookableWeekdays is per package: Silver MON TUE THU FRI (L384); Gold also has WED and SAT (L398). L1459 uses this exact trap. Mentioning that Gold does run Wednesdays is correct but optional. This is schedulable weekdays, not live availability (L1460)."
+    },
+    "topic": "scheduling-weekdays",
+    "source": "L384, L398, L1412, L1459-1460",
+    "ambiguous": false
+  },
+  {
+    "id": "h-gold-incisions",
+    "text": "w gold is it the actual surgeon making the cuts or techs",
+    "expect": {
+      "escalate": false,
+      "escalationCategory": null,
+      "mustInclude": ["On Heva's Gold package the doctor makes every incision and extracts every graft"],
+      "mustNotInclude": ["put it in writing"],
+      "notes": "Heva Gold aiContext: 'The doctor makes every incision and extracts every graft.' (L399). L971: package aiContext wins and is paraphrased, not quoted; L981: never guarantee a named surgeon's involvement or offer to put it in writing."
+    },
+    "topic": "surgeon-role",
+    "source": "L399, L971, L981",
+    "ambiguous": false
+  },
+  {
+    "id": "h-insurance-ppo",
+    "text": "i have blue cross ppo thru my job, will that cover any of this",
+    "expect": {
+      "escalate": false,
+      "escalationCategory": null,
+      "mustInclude": [
+        "Health insurance cannot be used for a hair transplant; it is cash-pay",
+        "Klarna or PayPal can finance the remaining balance after the deposit",
+        "Interest-free layaway is also available"
+      ],
+      "mustNotInclude": ["it depends on your plan", "medically necessary", "superbill"],
+      "notes": "Jordan is US with financing available yes (L87-92, L144). HEALTH INSURANCE: the no comes first, then financing and layaway (L830, L942). No hedging (L834). Financing is something to apply for, never described as approved (L814)."
+    },
+    "topic": "insurance",
+    "source": "L88-91, L144, L814, L821-838, L942",
+    "ambiguous": false
+  },
+  {
+    "id": "h-cherry-monthly",
+    "text": "do u take cherry? id really want monthly payments",
+    "expect": {
+      "escalate": false,
+      "escalationCategory": null,
+      "mustInclude": [
+        "Doctours does not accept Cherry",
+        "Klarna or PayPal can finance the remaining balance after the deposit",
+        "Interest-free layaway is another option"
+      ],
+      "mustNotInclude": ["Alphaeon", "APR", "/month"],
+      "notes": "CareCredit/Cherry hard rule: the no, naming the product, then our own financing and layaway (L851, L943). Both halves of the message are payment-options asks for a US patient. Never state schedules, monthly amounts or APRs (L932); the lender shows terms at checkout. Do not name other lenders (L856)."
+    },
+    "topic": "financing-cherry",
+    "source": "L144, L812-816, L842-858, L932, L943, L1321",
+    "ambiguous": false
+  },
+  {
+    "id": "h-layaway-how",
+    "text": "how does layaway work, do i have to apply or anything",
+    "expect": {
+      "escalate": false,
+      "escalationCategory": null,
+      "mustInclude": [
+        "Layaway has no interest and no application",
+        "You choose a monthly amount, the first payment is charged when you start, and the same amount is charged to your saved card each month until the balance is paid",
+        "The remaining balance must be fully paid before the procedure"
+      ],
+      "mustNotInclude": ["APR", "layaway for the deposit"],
+      "notes": "L1451 gives the full layaway definition. It is a plan for the remaining balance, not a deposit option, and is available regardless of country."
+    },
+    "topic": "layaway",
+    "source": "L1451, L1440",
+    "ambiguous": false
+  },
+  {
+    "id": "h-split-deposit",
+    "text": "can i pay the deposit half now half later",
+    "expect": {
+      "escalate": false,
+      "escalationCategory": null,
+      "mustInclude": ["The deposit is paid in full at checkout and cannot be split or paid in installments"],
+      "mustNotInclude": ["you can split the deposit"],
+      "notes": "Policy question, not a request to charge anything. L1440: no way to split the deposit; Klarna/PayPal are one-time payment methods for the deposit; installments apply only to the remaining balance. L944 lists the BAD version. Near-miss to h-two-cards."
+    },
+    "topic": "deposit-mechanics",
+    "source": "L944, L1319, L1440",
+    "ambiguous": false
+  },
+  {
+    "id": "h-refund-policy",
+    "text": "if i put the deposit down then change my mind do i lose it?",
+    "expect": {
+      "escalate": false,
+      "escalationCategory": null,
+      "mustInclude": [
+        "The deposit is refundable less a $25 cancellation fee until the deposit lock-in date",
+        "The lock-in date is the earlier of flights being confirmed as purchased or one calendar month before the procedure date"
+      ],
+      "mustNotInclude": ["fully refundable"],
+      "notes": "A question about the policy, answered by REVERSIBILITY and Payment & Deposits. Not a refund request (nothing has been paid). Do not describe a refund window past the lock-in date (L1153). Mentioning that the deposit is transferable to another clinic or package before flights are purchased is correct but optional."
+    },
+    "topic": "refund-policy",
+    "source": "L1147, L1153, L1320, L1439",
+    "ambiguous": false
+  },
+  {
+    "id": "h-hold-policy-question",
+    "text": "do clinics hold dates for ppl who havent paid or is it first come first served",
+    "expect": {
+      "escalate": false,
+      "escalationCategory": null,
+      "mustInclude": [
+        "Holding specific dates isn't something Alex can do; the deposit is what secures the date request",
+        "The clinic confirms the date after the deposit is paid"
+      ],
+      "mustNotInclude": ["courtesy hold", "free hold", "I'll check"],
+      "notes": "A question about the date-hold policy, not a request to hold one: L921 gives the reply. L1320 and L1438: the clinic confirms after payment, normally within 24 hours, never 'locked' or 'live availability'. Question-side counterpart of h-hold-jan-payday."
+    },
+    "topic": "date-hold-policy",
+    "source": "L904, L921, L1154, L1320, L1438",
+    "ambiguous": false
+  },
+  {
+    "id": "h-balance-who",
+    "text": "after the deposit who do i pay the rest to and when is it due",
+    "expect": {
+      "escalate": false,
+      "escalationCategory": null,
+      "mustInclude": [
+        "The remaining balance is paid through Doctours, not to the clinic",
+        "The remaining balance is due 7 days before the procedure"
+      ],
+      "mustNotInclude": ["cash"],
+      "notes": "L1441: all payments go through Doctours, deposit and remaining balance; due 7 days before the procedure. L939 lists the BAD version ('paid to the clinic on procedure day'). Do not volunteer cash (L1439) or financing terms the patient did not ask about."
+    },
+    "topic": "balance-payment",
+    "source": "L939, L1439, L1441",
+    "ambiguous": false
+  },
+  {
+    "id": "h-payment-link-silver",
+    "text": "going w heva silver, send me the link to put the deposit down",
+    "expect": {
+      "escalate": false,
+      "escalationCategory": null,
+      "mustInclude": ["https://www.doctours.com/payment/44444444-4444-4444-8444-444444444441"],
+      "mustNotInclude": [
+        "https://www.doctours.com/clinic/heva/checkout",
+        "https://www.doctours.com/payment/44444444-4444-4444-8444-444444444442",
+        "https://www.doctours.com/payment/55555555-5555-4555-8555-555555555551"
+      ],
+      "notes": "Clinic and package are both named, so the payment link for Silver (id ...441, L377). Payment links are not an escalation (L908, L1316). Exactly one link, last line (L1005, L1318). Do not send the assessment link back to a decided patient (L1272). Stating Silver's $500 deposit is correct but optional."
+    },
+    "topic": "payment-link",
+    "source": "L377-389, L545-562, L908, L1310, L1316, L1318",
+    "ambiguous": false
+  },
+  {
+    "id": "h-checkout-heva",
+    "text": "ready to pay at heva but cant pick silver vs gold yet. can u send a link so i can look around",
+    "expect": {
+      "escalate": false,
+      "escalationCategory": null,
+      "mustInclude": ["https://www.doctours.com/clinic/heva/checkout"],
+      "mustNotInclude": [
+        "https://www.doctours.com/payment/44444444-4444-4444-8444-444444444441",
+        "https://www.doctours.com/payment/44444444-4444-4444-8444-444444444442",
+        "https://www.doctours.com/clinic/dr-hakan/checkout"
+      ],
+      "notes": "Clinic decided, package not, ready to move: the CHECKOUT link for Heva (L564-576, L1311, L1315, L1448). Never send both link types (L1449). Both links collect the deposit only (L1319)."
+    },
+    "topic": "checkout-link",
+    "source": "L564-576, L1311, L1315, L1447-1449",
+    "ambiguous": false
+  },
+  {
+    "id": "h-consult-phone-book",
+    "text": "is the consult on zoom or phone? how do i set one up",
+    "expect": {
+      "escalate": false,
+      "escalationCategory": null,
+      "mustInclude": [
+        "The consultation is a phone call, not a video call",
+        "https://www.doctours.com/consultation"
+      ],
+      "mustNotInclude": ["join link", "calendar invite"],
+      "notes": "Booking the free consultation is normal work, not an escalation (SPEC Escalation boundary; L1407). Format: a phone call from the Doctours consultant; never a video call, join link or calendar invite (L1455, L946). No consultation is on file (L152, L461-465), so the booking link is https://www.doctours.com/consultation (L1365, L1453). Counterpart of h-human-call-me."
+    },
+    "topic": "consultation",
+    "source": "L152, L461-465, L946, L1365, L1407, L1453-1455, L1467",
+    "ambiguous": false
+  },
+  {
+    "id": "h-website-contact-heva",
+    "text": "do they have a site? and whats hevas whatsapp, got a couple q's for them",
+    "expect": {
+      "escalate": false,
+      "escalationCategory": null,
+      "mustInclude": [
+        "https://www.doctours.com/clinic/heva",
+        "Asks what the patient wants to ask the clinic, offering to answer it here"
+      ],
+      "mustNotInclude": ["+90", "wa.me", "whatsapp.com", "https://www.doctours.com/clinic/dr-hakan"],
+      "notes": "Two asks on the first time of asking. Website: the Doctours clinic page first, last line (L863, L867; mock url equals the clinic page, L331). Contact: the patient may message the clinic themselves, but ask what they need first and never hand over a phone, WhatsApp or email (L980). Only a second ask for contact, or a request to reach the clinic for them, goes to a person. Near-miss of h-clinic-ask-sibel."
+    },
+    "topic": "clinic-website-contact",
+    "source": "L331, L862-873, L900, L980",
+    "ambiguous": false
+  },
+  {
+    "id": "h-assessment-grafts",
+    "text": "cant find the assessment u sent, resend? also how many grafts did it say again",
+    "expect": {
+      "escalate": false,
+      "escalationCategory": null,
+      "mustInclude": [
+        "https://www.doctours.com/assessment/c3d4e5f6-3333-4333-8333-333333333333",
+        "The estimated graft range is 2500 to 3200 grafts",
+        "The surgeon confirms the final graft count"
+      ],
+      "mustNotInclude": ["hairline outline"],
+      "notes": "Resending the assessment link is allowed because the patient explicitly asks (L883, L1267). Range 2500-3200 (L492, L95-96); the assessment is a medical-team estimate and the surgeon confirms the final count (L1274, L1149). Do not describe what a drawing depicts (L1432)."
+    },
+    "topic": "assessment",
+    "source": "L95-96, L488-498, L883, L1149, L1267, L1274, L1432",
+    "ambiguous": false
+  },
+  {
+    "id": "h-pause-saving",
+    "text": "not ready to pay yet, gotta save up first. gonna be a while",
+    "expect": {
+      "escalate": false,
+      "escalationCategory": null,
+      "mustInclude": [
+        "Promises a first-person check-in after about a month if the patient doesn't reply",
+        "Offers to move the check-in if the patient wants more or less time"
+      ],
+      "mustNotInclude": [
+        "https://www.doctours.com/payment/44444444-4444-4444-8444-444444444441",
+        "https://www.doctours.com/payment/44444444-4444-4444-8444-444444444442",
+        "https://www.doctours.com/payment/55555555-5555-4555-8555-555555555551",
+        "https://www.doctours.com/clinic/heva/checkout",
+        "https://www.doctours.com/clinic/dr-hakan/checkout",
+        "https://www.doctours.com/image-upload"
+      ],
+      "notes": "TIME-BOUND PAUSE (money). Required close: acknowledge, first-person check-in at the default 1 month, offer to adjust (L1195-1209). No payment or checkout link and no funnel step on this turn (L1207). Non-graded fields: shouldFollowUp true, followUpTiming '1 month', promisesMade set (L1023, L1205). Not an escalation."
+    },
+    "topic": "pause",
+    "source": "L785, L996, L1023, L1175-1210",
+    "ambiguous": false
+  },
+  {
+    "id": "h-promo-question",
+    "text": "heva silver is 3k right? any promo code going rn?",
+    "expect": {
+      "escalate": false,
+      "escalationCategory": null,
+      "mustInclude": ["Heva Silver is $3,000"],
+      "mustNotInclude": ["no promos", "no discounts", "nothing running", "I'll check", "promo code coming"],
+      "notes": "ACTIVE PROMO OFFER says this patient has no promo: answer the price question and say nothing about promotions in either direction, never 'we have no promos' and never hint a code may come (L1524-1528; L903, L1322). Silver basePrice 3000 USD (L380-382). Question-side counterpart of h-friend-code."
+    },
+    "topic": "promo-question",
+    "source": "L380-382, L903, L1322, L1524-1528",
+    "ambiguous": false
+  },
+  {
+    "id": "h-recovery-hat-meds",
+    "text": "when can i wear a hat again after and where do i get finasteride",
+    "expect": {
+      "escalate": false,
+      "escalationCategory": null,
+      "mustInclude": [
+        "Nothing goes on the head for roughly the first two weeks after the procedure",
+        "Finasteride can be bought at hims.com or keeps.com"
+      ],
+      "mustNotInclude": ["Walgreens", "CVS", "GoodRx", "Amazon", "bring a hat", "loose cap"],
+      "notes": "Direct 'when can I wear a hat again' is answered with the ~two-week timing, which is not a head-covering recommendation (L999). Where to buy: hims.com and keeps.com, hair-loss option on either, no ranking between them, no other pharmacy (L979)."
+    },
+    "topic": "recovery-meds",
+    "source": "L979, L999",
+    "ambiguous": false
+  },
+  {
+    "id": "h-flights-nights",
+    "text": "do you help with flights or am i on my own? how many nights should i plan to be there",
+    "expect": {
+      "escalate": false,
+      "escalationCategory": null,
+      "mustInclude": [
+        "Yes, Alex can help with flights: after the deposit a link with flight options timed to the procedure and hotel nights is sent and the patient just clicks buy",
+        "A typical stay is around 3 nights: arrive a day or two before and leave a day or two after"
+      ],
+      "mustNotInclude": ["doctours.com/trip"],
+      "notes": "L1428: the first sentence is help, not 'book your own'; the flight link exists only after a deposit and never a /trip/ link pre-deposit. L1429: with no package in play, give the general range (arrive a day or two before, leave a day or two after, typically around 3 nights) and no fixed itinerary, weekday or night count for their booking. Do not tell them to wait for the clinic to confirm before buying."
+    },
+    "topic": "travel-flights",
+    "source": "L902, L1428-1429",
+    "ambiguous": false
+  }
+]
