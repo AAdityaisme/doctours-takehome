@@ -14,7 +14,7 @@ This system handed off every message that needed a person in the final runs.
 | Handed off by mistake | 0 of 21 | 3 of 63 trials |
 | Fully correct | 80% | 87% |
 | Facts and checks passed | 97.1% | 96.4% |
-| **Dev set (87 cases)** | | |
+| **Dev set (87 cases I tuned against)** | | |
 | Messages that needed a person, handed off | 14 of 23 | 23 of 23 in every run |
 | Handed off by mistake | 0 of 64 | 12 of 192 trials |
 | Fully correct | 78% | 92% |
@@ -40,7 +40,7 @@ The overview rounds the fully correct percentages; the exact values are below. T
 | Facts and checks passed | 94.6% (383/405) | 97.9% (1189/1215) | 97.1% (135/139) | 96.4% (402/417) |
 | Fully correct | 78.2% (68/87) | 92.3% (241/261) | 80.0% (24/30) | 86.7% (78/90) |
 | Passed in all 3 runs | Not measured | 90.8% (79/87) | Not measured | 86.7% (26/30) |
-| Batch latency, median / 95th percentile (ms) | 18370 / 50530 | 8762 / 18331 | 17396 / 47332 | 9808 / 21910 |
+| Latency per message, median / 95th percentile (ms) | 18370 / 50530 | 8762 / 18331 | 17396 / 47332 | 9808 / 21910 |
 | Batch cost per message (USD) | $0.0149 | $0.0079 | $0.0139 | $0.0061 |
 
 On unseen cases, required handoffs rose from 5/9 to 27/27, and overall handoff decisions from 86.7% to 96.7%. The original prompt often answers or declines in place, avoiding false handoffs while missing required ones. This system catches every required handoff in these runs but answers fewer of the messages that did not need one. Every remaining false-handoff case is listed under [Known limits and next steps](#known-limits-and-next-steps).
@@ -68,7 +68,7 @@ Result files: [original prompt, dev](evals/results/baseline-2026-10-05-0529.json
 
 The command reads messages from a JSON file and writes one reply per message, in the same order.
 
-You need Git, Node.js >=24 ([package.json](package.json)), and an OpenAI API key for the configured models. Node runs the `.ts` files directly with built-in type stripping.
+You need Git, Node.js 24.2.0 or later ([package.json](package.json)), and an OpenAI API key for the configured models. Node runs the `.ts` files directly with built-in type stripping.
 
 ```sh
 npm ci
@@ -162,9 +162,9 @@ Every reply turn loads the core and one patient stage, plus only the topic skill
 |---|---|---|---|
 | Original prompt | Whole prompt on every message | 164,678 | ~41,169 |
 | This system: core | Identity, voice, grounding, handoff rules, and patient context | 39,965 | ~9,991 |
-| This system: largest measured combination | Core + largest stage (`PRE_CLINICAL_SENT`) + two largest skills (`financing`, `packages-and-pricing`) | 80,185 | ~20,046 |
+| This system: a large combination | Core + the largest stage (`PRE_CLINICAL_SENT`) + the two largest skills (`financing`, `packages-and-pricing`) | 80,185 | ~20,046 |
 
-Sizes come from [docs/prompt-map.md](docs/prompt-map.md), before filling placeholders and without front matter. They are file-size estimates, not API usage or a cap on messages needing more skills; the core is still large. Filling placeholders adds the same patient values to both modes.
+Sizes come from [docs/prompt-map.md](docs/prompt-map.md), before filling placeholders and without front matter. They are file-size estimates, not API usage. In the final runs the median reply turn loaded 65,799 characters (~16,449 tokens); 23 of 262 reply turns, each with three or more skills, loaded more than the row above, up to 109,871 characters (~27,467 tokens). The core is still large. Filling placeholders adds the same patient values to both modes.
 
 The [stage file](prompts/stages) follows `PIPELINE_STATUS` and governs what the coordinator may do at that point. The router chooses [skills](prompts/skills) from their descriptions; code adds `intake` when collection is outstanding or this is first contact. Code offers the promo tool only when `PROMO_OFFER` is set. The reply model can load an omitted skill with its tools, and that load is traced; an early handoff needs no reply prompt or call.
 
@@ -186,11 +186,11 @@ I hand off requests for a person or work no tool and no rule can perform, follow
 
 A request to do the action hands off; a policy question gets an answer, even when the answer is no. Asking for the named coordinator does not hand off because the model replies as that coordinator. Payment links, consultation booking/rescheduling, and package facts stay automated. These decisions include judgment calls; [evals/README.md](evals/README.md) records the alternatives.
 
-The router decides first, using `human_requested` or `cannot_do`. The reply model catches misses, follows prescribed policy refusals, and hands off medical safety updates; a passing medical mention is not a record-update request. Code writes the sentence, then clears attachments, follow-up, and reply memory updates.
+The router decides first, using `human_requested` or `cannot_do`. The reply model catches misses, follows prescribed policy refusals, and hands off medical safety updates; a passing medical mention is not a record-update request. Code writes the sentence and clears attachments, follow-up, and working-memory updates.
 
 <details><summary>Failures, handoff reasons, and trace categories</summary>
 
-A failed reply turn hands off as `system_error` after retries. A router failure falls back to a reply with core + stage + rule skills and `loadSkill` available; it does not automatically page a person. `Reply.escalate` flags takeover; `Reply.escalationReason` carries the code-set reason. `Reply` has no category field. The trace's `escalationCategory` is `human_requested`, `cannot_do`, `reply`, or `system_error`. `reply` means the backstop handed off without classifying the request; the trace retains the router's more specific reason. [Handoff tests](test/escalation.test.ts) and [turn tests](test/restructured.test.ts) cover these paths.
+A failed reply turn hands off as `system_error` after retries. A router failure falls back to a reply with core + stage + any skill code always adds (`intake` when needed) and `loadSkill` available; it does not automatically page a person. `Reply.escalate` flags takeover; `Reply.escalationReason` carries the code-set reason. `Reply` has no category field. The trace's `escalationCategory` is `human_requested`, `cannot_do`, `reply`, or `system_error`. `reply` means the reply model handed off after the router did not, so no category was assigned; the trace still records the router's intent. When the router hands off, the trace also keeps its one-line reason. [Handoff tests](test/escalation.test.ts) and [turn tests](test/restructured.test.ts) cover these paths.
 
 </details>
 
@@ -209,7 +209,7 @@ I separated topic rules and testable steps, with some problems only partly addre
 | 5. Every message pays for the full prompt | I select skills, cache the prefix, and skip replies on early handoffs: [turn](src/restructured.ts). | [Cache tests](test/cache.test.ts) and final costs support this; rate limits leave latency causality unresolved. |
 | 6. A small policy edit affects unrelated replies | I put topic rules in separate files: [skills](prompts/skills). | **Partly:** [assembly tests](test/restructured.test.ts) check loading, but core edits affect all replies and arbitrary edits' reach is unmeasured. |
 | 7. Conflicts have no recorded winner | I record precedence and enforce output rules in code: [prompt map](docs/prompt-map.md). | [Map tests](test/prompt-map.test.ts) check the map; the decisions are below. |
-| 8. Behaviors cannot be tested separately | I separate routing, schema, handoff, and factual checks: [scorer](evals/score.ts). | [Router tests](evals/router.ts), [reply tests](test/reply.test.ts), and final per-topic summaries show separate checks. |
+| 8. Behaviors cannot be tested separately | I separate routing, schema, handoff, and factual checks: [scorer](evals/score.ts). | [Router-only eval](evals/router.ts), [reply tests](test/reply.test.ts), and final per-topic summaries show separate checks. |
 
 </details>
 
@@ -217,12 +217,12 @@ I separated topic rules and testable steps, with some problems only partly addre
 
 I measured changes during development, then ran the final comparison from merged main.
 
-- I compare the [original prompt](baseline/system-prompt.md), filled with packet constants, against this system in the same test runner, using the same tools, reply schema, and output checks. The original gets no new router or handoff prompt.
-- The 87 hand-written dev cases cover topics, request/question pairs, and messy input on the fixed patient history. The 5 packet samples are scored separately. Their expected replies never enter application prompts or code; a [guard test](test/samples-guard.test.ts) checks for sample references.
+- I compare the [original prompt](baseline/system-prompt.md), filled with packet constants, against this system in the same test runner, using the same mock tool code, reply schema, and output checks. The original gets no new router or handoff prompt.
+- The 87 handwritten dev cases cover topics, request/question pairs, and messy input on the fixed patient history. The 5 packet samples are scored separately. Their expected replies never enter application prompts or code; a [guard test](test/samples-guard.test.ts) checks for sample references.
 - The [scorer](evals/score.ts) checks handoffs and literal facts in code, then uses a `gpt-6.1-sol` grader at `low` for meaning. Model grading can miss omissions or disagree with short answers. It is evidence against these checks, not a safety proof.
 - The blind holdout has 30 cases and hash `a96df30a97f2721824be86153dc975a295e71df4c6f10f0058c1a14f99960c58`, checked before the final run. Its writer saw no dev messages or failures, but saw the test README's topic list and ambiguous case IDs. Wording and facts are independent; topic coverage overlaps.
-- Each change was a PR with measured before/after results, independent Codex review, and Greptile review. Review rejected some apparent gains and required fixes before merge.
-- I dropped V2's router illustrations because they mirrored dev cases with changed entities. V4 shipped with no illustrations under an acceptance rule recorded before testing; the details are below.
+- Every change was a PR with an independent Codex review and a Greptile review; each of the four shipped changes below also had measured before/after results. Review rejected some apparent gains and required fixes before merge.
+- I dropped an earlier router version's example messages because they mirrored dev cases with the names swapped. The shipped router has no examples, only the request-versus-question rule, and it passed an acceptance rule I wrote before testing it; the details are below.
 
 ```mermaid
 flowchart TD
@@ -235,7 +235,7 @@ flowchart TD
 
 <details><summary>What counts as fully correct</summary>
 
-Handoff decisions are checked exactly, as are URLs, emails, amounts, and digit strings, including literals embedded in prose claims. Forbidden content is searched in every decoded `Reply` string, not only `response`. The grader sees only the message, reply, and claims, and judges the remaining claims by meaning. A case is fully correct only when its handoff decision, any scored category, and every fact and check pass; an answer must also be nonempty. “Passed in all 3 runs” counts cases that passed every repeat, rather than averaging trial scores. Errored trials are excluded from rates and reported separately; the final runs have 0. The holdout checks output shape but lacks some handoff-wording checks present in dev; offline tests cover those rules.
+Handoff decisions are checked exactly in code, as are facts that are only a URL, email, dollar amount, or digit string. URLs, emails, and dollar amounts inside a prose fact are also checked in code. Forbidden literals are searched in every decoded `Reply` string, not only `response`; the grader judges forbidden prose. The grader sees only the message, reply, and claims, and judges the remaining claims by meaning. A case is fully correct only when its handoff decision, any scored category, and every fact and check pass; an answer must also be nonempty. “Passed in all 3 runs” counts cases that passed every repeat, rather than averaging trial scores. Errored trials are excluded from rates and reported separately; the final runs have 0. The holdout checks output shape but lacks some handoff-wording checks present in dev; offline tests cover those rules.
 
 </details>
 
@@ -245,14 +245,14 @@ These are pre-merge development comparisons, separate from the final results abo
 
 | Shipped change | What changed and what the development tests showed |
 |---|---|
-| Router precision (V4) | A request to act differs from a policy question; in 3 router-only runs, mistaken handoffs were 3, 4, 4 versus V0's 6, 5, 5, with missed handoffs 1, 1, 1, all caught end to end in 9/9 trials. |
-| Escalation scope | A prescribed refusal wins over a general capability limit; in 3 runs, assessment-note moved from 3/3 handed off to 3/3 answered, insurance-paperwork stayed 3/3 answered, allergy-note stayed 3/3 handed off, and medical-mention probes stayed 12/12 answered. |
+| Router precision | A request to act differs from a policy question; in 3 router-only runs, mistaken handoffs were 3, 4, 4 versus the old router's 6, 5, 5, with missed handoffs 1, 1, 1, all caught end to end in 9/9 trials. |
+| Escalation scope | A prescribed refusal wins over a general capability limit. Before it, the reply model handed off insurance-paperwork and assessment-note on dev; with the final rule, in 3 runs, both were answered 3/3, allergy-note was still handed off 3/3, and 4 medical-mention probes were answered 12/12. |
 | Prompt caching | Fixed definitions, core + stage prefix, and a loaded-skill list cut full-dev reply cost in 1 run from $1.27 to $0.61; facts and checks were 95.1% against 95.7%, with 93% of reply input read from cache. |
 | Complete answers | Prices include deposits, pages include links, and consultation answers keep their facts; the initial 3-run check rose from 9/30 to 30/30, then the expanded set passed 33/33 and fact samples 9/9 after review fixes. |
 
-I wrote the consultation and all-packages rules after seeing sample failures, so those samples are not independent evidence. Review tightened checks and stopped booking links going to booked or declining patients. The holdout checks unseen cases and shows no overall gain in facts and checks.
+I wrote the consultation and all-packages rules after seeing sample failures, so those samples are not independent evidence. Review tightened the checks and stopped the system from sending a booking link to patients who had already booked a consultation or declined one. The holdout checks unseen cases and shows no overall gain in facts and checks.
 
-Review found V2's illustrations mirrored dev cases; the next attempt's class descriptions still mirrored those failures. I removed every illustration and do not claim V2's apparent gain. V4's acceptance rule required fewer mistaken router handoffs than V0, with every router miss still caught end to end.
+Review found that the first new router's example messages mirrored dev cases, and the next attempt's case descriptions still mirrored those failures. I removed every example and do not claim that version's apparent gain. To ship, the final router had to make fewer mistaken handoffs than the old one, with every router miss still caught end to end.
 
 </details>
 
@@ -265,14 +265,14 @@ I verified the cited rules and tool data and recorded which rule I followed in t
 | Conflict | What I followed |
 |---|---|
 | 1. L7 takeover vs L775/L902/L921 declines for refunds, cards, and date holds | → L7 for action requests; policy questions get the prescribed answer. |
-| 2. L913/L955/L980/L1039/L1317/L1407/L1436 human routing vs L914/fallback replies | → Router hands off requests; questions keep prescribed replies, as a recorded interpretation. |
+| 2. L913/L955/L980/L1039/L1317/L1407/L1436 human routing vs L914 and each rule's "if one slips through" reply | → Router hands off requests; questions keep prescribed replies, as a recorded interpretation. |
 | 3. L877 bans another Doctours person taking over; L769 bans channel excuses and unsupported promises | → L7 wins; code writes a first-person handoff with no role or timing promise. |
 | 4. L331/L347 return Doctours pages; L867/L868/L1416 call `url` an independent clinic website | → I use the returned URL; the mock cannot supply an independent site, and I invent no domain. |
 | 5. L981 names Heva VIP and MetropolMED, absent from L375-418; L399 gives Gold's doctor involvement | → Package `aiContext` wins when present, per L971; I invent no missing packages. |
 | 6. L1041 asserts transfers; L1395 invents a price range; L989/L1519 add tiers; L1459 names an absent package; L1404 offers Miami | → Fresh tool facts and L963/L967 grounding win; examples remain text, not catalog data. |
-| 7. L963-977/L1412/L1429 describe airports, hotels, add-ons, list prices, and itineraries absent from L375-418/L448-456 | → Returned data wins; missing details stay unknown and dead-tool references are removed as mapped. |
+| 7. L963-977/L1412/L1429 describe airports, hotels, add-ons, list prices, and itineraries absent from L375-418/L448-456 | → Returned data wins; missing details stay unknown, and mentions of undefined tools are removed, as the prompt map records. |
 | 8. L103/L472-481 record a past call, while L105 starts a first-contact intro | → I preserve history and follow L1045's no-repeat-intro rule and L898's current calling limit; a past call gives no calling tool. |
-| 9. L896 allows later photos, while L896/L912 ban future-content promises | → L83's current-turn attachment limit wins in code; inconsistent wording remains, with no future send implemented. |
+| 9. L896 allows later photos, while L896/L912 ban future-content promises | → L82's current-turn attachment limit wins in code; inconsistent wording remains, with no future send implemented. |
 | 10. L883/L1549 suppress repeated links and L994 asks for the answer alone; L759 requires deposits and assessment/consultation links | → I follow L759 narrowly with deposit and page-link rules; consultation links still respect booking state, refusal, and no-repeat rules. |
 
 </details>
@@ -282,7 +282,7 @@ I verified the cited rules and tool data and recorded which rule I followed in t
 I would first reduce early false handoffs, which skip the reply model's chance to correct the router.
 
 - The router can still hand off requests with prescribed policy refusals, including insurance paperwork and financing enrollment (L836/L858). I would test letting the reply model decide those cases against new request/question pairs.
-- All false handoffs came from the router. Clinic contact, card talk, and surgeon contact are the main repeats; identity and creator policy also misfired on dev.
+- In the final runs, all false handoffs came from the router. Clinic contact, card talk, and surgeon contact are the main repeats; identity and creator policy also misfired on dev.
 - Some answers still omit facts. I would add independent checks before changing rules, without writing around a holdout sentence.
 - The holdout is small and uses a fixed patient state. I would test new histories and stage transitions, keep a new blind set, and lock the recorded hash in CI.
 - The tools are mocks and no staff queue is connected. I would connect real services, verify workflow contracts, and redact sensitive traces before product use.

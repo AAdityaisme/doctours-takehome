@@ -93,9 +93,10 @@ They test breadth across the prompt's topics and both sides of the escalation bo
 Its SHA-256 is `a96df30a97f2721824be86153dc975a295e71df4c6f10f0058c1a14f99960c58`, recorded on 2026-10-04
 before the experiments ran. It was not used for any decision and is run only in the final measurement.
 
-The holdout carries shape validation only; it lacks the two handoff-wording claims every escalated dev case carries
-("over text", "names a role"). It stays unedited because it is hash-locked, and those claims test the code-written
-handoff sentence, which the unit tests cover.
+The holdout carries shape validation only. Every escalated dev case carries two handoff-wording claims ("over text",
+"names a role"); of the 9 escalated holdout cases, 4 carry the "over text" exclusion and none carries the role
+exclusion. It stays unedited because it is hash-locked, and those claims test the code-written handoff sentence,
+which the unit tests cover.
 
 The writer used packet constants, tool data, the message template, prompt rules and SPEC's escalation boundary,
 without opening `cases.json` or the packet's expected replies. The writer did see this README's ambiguous-case table
