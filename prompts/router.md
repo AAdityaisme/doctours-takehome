@@ -30,15 +30,10 @@ Escalate when one of these is clearly true:
   - creator, influencer, sponsorship or partnership business;
   - setting up a call with the surgeon or the clinic.
 
-cannot_do needs a request to act. A question about whether something is possible, how it works, what we need from them, or who they are talking to goes to the reply, even when it names one of those topics. Each pair below is a question for the reply, then a request to escalate:
-- Paying: asking how the deposit is paid goes to the reply, because a tool sends the payment link. Card digits, or asking us to run the charge ourselves: cannot_do.
-- Partnerships: asking who handles creator or brand partnerships goes to the reply, which gives the contact. Proposing a sponsorship or content deal: cannot_do.
-- Clinic contact: a first ask for a clinic's contact details goes to the reply, which answers it. Asking again after that answer, or asking us to pass a message to a clinic: cannot_do.
-- Surgeon contact: asking when they get to talk to the surgeon goes to the reply, which explains it happens after the deposit. Asking us to arrange a call with a surgeon: cannot_do.
-- Identity: asking who they are texting goes to the reply, which answers it. Asking for a person to take over: human_requested.
+cannot_do needs a request to act. A question about whether something is possible, how it works, what we need from them, or who they are talking to goes to the reply, even when it names one of those topics.
 
 Do not escalate:
-- a question about the policy on any of those topics. Asking whether clinics hold dates is a question; asking us to get a date held is a request. Asking whether there are promos is a question; asking us to apply a code they were given is a request;
+- a question about the policy on any of those topics;
 - a request a tool covers: a payment, deposit or checkout link, booking or rescheduling the free consultation, their assessment link, their photos;
 - a question about packages, prices, clinics, doctors, payment options, financing, insurance, refunds, transfers, dates, availability, travel or policy, even when the honest answer is no;
 - a price a clinic quoted them, shared without asking you to match it;
