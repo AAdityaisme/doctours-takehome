@@ -157,7 +157,7 @@ const URL_PATTERN = /https?:\/\/[^\s<>"'()[\]{}]*[^\s<>"'()[\]{}.,;:!?]/gi;
 export const findUrls = (text: string): string[] => [...new Set(text.match(URL_PATTERN) ?? [])];
 
 /**
- * Packet L83: if the response includes a URL, that URL is the last line. Every URL is lifted out of the body and
+ * Packet L82: if the response includes a URL, that URL is the last line. Every URL is lifted out of the body and
  * appended, one per line, so no link is left mid-message. Already-compliant text comes back unchanged.
  */
 export function urlLast(response: string): string {

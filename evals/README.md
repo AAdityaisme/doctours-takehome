@@ -74,7 +74,12 @@ It writes `results/router-<YYYY-MM-DD-HHMM>.json` with the same no-overwrite rul
 is not always a system miss, because the reply model can still escalate, but the router is measured on its own here.
 
 The four `results/router-2026-10-04-*.json` files are experiment E1 (router precision): the old router prompt at
-effort none and low (V0, V1), then the request-or-question prompt at none and low (V2, V3), three runs each. V2 shipped.
+effort none and low (V0, V1), then the request-or-question prompt at none and low (V2, V3), three runs each.
+V2 did not ship: review found its illustrations mirrored dev cases. V4 (principle only, no illustrations) shipped.
+Its router-only x3 branch screen at `a46cb87` (`results/router-2026-10-05-0216.json`) had false positives 3, 4, 4
+(11 total, versus V0's 16) and false negatives 1, 1, 1. The missed cases escalated end to end in 9/9 trials
+(`results/restructured-2026-10-05-0218.json`). Both screens used `gpt-6-luna` at `none` for routing; the end-to-end
+screen used `gpt-6.1-sol` at `low` for replies. These are branch screens, not the final main measurement.
 
 ## Cases
 
@@ -88,9 +93,10 @@ They test breadth across the prompt's topics and both sides of the escalation bo
 Its SHA-256 is `a96df30a97f2721824be86153dc975a295e71df4c6f10f0058c1a14f99960c58`, recorded on 2026-10-04
 before the experiments ran. It was not used for any decision and is run only in the final measurement.
 
-The holdout carries shape validation only; it lacks the two handoff-wording claims every escalated dev case carries
-("over text", "names a role"). It stays unedited because it is hash-locked, and those claims test the code-written
-handoff sentence, which the unit tests cover.
+The holdout carries shape validation only. Every escalated dev case carries two handoff-wording claims ("over text",
+"names a role"); of the 9 escalated holdout cases, 4 carry the "over text" exclusion and none carries the role
+exclusion. It stays unedited because it is hash-locked, and those claims test the code-written handoff sentence,
+which the unit tests cover.
 
 The writer used packet constants, tool data, the message template, prompt rules and SPEC's escalation boundary,
 without opening `cases.json` or the packet's expected replies. The writer did see this README's ambiguous-case table
