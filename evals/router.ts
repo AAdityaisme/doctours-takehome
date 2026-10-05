@@ -4,7 +4,7 @@ import { parseArgs } from "node:util";
 import OpenAI from "openai";
 import type { Client, Usage } from "../src/respond.ts";
 import { route } from "../src/router.ts";
-import { counting429, fail, load, patientClient, pool, writeResults } from "./run.ts";
+import { counting429, fail, load, pool, writeResults } from "./run.ts";
 import { addUsage, cost, percentile, zeroUsage, type Case } from "./score.ts";
 
 /** One case through the router alone: what it decided against what the case expects. */
@@ -98,14 +98,16 @@ if (import.meta.main) {
     ...load("./cases.json").map((c) => ({ ...c, set: "cases" as const })),
     ...load("./packet-samples.json").map((c) => ({ ...c, set: "samples" as const })),
   ];
-  const waits = { count: 0, ms: 0, observed429s: 0 };
+  const waits = { observed429s: 0 };
   const settings = {
     // Same defaults as the CLI's restructured mode.
     model: process.env.ROUTER_MODEL ?? "gpt-6-luna",
     effort: process.env.ROUTER_EFFORT ?? "none",
     concurrency,
   };
-  const client = patientClient(new OpenAI({ maxRetries: 8, fetch: counting429(fetch, waits) }), waits);
+  // As in src/cli.ts: the SDK's own retries only, so a 429 left after them is a router failure, as in production.
+  // The fetch wrapper only counts 429s.
+  const client = new OpenAI({ maxRetries: 8, fetch: counting429(fetch, waits) });
   const started = new Date();
   const runs = [];
   for (let k = 1; k <= repeat; k++) {
@@ -123,7 +125,7 @@ if (import.meta.main) {
   const stamp = started.toISOString().slice(0, 16).replace("T", "-").replace(":", "");
   const dir = new URL("./results/", import.meta.url);
   mkdirSync(dir, { recursive: true });
-  const rateLimits = { observed429s: waits.observed429s, harnessWaits: waits.count, harnessWaitSeconds: Math.round(waits.ms / 1000) };
+  const rateLimits = { observed429s: waits.observed429s };
   const out = writeResults(
     dir,
     `router-${stamp}`,
@@ -148,7 +150,7 @@ if (import.meta.main) {
       ...s.routerFailures.map((f) => `- run ${i + 1} router failure ${f.id}: ${f.error}`),
     ]),
     "",
-    `Rate limits: ${rateLimits.observed429s} 429 responses seen, ${rateLimits.harnessWaits} harness waits.`,
+    `Rate limits: ${rateLimits.observed429s} 429 responses seen.`,
     `Results: ${out.pathname}`,
   ];
   process.stdout.write(`${lines.join("\n")}\n`);
