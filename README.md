@@ -22,6 +22,8 @@ This system handed off every message that needed a person in the final runs.
 | Fully correct | 1 of 5 | 5 of 5 in every run |
 | **Cost per message on dev** | $0.0149 | $0.0079 |
 
+I wrote the test cases and their expected answers; the 30-case holdout was written by a separate agent before tuning; a model grader (`gpt-6.1-sol`, the same model family as the replies) checks the prose facts, with literal facts checked in code.
+
 The gain on unseen cases is correct handoffs; facts and checks held about level.
 
 The trade is a few false handoffs on messages the system could answer.
@@ -113,7 +115,7 @@ The default is `--mode restructured`; add `--mode baseline` to use the original 
 node src/cli.ts --trace trace.jsonl input.json > output.json
 ```
 
-Each JSON line records the input index, router decision, loaded skills, tools, tokens, cached tokens, and latency. The trace file is overwritten at the start; errors go to stderr and stdout contains only the reply array.
+Each JSON line records the input index, router decision, loaded skills, tools, tokens, cached tokens, and latency. The trace file is overwritten at the start; a trace write failure is reported to stderr once and replies still finish in order, with handoffs preserved. Stdout contains only the reply array.
 
 ```sh
 npm run typecheck && npm test
@@ -186,13 +188,15 @@ I hand off requests for a person or work no tool and no rule can perform, follow
 
 A request to do the action hands off; a policy question gets an answer, even when the answer is no. Asking for the named coordinator does not hand off because the model replies as that coordinator. Payment links, consultation booking/rescheduling, and package facts stay automated. These decisions include judgment calls; [evals/README.md](evals/README.md) records the alternatives.
 
-The router decides first, using `human_requested` or `cannot_do`. The reply model catches misses, follows prescribed policy refusals, and hands off medical safety updates; a passing medical mention is not a record-update request. Code writes the sentence and clears attachments, follow-up, and working-memory updates.
+The router decides first, using `human_requested` or `cannot_do`. The reply model catches misses, follows prescribed policy refusals, and hands off medical safety updates; a passing medical mention is not a record-update request. Code writes the sentence and clears attachments, follow-up, and working-memory updates. Payment (`/payment/<package>`) and checkout (`/clinic/<slug>/checkout`) links in the reply must exactly match a URL a tool returned this turn; otherwise code writes a `system_error` handoff. Static consultation, clinic, and assessment pages stay allowed.
 
 <details><summary>Failures, handoff reasons, and trace categories</summary>
 
-A failed reply turn hands off as `system_error` after retries.
+A 400, 401, 403, or 404 API error stops the batch and eval runs. The command prints the status, message, and a hint to check `ROUTER_MODEL` / `REPLY_MODEL` to stderr, exits nonzero, and writes nothing to stdout.
 
-A router failure falls back to a reply with core + stage + any skill code always adds (`intake` when needed) and `loadSkill` available; it does not automatically page a person.
+Rate limits (429), server errors (5xx), timeouts, and connection errors keep the fallback paths: a failed reply turn hands off as `system_error` after retries.
+
+A temporary router failure falls back to a reply with core + stage + any skill code always adds (`intake` when needed) and `loadSkill` available; it does not automatically page a person.
 
 `Reply.escalate` flags takeover; `Reply.escalationReason` carries the code-set reason. `Reply` has no category field.
 
