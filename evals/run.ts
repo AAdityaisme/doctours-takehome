@@ -2,6 +2,7 @@ import { execFileSync } from "node:child_process";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { parseArgs } from "node:util";
 import OpenAI from "openai";
+import { apiErrorMessage, nonRetryableApiError } from "../src/api-errors.ts";
 import { MODES, replyAll, type Mode } from "../src/cli.ts";
 import type { Reply } from "../src/reply.ts";
 import type { Client, Usage } from "../src/respond.ts";
@@ -114,6 +115,7 @@ async function runOnce(cases: Case[], settings: Settings) {
       }
       return graded.verdicts;
     } catch (error) {
+      if (nonRetryableApiError(error)) throw error;
       graderErrors++;
       console.error(`grader failed on ${c.id}: ${error instanceof Error ? error.message : String(error)}`);
       return null;
@@ -162,7 +164,7 @@ export const parseOptions = (args?: string[]) =>
     },
   });
 
-if (import.meta.main) {
+async function main() {
   const { values } = parseOptions();
   const mode = values.mode as Mode;
   if (!MODES.includes(mode)) fail(`unknown --mode ${values.mode}; expected one of: ${MODES.join(", ")}`);
@@ -290,4 +292,12 @@ if (import.meta.main) {
     `Results: ${out.pathname}`,
   ];
   process.stdout.write(`${report.join("\n")}\n`);
+}
+
+if (import.meta.main) {
+  main().catch((error: unknown) => {
+    const fatal = nonRetryableApiError(error);
+    console.error(fatal ? apiErrorMessage(fatal) : error instanceof Error ? error.message : String(error));
+    process.exit(1);
+  });
 }

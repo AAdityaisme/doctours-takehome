@@ -119,3 +119,151 @@ test("an escalated reply is replaced by the handoff sentence and nothing else sh
   assert.equal(out.followUpTiming, null);
   assert.equal(out.workingMemoryUpdates, null);
 });
+
+test("payment and checkout URLs require an exact tool result this turn; public pages stay allowed", () => {
+  const payment = "https://www.doctours.com/payment/gold";
+  const checkout = "https://www.doctours.com/clinic/heva/checkout";
+  for (const url of [payment, checkout, `${payment}?changed=1`]) {
+    const out = postProcess(reply({ response: `Pay here: ${url}`, shouldFollowUp: true }), new Set());
+    assert.equal(out.escalationReason, "system error");
+    assert.equal(out.response, HANDOFFS.system_error.sentence);
+    assert.equal(out.shouldFollowUp, false);
+    assert.equal(postProcess(reply({ response: url }), new Set([url])).escalate, false);
+  }
+  // A returned clinic checkout does not authorize a different package's payment link.
+  assert.equal(postProcess(reply({ response: payment }), new Set([checkout])).escalate, true);
+  for (const url of ["https://www.doctours.com/consultation", "https://www.doctours.com/clinic/heva", "https://www.doctours.com/assessment/abc"]) {
+    assert.equal(postProcess(reply({ response: url }), new Set()).escalate, false);
+  }
+});
+
+test("an evil URL glued before a real tool payment URL hands off", () => {
+  const url = "https://www.doctours.com/payment/gold";
+  const out = postProcess(reply({ response: `https://evil.example/${url}` }), new Set([url]));
+  assert.equal(out.escalationReason, "system error");
+  assert.equal(out.response, HANDOFFS.system_error.sentence);
+});
+
+test("a tool URL with a plain nested scheme in its query passes whole", () => {
+  for (const nested of ["https://www.doctours.com/thanks", "HTTP://www.doctours.com/checkout"]) {
+    const url = `https://www.doctours.com/payment/gold?return=${nested}`;
+    assert.equal(postProcess(reply({ response: `Link:${url}.` }), new Set([url])).escalate, false);
+    assert.equal(postProcess(reply({ response: url }), new Set()).escalationReason, "system error");
+  }
+});
+
+test("two real tool URLs glued without a space hand off", () => {
+  const payment = "https://www.doctours.com/payment/gold";
+  const checkout = "https://www.doctours.com/clinic/heva/checkout";
+  const returned = new Set([payment, checkout]);
+  for (const urls of [[payment, checkout], [checkout, payment]]) {
+    assert.equal(postProcess(reply({ response: urls.join("") }), returned).escalationReason, "system error");
+    assert.equal(postProcess(reply({ response: urls.join(" ") }), returned).escalate, false);
+  }
+});
+
+for (const prefix of ["Link:", "here:", "("]) {
+  test(`glued payment links compare from the scheme: ${prefix}`, () => {
+    for (const scheme of ["https", "http"]) {
+      const url = `${scheme}://www.doctours.com/payment/gold`;
+      const response = `${prefix}${url}`;
+      assert.equal(postProcess(reply({ response }), new Set([url])).escalate, false);
+      assert.equal(postProcess(reply({ response }), new Set()).escalationReason, "system error");
+      const encoded = `${scheme}://www.doctours.com/%70ayment/gold`;
+      assert.equal(postProcess(reply({ response: `${prefix}${encoded}` }), new Set([encoded])).escalate, false);
+      assert.equal(postProcess(reply({ response: `${prefix}${encoded}` }), new Set()).escalationReason, "system error");
+    }
+  });
+}
+
+for (const prefix of [
+  "evil.example/payment/",
+  "pay.doctours.com/payment/",
+  "doctours.com/payment/gold/",
+  "evil.example/payment?u=",
+  "www.evil.example/checkout?next=",
+]) {
+  test(`untrusted payment link glued before a tool URL hands off: ${prefix}`, () => {
+    const url = "https://www.doctours.com/payment/silver";
+    const out = postProcess(reply({ response: `${prefix}${url}`, shouldFollowUp: true }), new Set([url]));
+    assert.equal(out.escalate, true);
+    assert.equal(out.escalationReason, "system error");
+    assert.equal(out.response, HANDOFFS.system_error.sentence);
+    assert.equal(out.shouldFollowUp, false);
+  });
+}
+
+for (const [form, link] of [
+  ["bare domain", "doctours.com/payment/gold"],
+  ["no scheme", "www.doctours.com/clinic/heva/checkout"],
+  ["glued label", "Pay:doctours.com/payment/gold"],
+  ["glued hash", "#doctours.com/payment/gold"],
+  ["glued equals", "=doctours.com/payment/gold"],
+  ["encoded space", "%20doctours.com/payment/gold"],
+  ["glued checkout label", "Pay:www.doctours.com/clinic/heva/checkout"],
+  ["subdomain", "https://pay.doctours.com/payment/gold"],
+  ["trailing dot", "https://www.doctours.com./payment/gold"],
+  ["percent-encoding", "https://www.doctours.com/%70ayment/gold"],
+  ["userinfo", "https://www.doctours.com@evil.example/payment/gold"],
+  ["markdown", "[Pay](https://doctours.com/payment/gold)"],
+  ["double slash", "https://www.doctours.com//payment/gold"],
+  ["outside domain", "https://evil.example/checkout"],
+  ["malformed escape", "https://doctours.com/%70ayment/%ZZ"],
+]) {
+  test(`untrusted payment bypass: ${form}`, () => {
+    const out = postProcess(reply({ response: link, shouldFollowUp: true }), new Set());
+    assert.equal(out.escalationReason, "system error");
+    assert.equal(out.response, HANDOFFS.system_error.sentence);
+    assert.equal(out.shouldFollowUp, false);
+    assert.equal(out.attachmentUrls, null);
+    assert.equal(out.workingMemoryUpdates, null);
+  });
+}
+
+test("a real tool URL glued after Link: passes", () => {
+  const url = "https://www.doctours.com/payment/gold";
+  const out = postProcess(reply({ response: `Link:${url}` }), new Set([url]));
+  assert.equal(out.escalate, false);
+  assert.equal(out.response, `Link:\n${url}`);
+});
+
+test("malformed static URL does not throw or force a handoff; payment words in prose stay allowed", () => {
+  for (const response of ["See https://www.doctours.com:99999/consultation", "Your payment and checkout options are available."]) {
+    assert.equal(postProcess(reply({ response }), new Set()).escalate, false);
+  }
+});
+
+for (const response of [
+  "We accept card, Klarna or PayPal for the payment/financing step.",
+  "The $600 deposit/payment locks your price for 12 months.",
+  "Once you pick a package I can send a payment/checkout link.",
+  "Head to checkout/booking when you're ready.",
+  "You can choose PayPal/checkout at the end.",
+  "Card/payment details never go over text.",
+  "Pay-in-full/payment plans are available.",
+  "Klarna/PayPal checkout works too.",
+]) {
+  test(`payment prose stays allowed: ${response}`, () => {
+    assert.equal(postProcess(reply({ response }), new Set()).escalate, false);
+  });
+}
+
+for (const wrap of [
+  (url: string) => `${url}…`,
+  (url: string) => `${url}—thanks`,
+  (url: string) => `“${url}”`,
+  (url: string) => `‘${url}’`,
+  (url: string) => `*${url}*`,
+  (url: string) => `**${url}**`,
+  (url: string) => `\`${url}\``,
+]) {
+  test(`attached punctuation preserves exact tool links: ${wrap("link")}`, () => {
+    for (const url of ["https://www.doctours.com/payment/gold", "https://www.doctours.com/clinic/heva/checkout"]) {
+      const response = `Here: ${wrap(url)}`;
+      const out = postProcess(reply({ response }), new Set([url]));
+      assert.equal(out.escalate, false);
+      assert.equal(out.response.split("\n").at(-1), url);
+      assert.equal(postProcess(reply({ response }), new Set()).escalate, true);
+    }
+  });
+}

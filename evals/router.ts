@@ -1,9 +1,10 @@
+import { apiErrorMessage, messageApiError, nonRetryableApiError } from "../src/api-errors.ts";
 import { execFileSync } from "node:child_process";
 import { mkdirSync } from "node:fs";
 import { parseArgs } from "node:util";
 import OpenAI from "openai";
 import type { Client, Usage } from "../src/respond.ts";
-import { route } from "../src/router.ts";
+import { route, type Routed } from "../src/router.ts";
 import { counting429, fail, load, pool, writeResults } from "./run.ts";
 import { addUsage, cost, percentile, zeroUsage, type Case } from "./score.ts";
 
@@ -31,7 +32,20 @@ export async function routeCases(
   options: { client: Client; model: string; effort: string; concurrency: number },
 ): Promise<RouterResult[]> {
   return pool(cases, options.concurrency, async (c) => {
-    const routed = await route(options.client, c.text, options);
+    const started = performance.now();
+    let routed: Routed;
+    try {
+      routed = await route(options.client, c.text, options);
+    } catch (error) {
+      if (!messageApiError(error)) throw error;
+      routed = {
+        route: null,
+        error: error instanceof Error ? error.message : String(error),
+        usage: zeroUsage(),
+        apiCalls: 0,
+        latencyMs: Math.round(performance.now() - started),
+      };
+    }
     return {
       id: c.id,
       set: c.set,
@@ -50,8 +64,8 @@ export async function routeCases(
 const share = (hits: number, total: number) => ({ hits, total, rate: total === 0 ? null : hits / total });
 
 /**
- * Scores one run. A router failure is scored as no escalation, because that is what restructured mode does with it
- * (it replies on the fallback path), and it is also counted on its own; so a variant can't look better by failing on
+ * Scores one run. A router failure is scored as no escalation because the router made no decision, and it is also
+ * counted on its own; so a variant can't look better by failing on
  * hard cases. A false positive is a handoff the case says to answer; a false negative is a missed handoff, which the
  * reply model may still catch, but the router is measured on its own here.
  */
@@ -84,7 +98,7 @@ export function scoreRouter(results: RouterResult[], model: string) {
 const pct = (r: { hits: number; total: number; rate: number | null }) =>
   r.rate === null ? "n/a" : `${(r.rate * 100).toFixed(1)}% (${r.hits}/${r.total})`;
 
-if (import.meta.main) {
+async function main() {
   const { values } = parseArgs({
     options: { repeat: { type: "string", default: "1" }, concurrency: { type: "string", default: "4" } },
   });
@@ -154,4 +168,12 @@ if (import.meta.main) {
     `Results: ${out.pathname}`,
   ];
   process.stdout.write(`${lines.join("\n")}\n`);
+}
+
+if (import.meta.main) {
+  main().catch((error: unknown) => {
+    const fatal = nonRetryableApiError(error);
+    console.error(fatal ? apiErrorMessage(fatal) : error instanceof Error ? error.message : String(error));
+    process.exit(1);
+  });
 }
