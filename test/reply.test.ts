@@ -151,6 +151,23 @@ for (const prefix of ["Link:", "here:", "("]) {
   });
 }
 
+for (const prefix of [
+  "evil.example/payment/",
+  "pay.doctours.com/payment/",
+  "doctours.com/payment/gold/",
+  "evil.example/payment?u=",
+  "www.evil.example/checkout?next=",
+]) {
+  test(`untrusted payment link glued before a tool URL hands off: ${prefix}`, () => {
+    const url = "https://www.doctours.com/payment/silver";
+    const out = postProcess(reply({ response: `${prefix}${url}`, shouldFollowUp: true }), new Set([url]));
+    assert.equal(out.escalate, true);
+    assert.equal(out.escalationReason, "system error");
+    assert.equal(out.response, HANDOFFS.system_error.sentence);
+    assert.equal(out.shouldFollowUp, false);
+  });
+}
+
 for (const [form, link] of [
   ["bare domain", "doctours.com/payment/gold"],
   ["no scheme", "www.doctours.com/clinic/heva/checkout"],

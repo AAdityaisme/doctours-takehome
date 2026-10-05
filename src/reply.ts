@@ -192,10 +192,9 @@ export function postProcess(raw: unknown, toolUrls: ReadonlySet<string>): Reply 
     return escalated;
   }
   // Scan URL-like tokens independently of URL-last formatting; scheme-less links are tappable in SMS.
-  const tokens = raw.response.match(/[^\s<>"'()[\]{}“”‘’…—–*`]+/g) ?? [];
+  const tokens = (raw.response.match(/[^\s<>"'()[\]{}“”‘’…—–*`]+/g) ?? []).flatMap((token) => token.split(/(?=https?:\/\/)/i));
   const untrustedPayment = tokens.some((token) => {
-    const scheme = token.search(/https?:\/\//i);
-    const url = (scheme === -1 ? token : token.slice(scheme)).replace(/[.,;:!?]+$/, "");
+    const url = token.replace(/[.,;:!?]+$/, "");
     // Decode valid escapes individually so a malformed escape elsewhere cannot hide the route.
     const decoded = url.replace(/%([0-9a-f]{2})/gi, (_, hex: string) =>
       String.fromCharCode(parseInt(hex, 16))).toLowerCase();
